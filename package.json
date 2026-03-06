@@ -2,15 +2,22 @@
   "name": "420coopapp",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
+    "install-all" : "npm install && npm install --prefix backend && npm install --prefix frontend",
+    "server": "npm run dev --prefix backend",
+    "client": "npm run dev --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "express": "^5.2.1"
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IsAlexAvailable/406coopapp.git"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
