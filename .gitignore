@@ -1,0 +1,15 @@
+# Dependency directories
+node_modules/
+
+# Environment variables (Crucial for security!)
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+
+# Logs
+*.log
