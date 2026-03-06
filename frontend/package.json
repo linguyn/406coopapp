@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start" : "node ---INSERT SCRIPTNAME---",
-    "dev" : "nodemon ---INSERT SCRIPTNAME---",
+    "start" : "---INSERT REACT SERVER START---",
+    "dev" : "---INSERT REACT SERVER START---",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
