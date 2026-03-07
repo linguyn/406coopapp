@@ -8,6 +8,13 @@ dotenv.config()
 const port = process.env.PORT || 5000;
 
 const app = express();
+tempStudentArray = [
+    {
+        studentId: '123456789',
+        email: 'student@example.com',
+        password: 'password123'
+    }
+];
 
 /* 
     "stamping" cors to this app allows the frontend server to communicate with the backend server.
@@ -27,6 +34,25 @@ app.use(express.json());
 // This defines what happens when someone visits the home page ("/")
 app.get('/', (req, res) => {
     res.send('time to cook!');
+});
+
+app.post('/register', (req, res) => {
+    const loginInfo = req.body;
+    try {
+        //TODO: check if user already exists in database, if not, add them to the database
+        if (loginInfo.studentID && loginInfo.email && loginInfo.password && !tempStudentArray.some(student => student.studentId === loginInfo.studentID)) {
+            if (loginInfo.studentID.length == 9 && !isNaN(loginInfo.studentID) && loginInfo.email.includes('@') && loginInfo.password.length >= 6) {
+                tempStudentArray.push({
+                    studentId: loginInfo.studentID,
+                    email: loginInfo.email,
+                    password: loginInfo.password
+                });
+                res.status(200).json('User registered successfully');
+            }
+        }
+    } catch (error) {
+        res.status(500).send('Error occurred while registering user');
+    }
 });
 
 // This starts the server
