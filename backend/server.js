@@ -55,6 +55,20 @@ app.post('/register', (req, res) => {
     }
 });
 
+app.post('/login', (req, res) => {
+    const loginInfo = req.body;
+    try {
+        const studentLogin = tempStudentArray.find(student => student.studentId === loginInfo.studentID && student.email === loginInfo.email && student.password === loginInfo.password);
+        if (studentLogin) {
+            res.status(200).json('Login successful');
+        } else {
+            res.status(401).json('Invalid student ID, email, or password');
+        }
+    } catch (error) {
+        res.status(500).send('Error occurred while logging in');
+    }
+});
+
 // This starts the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
