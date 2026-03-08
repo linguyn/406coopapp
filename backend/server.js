@@ -2,16 +2,32 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { isValidStudent, isValidSupervisor, isValidCoordinator } from './validate.js';
 
 // loads .env contents into process.env
 dotenv.config()
 const port = process.env.PORT || 5000;
 
 const app = express();
-tempStudentArray = [
+
+// TEMP REPRESENTATION OF USERS
+tempStudents = [
     {
         studentId: '123456789',
         email: 'student@example.com',
+        password: 'password123'
+    }
+];
+tempSupervisors = [
+    {
+        email: 'supervisor@example.com',
+        password: 'password123'
+    }
+];
+
+tempCoordinators = [
+    {
+        email: 'supervisor@example.com',
         password: 'password123'
     }
 ];
@@ -28,45 +44,71 @@ app.use(express.json());
 
 // TODO: connect to database
 // TODO: test basic CRUD operations
-// TODO: create .env file, install dotenv, and move port there
-
 
 // This defines what happens when someone visits the home page ("/")
 app.get('/', (req, res) => {
     res.send('time to cook!');
 });
 
-app.post('/register', (req, res) => {
-    const loginInfo = req.body;
+app.post('/register/student', (req, res) => {
+    const registerInfo = req.body;
+    if (!isValidStudent(registerInfo)) { return res.status(400).json('Invalid registration credentials'); }
     try {
-        //TODO: check if user already exists in database, if not, add them to the database
-        if (loginInfo.studentID && loginInfo.email && loginInfo.password && !tempStudentArray.some(student => student.studentId === loginInfo.studentID)) {
-            if (loginInfo.studentID.length == 9 && !isNaN(loginInfo.studentID) && loginInfo.email.includes('@') && loginInfo.password.length >= 6) {
-                tempStudentArray.push({
-                    studentId: loginInfo.studentID,
-                    email: loginInfo.email,
-                    password: loginInfo.password
-                });
-                res.status(200).json('User registered successfully');
-            }
-        }
-    } catch (error) {
-        res.status(500).send('Error occurred while registering user');
-    }
+        // check if user already exists in database, if not, add them to the database
+        if (tempStudents.some(student => student.studentId === registerInfo.studentId)) { return res.status(400).json('User already exists') }
+        tempStudents.push({
+            studentId: registerInfo.studentId,
+            email: registerInfo.email,
+            password: registerInfo.password
+        });
+        const user = tempStudents.find(student => student.studentId === registerInfo.studentId);
+        return res.status(200).json(user);
+    } catch (error) { return res.status(500).send('Error occurred while registering user'); }
 });
 
-app.post('/login', (req, res) => {
-    const loginInfo = req.body;
+app.post('/register/supervisor', (req, res) => {
+    const registerInfo = req.body;
+    if (!isValidSupervisor(registerInfo)) { return res.status(400).json('Invalid registration credentials'); }
     try {
-        const studentLogin = tempStudentArray.find(student => student.studentId === loginInfo.studentID && student.email === loginInfo.email && student.password === loginInfo.password);
-        if (studentLogin) {
-            res.status(200).json('Login successful');
-        } else {
-            res.status(401).json('Invalid student ID, email, or password');
-        }
-    } catch (error) {
-        res.status(500).send('Error occurred while logging in');
-    }
+        // check if user already exists in database, if not, add them to the database
+        if (tempSupervisors.some(supervisor => supervisor.email === registerInfo.email)) { return res.status(400).json('User already exists') }
+        tempSupervisors.push({
+            email: registerInfo.email,
+            password: registerInfo.password
+        });
+        const user = tempSupervisors.find(supervisor => supervisor.email === registerInfo.email);
+        return res.status(200).json(user);
+    } catch (error) { return res.status(500).send('Error occurred while registering user'); }
+});
+
+app.post('/login/student', (req, res) => {
+    const loginInfo = req.body;
+    if (!isValidStudent(loginInfo)) { return res.status(400).json('Invalid login credentials'); }
+    try {
+        const user = tempStudents.find(student => student.studentId === loginInfo.studentID && student.email === loginInfo.email && student.password === loginInfo.password);
+        if (user) { return res.status(200).json(user); }
+        return res.status(401).json('Invalid student ID, email, or password');
+    } catch (error) { return res.status(500).send('Error occurred while logging in'); }
+});
+
+app.post('/login/supervisor', (req, res) => {
+    const loginInfo = req.body;
+    if (!isValidSupervisor(loginInfo)) { return res.status(400).json('Invalid login credentials'); }
+    try {
+        const user = tempSupervisors.find(supervisor => supervisor.email === loginInfo.email && supervisor.password === loginInfo.password);
+        if (!user) { res.status(400).json('Invalid login credentials'); }
+        return res.status(200).json(user);
+    } catch (error) { return res.status(500).json('Error occurred while logging in'); }
+});
+
+app.post('login/coordinator', (req, res) => {
+    const loginInfo = req.body;
+    if (!isValidCoordinator(loginInfo)) { return res.status(400).json('Invalid login credentials'); }
+    try {
+        const user = tempCoordinators.find(coordinator => coordinator.email === loginInfo.email && coordinator.password === loginInfo.password);
+        if (!user) { res.status(400).json('Invalid login credentials'); }
+        return res.status(200).json(user);
+    } catch (error) { return res.status(500).json('Error occurred while logging in'); }
 });
 
 // This starts the server
