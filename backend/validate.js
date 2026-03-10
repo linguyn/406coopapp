@@ -1,4 +1,5 @@
-//TODO: move validation to schemas eventually so you can just call the validation from the schema
+// TODO: move validation to schemas eventually so you can just call the validation from the schema
+// Note: although some functions look redundant, eventually the tests will change to make them different
 
 /**
  * @function hasValidEmail
@@ -37,35 +38,51 @@ function hasValidStudentId(studentId) {
 /**
  * @function isValidStudent
  * @description Validates the fields of a student
- * @param {Object} loginInfo - A student's loginInfo
- * @returns {boolean} True if the loginInfo contains the valid fields
+ * @param {String} email - A student's email
+ * @param {String} password - A student's password
+ * @param {String} studentId - A student's studentId
+ * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidStudent(loginInfo) {
-    const hasFields = loginInfo.studentId && loginInfo.password && loginInfo.email;
-    return hasFields && hasValidEmail(loginInfo.email) && hasValidPassword(loginInfo.password) && hasValidStudentId(loginInfo.studentId);
-}
-
-/**
- * @function isValidSupervisor
- * @description Validates the fields of a supervisor
- * @param {Object} loginInfo - A supervisor's loginInfo
- * @returns {boolean} True if the loginInfo contains the valid fields
- */
-
-export function isValidSupervisor(loginInfo) {
-    const hasFields = loginInfo.email && loginInfo.password;
-    return hasFields && hasValidEmail(loginInfo.email) && hasValidPassword(loginInfo.password);
+export function isValidStudent(email, password, studentId) {
+    const hasFields = email && password && studentId;
+    return hasFields && hasValidEmail(email) && hasValidPassword(password) && hasValidStudentId(studentId);
 }
 
 /**
  * @function isValidCoordinator
  * @description Validates the fields of a coordinator
- * @param {Object} loginInfo - A coordinator's loginInfo
- * @returns {boolean} True if the loginInfo contains the valid fields
+ * @param {String} email - A coordinator's email
+ * @param {String} password - A coordinator's password
+ * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidCoordinator(loginInfo) {
-    const hasFields = loginInfo.email && loginInfo.password;
-    return hasFields && hasValidEmail(loginInfo.email) && hasValidPassword(loginInfo.password);
+export function isValidCoordinator(email, password) {
+    const hasFields = email && password;
+    return hasFields && hasValidEmail(email) && hasValidPassword(password);
+}
+
+/**
+ * @function isValidSupervisor
+ * @param {String} email - A supervisor's email
+ * @param {String} password - A supervisor's password
+ * @returns {boolean} True if all parameters are valid
+ */
+
+export function isValidSupervisor(email, password) {
+    const hasFields = email && password;
+    return hasFields && hasValidEmail(email) && hasValidPassword(password);
+}
+
+/**
+ * @function isValidLoginAttempt
+ * @description Validates login fields
+ * @param {String} email - Login email
+ * @param {String} password - Login password
+ * @returns {boolean} True if all parameters are valid
+ */
+
+export function isValidLoginAttempt(email, password) {
+    const hasFields = email && password;
+    return hasFields && hasValidEmail(email) && hasValidPassword(password);
 }

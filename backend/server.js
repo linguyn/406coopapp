@@ -2,11 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { isValidStudent, isValidSupervisor, isValidCoordinator } from './validate.js';
+import { isValidStudent, isValidLoginAttempt, isValidCoordinator, isValidSupervisor } from './validate.js';
+import { NotFoundError, ValidationError, ConflictError } from './errors.js';
 
 // TODO: connect to database
 // TODO: test basic CRUD operations
 // TODO: organize routes by moving to routes directory
+// TODO: eventually collapse register routes to one route when database is connected
 
 // loads .env contents into process.env
 dotenv.config()
@@ -21,58 +23,61 @@ const app = express();
 */
 app.use(cors());  
 
-// parses frontend JSON data to a processable object
+// parses JSON data from requests into a processable object (so that all you have to do is call req.body to get the object)
 app.use(express.json());
 
 // TEMP REPRESENTATION OF USERS
 
-let tempUsers = {
-    students : [ 
+let tempUsers = [
         {
             studentId: '123456789',
             email: 'student@example.com',
-            password: 'password123'
+            password: 'password123',
+            userType: 'student'
         },
         {
             studentId: '423456789',
             email: 'aaaatudent@example.com',
-            password: 'password123'
+            password: 'password123',
+            userType: 'student'
         },
         {
             studentId: '323456789',
             email: 'ffftudent@example.com',
-            password: 'password123'
-        }
-    ],
-    supervisors : [
+            password: 'password123',
+            userType: 'student'
+        },
         {
             email: 'supervisor@example.com',
-            password: 'password123'
+            password: 'password123',
+            userType: 'supervisor'
         },
         {
             email: 'aaaasupervisor@example.com',
-            password: 'password123'
+            password: 'password123',
+            userType: 'supervisor'
         },
         {
             email: 'ffffffsupervisor@example.com',
-            password: 'password123'
-        }
-    ],
-    coordinators : [
+            password: 'password123',
+            userType: 'supervisor'
+        },
         {
             email: 'coordinator@example.com',
-            password: 'password123'
+            password: 'password123',
+            userType: 'coordinator'
         },
         {
             email: 'aaaacoordinator@example.com',
-            password: 'password123'
+            password: 'password123',
+            userType: 'coordinator'
         },
         {
             email: 'ffffffcoordinator@example.com',
-            password: 'password123'
+            password: 'password123',
+            userType: 'coordinator'
         }
-    ]
-}
+]
 
 // This defines what happens when someone visits the home page ("/")
 app.get('/', (req, res) => {
@@ -80,120 +85,172 @@ app.get('/', (req, res) => {
 });
 
 /**
- * @api {POST} /register/student
+ * @api {POST} /student
  * @description Adds a new student to the database
  * @body {String} studentId - The student's unique ID
  * @body {String} email - The student's unique email
  * @body {String} password - The student's unique password
- * @success {200} {Object} user
+ * @success {200} {Object} - Returns the user
  * @error {400} {Object} - Error message if user with studentId already exists
  * @error {500} {Object} - Internal error message
  */
 
-app.post('/register/student', (req, res) => {
+
+app.post('/student', (req, res) => {
     const registerInfo = req.body;
-    if (!isValidStudent(registerInfo)) { return res.status(400).json('Invalid registration credentials'); }
     try {
+        const email = registerInfo.email;
+        const password = registerInfo.password;
+        const studentId = registerInfo.studentId;
+
+        if (!isValidStudent(email, password, studentId)) { throw new ValidationError("Invalid registration details"); }
         // check if user already exists in database, if not, add them to the database
-        const students = tempUsers.students;
-        if (students.some(student => student.studentId === registerInfo.studentId)) { return res.status(400).json('User already exists') }
-        students.push({
-            studentId: registerInfo.studentId,
-            email: registerInfo.email,
-            password: registerInfo.password
-        });
-        const user = students.find(student => student.studentId === registerInfo.studentId);
-        user.confirm = "created";
+        if (findUserInDatabase(email)) { throw new ConflictError("User already exists"); }
+        
+        const user = addStudentToDatabase(email, password, studentId);
+        
         return res.status(200).json(user);
-    } catch (error) { return res.status(500).send('Error occurred while registering user'); }
+    } catch (error) { 
+        if (error instanceof ConflictError) { return res.status(409).json(error.message); }
+        else if (error instanceof ValidationError) { return res.status(400).json(error.message); }
+        else { return res.status(500).send('Error occurred while registering'); }
+    }
 });
 
 /**
- * @api {POST} /register/supervisor
+ * @api {POST} /coordinator
+ * @description Adds a new coordinator to the database
+ * @body {String} email - The coordinator's unique email
+ * @body {String} password - The coordinator's unique password
+ * @success {200} {Object} - Returns the user
+ * @error {400} {Object} - Error message if registration information is invalid
+ * @error {409} {Object} - Error message if a user already exists
+ * @error {500} {Object} - Internal error message
+ */
+
+app.post('/coordinator', (req, res) => {
+    const registerInfo = req.body;
+    try {
+        const email = registerInfo.email;
+        const password = registerInfo.password;
+
+        if (!isValidCoordinator(email, password)) { throw new ValidationError("Invalid registration details"); }
+        // check if user already exists in database, if not, add them to the database
+        if (findUserInDatabase(email)) { throw new ConflictError("User already exists"); }
+        
+        const user = addCoordinatorToDatabase(email, password);
+        
+        return res.status(200).json(user);
+    } catch (error) { 
+        if (error instanceof ConflictError) { return res.status(409).json(error.message); }
+        else if (error instanceof ValidationError) { return res.status(400).json(error.message); }
+        else { return res.status(500).send('Error occurred while registering'); }
+    }
+});
+
+/**
+ * @api {POST} /supervisor
  * @description Adds a new supervisor to the database
  * @body {String} email - The supervisor's unique email
  * @body {String} password - The supervisor's unique password
- * @success {200} {Object} user
- * @error {400} {Object} - Error message if user with email already exists
+ * @success {200} {Object} - Returns the user
+ * @error {400} {Object} - Error message if registration information is invalid
+ * @error {409} {Object} - Error message if a user already exists
  * @error {500} {Object} - Internal error message
  */
 
-app.post('/register/supervisor', (req, res) => {
+app.post('/supervisor', (req, res) => {
     const registerInfo = req.body;
-    if (!isValidSupervisor(registerInfo)) { return res.status(400).json('Invalid registration credentials'); }
     try {
+        const email = registerInfo.email;
+        const password = registerInfo.password;
+
+        if (!isValidSupervisor(email, password)) { throw new ValidationError("Invalid registration details"); }
         // check if user already exists in database, if not, add them to the database
-        const supervisors = tempUsers.supervisors;
-        if (supervisors.some(supervisor => supervisor.email === registerInfo.email)) { return res.status(400).json('User already exists') }
-        supervisors.push({
-            email: registerInfo.email,
-            password: registerInfo.password
-        });
-        const user = supervisors.find(supervisor => supervisor.email === registerInfo.email);
+        if (findUserInDatabase(email)) { throw new ConflictError("User already exists"); }
+        
+        const user = addSupervisorToDatabase(email, password);
+        
         return res.status(200).json(user);
-    } catch (error) { return res.status(500).send('Error occurred while registering user'); }
+    } catch (error) { 
+        if (error instanceof ConflictError) { return res.status(409).json(error.message); }
+        else if (error instanceof ValidationError) { return res.status(400).json(error.message); }
+        else { return res.status(500).send('Error occurred while registering'); }
+    }
 });
 
+function addCoordinatorToDatabase(email, password) {
+    tempUsers.push({
+        email: email,
+        password: password,
+        userType: "coordinator"
+    });
+    return getUserFromDatabase(email);
+}
+
+function addSupervisorToDatabase(email, password) {
+    tempUsers.push({
+        email: email,
+        password: password,
+        userType: "supervisor"
+    });
+    return getUserFromDatabase(email);
+}
+
+function addStudentToDatabase(email, password, studentId) {
+    tempUsers.push({
+        studentId : studentId,
+        email: email,
+        password: password,
+        userType: "student"
+    });
+    return getUserFromDatabase(email);
+}
+
+function findUserInDatabase(email) {
+    const isUser = tempUsers.some(user => user.email === email);
+    return isUser;
+}
+
 /**
- * @api {POST} /login/student
- * @description Checks if the student's login matches a student in the database
- * @body {String} studentId - The student's unique ID
- * @body {String} email - The student's unique email
- * @body {String} password - The student's unique password
- * @success {200} {Object} user
+ * @api {POST} /login
+ * @description Checks if the user's login matches a user in the database
+ * @body {String} email - The user's unique email
+ * @body {String} password - The user's unique password
+ * @success {200} {Object} - Returns the user
  * @error {400} {Object} - Error message if login information is invalid
+ * @error {401} {Object} - Error message if login information does not match a user
  * @error {500} {Object} - Internal error message
  */
 
-app.post('/login/student', (req, res) => {
+app.post('/login', (req, res) => {
     const loginInfo = req.body;
-    if (!isValidStudent(loginInfo)) { return res.status(400).json('Invalid login credentials'); }
     try {
-        const user = tempUsers.students.find(student => student.studentId === loginInfo.studentID && student.email === loginInfo.email && student.password === loginInfo.password);
-        if (!user) { return res.status(400).json('Invalid student ID, email, or password'); }
+        const email = loginInfo.email;
+        const password = loginInfo.password;
+        if (!isValidLoginAttempt(email, password)) { throw new ValidationError("Invalid login credentials"); }
+
+        const user = getUserFromDatabase(email);
+
+        if (user.password !== password) { throw new ValidationError("Login information does not match"); }
+
         return res.status(200).json(user);
-    } catch (error) { return res.status(500).send('Error occurred while logging in'); }
+    } catch (error) { 
+        if (error instanceof NotFoundError) { return res.status(401).json(error.message); }
+        else if (error instanceof ValidationError) { return res.status(400).json(error.message); }
+        // should not be error.message for safety (the unknown error message may contain sensitive data)
+        else { return res.status(500).json("Error occurred while logging in"); }
+    }
 });
 
-/**
- * @api {POST} /login/supervisor
- * @description Checks if the supervisor's login matches a supervisor in the database
- * @body {String} email - The supervisor's unique email
- * @body {String} password - The supervisor's unique password
- * @success {200} {Object} user
- * @error {400} {Object} - Error message if login information is invalid
- * @error {500} {Object} - Internal error message
- */
-
-app.post('/login/supervisor', (req, res) => {
-    const loginInfo = req.body;
-    if (!isValidSupervisor(loginInfo)) { return res.status(400).json('Invalid login credentials'); }
-    try {
-        const user = tempUsers.supervisors.find(supervisor => supervisor.email === loginInfo.email && supervisor.password === loginInfo.password);
-        if (!user) { return res.status(400).json('Invalid login credentials'); }
-        return res.status(200).json(user);
-    } catch (error) { return res.status(500).json('Error occurred while logging in'); }
-});
-
-/**
- * @api {POST} /login/coordinator
- * @description Checks if the coordinator's login matches a coordinator in the database
- * @body {String} email - The coordinator's unique email
- * @body {String} password - The coordinator's unique password
- * @success {200} {Object} user
- * @error {400} {Object} - Error message if login information is invalid
- * @error {500} {Object} - Internal error message
- */
-
-app.post('/login/coordinator', (req, res) => {
-    const loginInfo = req.body;
-    if (!isValidCoordinator(loginInfo)) { return res.status(400).json('Invalid login credentials'); }
-    try {
-        const user = tempUsers.coordinators.find(coordinator => coordinator.email === loginInfo.email && coordinator.password === loginInfo.password);
-        if (!user) { return res.status(400).json('Invalid login credentials'); }
-        return res.status(200).json(user);
-    } catch (error) { return res.status(500).json('Error occurred while logging in'); }
-});
+// should eventually be asynchronous when using database
+function getUserFromDatabase(email) {
+    const user = tempUsers.find(user => user.email === email);
+    if (!user) {
+        throw new NotFoundError("User doesn't exist");
+    }
+    return user;
+}
 
 /**
  * @api {GET} /users
@@ -218,7 +275,7 @@ app.get('/users', (req, res) => {
         return res.status(400).json('User type not specified');
     }
 
-    const filteredUsers = tempUsers[userType];
+    const filteredUsers = tempUsers.filter(user => user.userType === userType);
 
     if (!sortBy) {
         // no sorting specified just return an unsorted copy
