@@ -44,7 +44,7 @@ function hasValidStudentId(studentId) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidStudent(email, password, studentId) {
+export function isValidStudent({email, password, studentId}) {
     const hasFields = email && password && studentId;
     return hasFields && hasValidEmail(email) && hasValidPassword(password) && hasValidStudentId(studentId);
 }
@@ -57,7 +57,7 @@ export function isValidStudent(email, password, studentId) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidCoordinator(email, password) {
+export function isValidCoordinator({email, password}) {
     const hasFields = email && password;
     return hasFields && hasValidEmail(email) && hasValidPassword(password);
 }
@@ -69,7 +69,7 @@ export function isValidCoordinator(email, password) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidSupervisor(email, password) {
+export function isValidSupervisor({email, password}) {
     const hasFields = email && password;
     return hasFields && hasValidEmail(email) && hasValidPassword(password);
 }
@@ -82,7 +82,7 @@ export function isValidSupervisor(email, password) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidLoginAttempt(email, password) {
+export function isValidLoginAttempt({email, password}) {
     const hasFields = email && password;
     return hasFields && hasValidEmail(email) && hasValidPassword(password);
 }
