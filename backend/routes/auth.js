@@ -1,7 +1,8 @@
-import {isValidLoginAttempt, isValidStudent, isValidCoordinator, isValidSupervisor} from '../validate.js';
-import { NotFoundError, ValidationError, ConflictError } from '../errors.js';
-import { findUserInDatabase, addStudentToDatabase, addCoordinatorToDatabase, addSupervisorToDatabase } from '../database-services.js';
+import { isValidLoginAttempt } from '../validate.js';
+import { HTTPError } from '../errors.js';
+import { findUserInDatabase } from '../database-services.js';
 import express from 'express';
+import { userDetails } from '../constants.js';
 
 export const authRouter = express.Router();
 
@@ -19,38 +20,17 @@ export const authRouter = express.Router();
 authRouter.post('/login', (req, res) => {
     const loginInfo = req.body;
     try {
-        const email = loginInfo.email;
-        const password = loginInfo.password;
-        if (!isValidLoginAttempt(email, password)) { throw new ValidationError("Invalid login credentials"); }
+        if (!isValidLoginAttempt(loginInfo)) { throw new HTTPError("Invalid login credentials", 400); }
 
-        const user = getUserFromDatabase(email);
+        const user = getUserFromDatabase(loginInfo.email);
 
-        if (user.password !== password) { throw new ValidationError("Login information does not match"); }
+        if (user.password !== loginInfo.password) { throw new HTTPError("Login information does not match", 400); }
 
         return res.status(200).json(user);
     } catch (error) { 
-        if (error instanceof NotFoundError) { return res.status(401).json(error.message); }
-        else if (error instanceof ValidationError) { return res.status(400).json(error.message); }
-        // should not be error.message for safety (the unknown error message may contain sensitive data)
-        else { return res.status(500).json("Error occurred while logging in"); }
+        next(error);
     }
 });
-
-
-const userTypeFunctions = {
-    student : {
-        validate : isValidStudent,
-        add : addStudentToDatabase
-    },
-    supervisor : {
-        validate : isValidSupervisor,
-        add : addSupervisorToDatabase
-    },
-    coordinator : {
-        validate : isValidCoordinator,
-        add : addCoordinatorToDatabase
-    }
-};
 
 /**
  * @api {POST} /register
@@ -66,20 +46,19 @@ authRouter.post('/register', (req, res) => {
     const registerInfo = req.body;
     try {
         const userType = registerInfo.userType;
-        if (!userType || !userTypeFunctions[userType]) { throw new ValidationError("User type missing or invalid"); }
+        if (!userType || !userTypeFunctions[userType]) { throw new HTTPError("User type missing or invalid", 400); }
         // TODO: should perform basic validation
-        if (!isBasicUser(registerInfo)) { throw new ValidationError("Missing fields or invalid credentials"); }
-        if (findUserInDatabase(registerInfo.email)) { throw new ConflictError("User already exists"); }
+        // TODO: add isBasicUser fuction?
+        if (!isBasicUser(registerInfo)) { throw new HTTPError("Missing fields or invalid credentials", 400); }
+        if (findUserInDatabase(registerInfo.email)) { throw new HTTPError("User already exists", 409); }
 
-        const validationFunction = userTypeFunctions[userType].validate;
-        if (!validationFunction(registerInfo)) { throw new ValidationError("Invalid something something"); }
+        const validationFunction = userDetails.operations[userType].validate;
+        if (!validationFunction(registerInfo)) { throw new HTTPError("Missing fields or invalid credentials", 400); }
 
-        const registerFunction = userTypeFunctions[userType].add;
+        const registerFunction = userDetails.operations[userType].add;
         const user = registerFunction(registerInfo);
         return res.status(200).json(user);
     } catch (error) {
-        if (error instanceof ConflictError) { return res.status(409).json(error.message); }
-        else if (error instanceof ValidationError) { return res.status(400).json(error.message); }
-        else { return res.status(500).send('Error occurred while registering'); }
+        next(error);
     }
 });
