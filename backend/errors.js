@@ -1,20 +1,7 @@
-export class ConflictError extends Error {
-    constructor(message) {
+export class HTTPError extends Error {
+    constructor(message, statusCode) {
         super(message);
-        this.name = "ConflictError";
+        this.statusCode = statusCode;
+        this.isOperational = true;
     }
-}
-
-export class NotFoundError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "NotFoundError";
-    }
-}
-
-export class ValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ValidationError";
-  }
 }
