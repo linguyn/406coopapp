@@ -1,3 +1,5 @@
+import { userDetails } from './constants.js';
+
 // TODO: move validation to schemas eventually so you can just call the validation from the schema
 // Note: although some functions look redundant, eventually the tests will change to make them different
 
@@ -44,7 +46,7 @@ function hasValidStudentId(studentId) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidStudent(email, password, studentId) {
+export function isValidStudent({email, password, studentId}) {
     const hasFields = email && password && studentId;
     return hasFields && hasValidEmail(email) && hasValidPassword(password) && hasValidStudentId(studentId);
 }
@@ -57,7 +59,7 @@ export function isValidStudent(email, password, studentId) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidCoordinator(email, password) {
+export function isValidCoordinator({email, password}) {
     const hasFields = email && password;
     return hasFields && hasValidEmail(email) && hasValidPassword(password);
 }
@@ -69,7 +71,7 @@ export function isValidCoordinator(email, password) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidSupervisor(email, password) {
+export function isValidSupervisor({email, password}) {
     const hasFields = email && password;
     return hasFields && hasValidEmail(email) && hasValidPassword(password);
 }
@@ -82,7 +84,19 @@ export function isValidSupervisor(email, password) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidLoginAttempt(email, password) {
+export function isValidLoginAttempt({email, password}) {
     const hasFields = email && password;
     return hasFields && hasValidEmail(email) && hasValidPassword(password);
+}
+
+/**
+ * @function isValidStatusUpdate
+ * @description Validates status fields
+ * @param {String} status - new status
+ * @returns {boolean} True if all parameters are valid
+ */
+
+export function isValidStatusUpdate({status}) {
+    const hasFields = status;
+    return hasFields && (status in userDetails.statuses);
 }
