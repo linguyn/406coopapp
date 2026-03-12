@@ -4,10 +4,12 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/user.js';
+import { API } from './constants.js';
 
 // TODO: connect to database and reconfigure database-services to actual database
 // TODO: test basic CRUD operations
-// TODO: organize routes by moving to routes directory
+// TODO: instead of returning the full user object at routes we should return a filtered object (subtracting the sensitive info)
+// TODO: have a userLoggedIn boolean so the user doesnt need to login every time
 
 // loads .env contents into process.env
 dotenv.config()
@@ -26,8 +28,8 @@ app.use(cors());
 app.use(express.json());
 
 // mount the routers to the app (first arg is just a url prefix)
-app.use('/api/auth', authRouter);
-app.use('/api/users', userRouter);
+app.use(API.prefixes.auth, authRouter);
+app.use(API.prefixes.user, userRouter);
 
 /**
  * error handling middleware, this should be the last to be mounted to the app.
@@ -37,7 +39,7 @@ app.use('/api/users', userRouter);
  *  */ 
 app.use((error, req, res, next) => {
     const statusCode = error.statusCode || 500;
-    let message = "Internal server error";
+    let message = error.message
     if (error.isOperational) { message = error.message; }
     return res.status(statusCode).json({
         message : message,

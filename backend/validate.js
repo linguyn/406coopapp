@@ -1,4 +1,4 @@
-import { userDetails } from './constants.js';
+import { USER_DETAILS } from './constants.js';
 
 // TODO: move validation to schemas eventually so you can just call the validation from the schema
 // Note: although some functions look redundant, eventually the tests will change to make them different
@@ -93,10 +93,12 @@ export function isValidLoginAttempt({email, password}) {
  * @function isValidStatusUpdate
  * @description Validates status fields
  * @param {String} status - new status
+ * @param {String} callerId - calling user id
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidStatusUpdate({status}) {
+export function isValidStatusUpdate({status}, role) {
     const hasFields = status;
-    return hasFields && (status in userDetails.statuses);
+    const hasPermission = role === USER_DETAILS.roles.coordinator || role === USER_DETAILS.roles.admin;
+    return hasFields && hasPermission && USER_DETAILS.studentStatuses.includes(status);
 }

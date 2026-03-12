@@ -2,12 +2,11 @@ import { tempUsers, getUserFromDatabase, updateUserStatus } from '../database-se
 import express from 'express';
 import { HTTPError } from '../errors.js'
 import { isValidStatusUpdate } from '../validate.js';
-import { userDetails } from '../constants.js';
 
 export const userRouter = express.Router();
 
 /**
- * @api {GET} /users
+ * @api {GET} /api/user/list
  * @description Retrieves a filtered list of users with optional sorting
  * @query {String} role - The type of users. Options: "students", "supervisors", or "coordinators"
  * @query {String} [sortBy] - The sorting criteria. Options: "studentId", "email", "name"
@@ -18,7 +17,7 @@ export const userRouter = express.Router();
  * GET /users?role=students&sortBy=studentId&order=desc
  */
 
-userRouter.get('/', (req, res) => {
+userRouter.get('/list', (req, res) => {
     // TODO: validate queries more rigorously
     const role = req.query.role;
     // TODO: nothing preventing you from sorting by studentId for non-students
@@ -52,22 +51,26 @@ userRouter.get('/', (req, res) => {
 })
 
 /**
- * @api {PATCH} - Updates a user's status
- * @param id - User id
- * @body {String} status - New user status
- * @success {200} {Object} - Return the updated user
+ * @api {PATCH} - /api/user/student/:id/status
+ * @description - Updates a student's status
+ * @param id - Student id
+ * @body {String} status - New student status
+ * @body {String} callerId - Calling user id
+ * @success {200} {Object} - Return the updated student
  * @error {400} {Object} - Error message if status information is invalid
  * @error {401} {Object} - Error message if id does not match an existing user
+ * @errpr {403} {Object} - Error message if the calling user id does not have permission
  * @error {500} {Object} - Internal error message
  */
 
-userRouter.patch('/:id/status', (req, res) => {
+userRouter.patch('/student/:id/status', (req, res, next) => {
     const statusInfo = req.body;
-    const id = req.params.id;
+    const studentId = req.params.id;
+
     try {
-        if (!isValidStatusUpdate(statusInfo)) { throw new HTTPError("Invalid status update", 400); }
-        const user = getUserFromDatabase(id);
-        if (user.role !== userDetails.roles.coordinator || user.role !== userDetails.roles.admin) { throw new HTTPError("Lacking permissions", 403); }
+        const caller = getUserFromDatabase(statusInfo.callerId);
+        if (!isValidStatusUpdate(statusInfo, caller.role)) { throw new HTTPError("Invalid status update", 400); }
+        const user = getUserFromDatabase(studentId);
         updateUserStatus(user, statusInfo);
         return res.status(200).json(user);
     } catch(error) {
@@ -77,12 +80,27 @@ userRouter.patch('/:id/status', (req, res) => {
 
 userRouter.patch('/security', (req, res) => {
     // TODO: update user email/password/other sensitive info
+
 });
 
-userRouter.patch('/profile', (req, res) => {
+userRouter.patch('/:id/profile', (req, res) => {
     // TODO: update user profile info
+
 });
 
-userRouter.get('/:id/status', (req, res) => {
+/**
+ * @api {GET} - /api/user/:id
+ * @param id - User id
+ * @success - Returns the user's information
+ * @error {401} {Object} - Error message if the user doesn't exist
+ */
 
+userRouter.get('/:id', (req, res, next) => {
+    // TODO: get general user information i.e. name, email, id, status, role, etc.
+    try {
+        const user = getUserFromDatabase(req.params.id);
+        return res.status(200).json(user);
+    } catch(error) { 
+        next(error); 
+    }
 })
