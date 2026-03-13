@@ -1,64 +1,78 @@
-import { isValidLoginAttempt } from '../validate.js';
-import { HTTPError } from '../errors.js';
-import { findUserInDatabase, getUserFromDatabase } from '../database-services.js';
+import { validateLogin, validateLogout, validateRegister, USER_OPERATIONS } from '../validate.js';
 import express from 'express';
-import { USER_OPERATIONS } from '../user-operations.js';
+import { authenticateToken, generateAccessToken, generateRefreshToken } from '../server.js';
+import { getSafeUser } from '../database-services.js';
 
 export const authRouter = express.Router();
 
 /**
  * @api {POST} /api/auth/login
- * @description Checks if the user's login matches a user in the database
- * @body {String} email - The user's unique email
- * @body {String} password - The user's unique password
- * @success {200} {Object} - Returns the user
- * @error {400} {Object} - Error message if login information is invalid
- * @error {401} {Object} - Error message if login information does not match a user
- * @error {500} {Object} - Internal error message
+ * @description Authenticates the user
+ * IMPORTANT: requires the withCredentials (axios) or credentials (fetch) property to be true to save the cookie
+ * @body {String} email - The user's email
+ * @body {String} password - The user's password
+ * @success {200} {Object} - Returns the user's information and authorizes new access and refresh tokens
+ * @error {400} {Object} - Invalid login credentials format
+ * @error {401} {Object} - User not found
+ * @error {500} {Object} - Internal server error
  */
 
-authRouter.post('/login', (req, res, next) => {
-    const loginInfo = req.body;
-    try {
-        if (!isValidLoginAttempt(loginInfo)) { throw new HTTPError("Invalid login credentials", 400); }
+authRouter.post('/login', validateLogin, (req, res, next) => {
+    const user = req.user;
 
-        const user = getUserFromDatabase(loginInfo.email);
+    const accessToken = generateAccessToken(user.id, user.role);
+    const refreshToken = generateRefreshToken(user.id, user.role);
 
-        if (user.password !== loginInfo.password) { throw new HTTPError("Login information does not match", 400); }
+    res.cookie("refreshToken", refreshToken, {
+        secure : true,              // only used with https
+        httpOnly : true,            // only accessible by a web server
+        maxAge : 7*24*60*60*1000    // 7 days in milliseconds
+    })
 
-        return res.status(200).json(user);
-    } catch (error) { 
-        next(error);
-    }
+    return res.status(200).json({
+        token : accessToken,
+        user : user
+    });
+});
+
+authRouter.post('/logout', validateLogout, authenticateToken, (req, res, next) => {
+    // TODO: logout logic - clears user's cookies so they no longer have a valid refresh token
 });
 
 /**
  * @api {POST} /api/auth/register
- * @description Adds a new user to the database
- * @success {200} {Object} - Returns the user
- * @error {400} {Object} - Error message if invalid registration details
- * @error {409} {Object} - Error message if user already exists
- * @error {500} {Object} - Internal error message
+ * @description Registers a user to the database
+ * @body {String} role - The user's role
+ * @body {Object} otherRegistrationInfo - Other information relevant to the user's registration
+ * Note: complete list of registration information has yet to be implemented in this feature
+ * @success {200} {Object} - Returns the user's information and authorizes new access and refresh tokens
+ * @error {400} {Object} - Invalid login credentials format
+ * @error {409} {Object} - User already exists
+ * @error {500} {Object} - Internal server error
  */
 
+authRouter.post('/register', validateRegister, (req, res, next) => {
+    const { role } = req.body;
+    const roleOperations = USER_OPERATIONS[role];
 
-authRouter.post('/register', (req, res, next) => {
-    const registerInfo = req.body;
     try {
-        const role = registerInfo.role;
-        const roleOperations = USER_OPERATIONS[role];
-        if (!role || !roleOperations) { throw new HTTPError("User type missing or invalid", 400); }
-        // TODO: add isBasicUser fuction?
-        // if (!isBasicUser(registerInfo)) { throw new HTTPError("Missing fields or invalid credentials", 400); }
-        if (findUserInDatabase(registerInfo.email)) { throw new HTTPError("User already exists", 409); }
+        const user = roleOperations.add(req.body);
+        const safeUser = getSafeUser(user);
 
-        const validationFunction = roleOperations.validate;
-        if (!validationFunction(registerInfo)) { throw new HTTPError("Missing fields or invalid credentials", 400); }
+        const accessToken = generateAccessToken(user.id, user.role);
+        const refreshToken = generateRefreshToken(user.id, user.role);
 
-        const registerFunction = roleOperations.add;
-        const user = registerFunction(registerInfo);
-        return res.status(200).json(user);
-    } catch (error) {
+        res.cookie("refreshToken", refreshToken, {
+            secure: true,
+            httpOnly : true,
+            maxAge : 7*24*60*60*1000
+        })
+
+        return res.status(201).json({
+            token : accessToken,
+            user : safeUser
+        });
+    } catch(error) { 
         next(error);
-    }
+    }    
 });
