@@ -1,0 +1,94 @@
+* {
+  box-sizing: border-box;
+  } 
+
+
+body{
+  background-color: #B2C9D4;
+  margin: 0;
+  
+  font-family: Helvetica, sans-serif, Arial;
+  font-size: 30px;
+  font-weight: normal;
+
+}
+
+
+.login-page{
+  width: 80%;
+}
+
+
+.right-panel{
+  background-color: #FFFFFF;
+
+  width: 700px;
+  height: 1100px;
+
+  margin-left: 1700px;
+  margin-top: 190px;
+  
+
+}
+
+
+
+.inputs {
+  text-align: center;
+  padding-top: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+ 
+}
+
+
+.input {
+  line-height: 60px;
+}
+
+
+
+/* email and password label */
+.inputs label {
+  display: block;
+  padding-right: 490px;
+}
+
+.password-label {
+  padding-left: 60px;
+}
+
+
+
+
+
+.input [type='email'] {
+  width: 600px;
+  height: 80px;
+  font-size: 25px;
+  padding-left: 55px;
+}
+
+.input [type='password'] {
+  width: 600px;
+  height: 80px;
+  font-size: 25x;
+  padding-left: 55px;
+}
+
+.input-field {
+  position: relative;
+}
+
+.icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 60px;
+
+    color: #555;
+}
+
+
+
