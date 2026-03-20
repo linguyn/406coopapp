@@ -55,6 +55,7 @@ userRouter.get('/list', authenticateToken, (req, res, next) => {
 
     if (!role) { throw new HTTPError('User role not specified', 400); }
 
+    // TODO: return safeUsers
     const filteredUsers = tempUsers.filter(user => user.role === role);
 
     if (!sortBy) {

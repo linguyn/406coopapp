@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/user.js';
-import { API } from './constants.js';
+import { API, TOKEN_OPTIONS } from './constants.js';
 import jwt from 'jsonwebtoken';
 import { HTTPError } from './errors.js';
 import cookieParser from 'cookie-parser';
@@ -54,7 +54,7 @@ app.use(API.prefixes.user, userRouter);
 export function generateAccessToken(id, role) {
     const payload = { sub : id, role : role };
     const secret = process.env.ACCESS_TOKEN_SECRET;
-    const token = jwt.sign(payload, secret, { expiresIn : '15m' });
+    const token = jwt.sign(payload, secret, TOKEN_OPTIONS.access);
     return token;
 }
 
@@ -67,10 +67,14 @@ export function generateAccessToken(id, role) {
  * @returns {String} token - The unique refresh token
  */
 
-export function generateRefreshToken(id, role) {
+export function generateRefreshToken(id, role, isLong) {
+    let refreshOptions;
+    if (isLong) { refreshOptions = TOKEN_OPTIONS.refreshLong; } 
+    else { refreshOptions = TOKEN_OPTIONS.refreshShort; }
+
     const payload = { sub : id, role : role };
     const secret = process.env.REFRESH_TOKEN_SECRET;
-    const token = jwt.sign(payload, secret, { expiresIn : '7d'});
+    const token = jwt.sign(payload, secret, refreshOptions);
     return token;
 }
 
@@ -88,7 +92,7 @@ export function authenticateToken(req, res, next) {
         // get the token from the second part of string i.e. authorization : Bearer <token>
         const token = header.split(' ')[1];
 
-        const decodedPayload = jwt.verify(token, process.env.JWT_SECRET);
+        const decodedPayload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
         req.user = decodedPayload;
         next();

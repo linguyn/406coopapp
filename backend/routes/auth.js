@@ -2,6 +2,7 @@ import { validateLogin, validateLogout, validateRegister, USER_OPERATIONS } from
 import express from 'express';
 import { authenticateToken, generateAccessToken, generateRefreshToken } from '../server.js';
 import { getSafeUser } from '../database-services.js';
+import { TOKEN_OPTIONS } from '../constants.js';
 
 export const authRouter = express.Router();
 
@@ -19,15 +20,15 @@ export const authRouter = express.Router();
 
 authRouter.post('/login', validateLogin, (req, res, next) => {
     const user = req.user;
+    const rememberMe = req.body.rememberMe || false;
 
     const accessToken = generateAccessToken(user.id, user.role);
-    const refreshToken = generateRefreshToken(user.id, user.role);
+    const refreshToken = generateRefreshToken(user.id, user.role, rememberMe);
 
-    res.cookie("refreshToken", refreshToken, {
-        secure : true,              // only used with https
-        httpOnly : true,            // only accessible by a web server
-        maxAge : 7*24*60*60*1000    // 7 days in milliseconds
-    })
+    const cookieOptions = {...TOKEN_OPTIONS.refreshCookie};
+    if (rememberMe) { cookieOptions.maxAge = TOKEN_OPTIONS.sev_day_milli; }
+
+    res.cookie("refreshToken", refreshToken, cookieOptions)
 
     return res.status(200).json({
         token : accessToken,
@@ -35,8 +36,14 @@ authRouter.post('/login', validateLogin, (req, res, next) => {
     });
 });
 
-authRouter.post('/logout', validateLogout, authenticateToken, (req, res, next) => {
-    // TODO: logout logic - clears user's cookies so they no longer have a valid refresh token
+/**
+ * @api {POST} /api/auth/logout
+ * @description Logs out user by clearing their refresh token cookie (removing their auth)
+ */
+
+authRouter.post('/logout', validateLogout, (req, res, next) => {
+    res.clearCookie("refreshToken", TOKEN_OPTIONS.refreshCookie);
+    return res.status(200).json({message : "Successfully logged out"})
 });
 
 /**
@@ -52,7 +59,7 @@ authRouter.post('/logout', validateLogout, authenticateToken, (req, res, next) =
  */
 
 authRouter.post('/register', validateRegister, (req, res, next) => {
-    const { role } = req.body;
+    const { role, rememberMe = false } = req.body;
     const roleOperations = USER_OPERATIONS[role];
 
     try {
@@ -60,13 +67,13 @@ authRouter.post('/register', validateRegister, (req, res, next) => {
         const safeUser = getSafeUser(user);
 
         const accessToken = generateAccessToken(user.id, user.role);
-        const refreshToken = generateRefreshToken(user.id, user.role);
+        const refreshToken = generateRefreshToken(user.id, user.role, rememberMe);
 
-        res.cookie("refreshToken", refreshToken, {
-            secure: true,
-            httpOnly : true,
-            maxAge : 7*24*60*60*1000
-        })
+        // copy refresh cookie options and set a maxAge of 7 days if requested
+        const cookieOptions = {...TOKEN_OPTIONS.refreshCookie};
+        if (rememberMe) { cookieOptions.maxAge = TOKEN_OPTIONS.sev_day_milli; }
+
+        res.cookie("refreshToken", refreshToken, cookieOptions);
 
         return res.status(201).json({
             token : accessToken,

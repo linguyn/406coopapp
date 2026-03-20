@@ -164,7 +164,11 @@ export function validateStatusUpdate(req, res, next) {
 }
 
 export function validateLogout(req, res, next) {
-    // TODO: validation logic
+    const cookie = req.cookies.refreshToken;
+    try {
+        if (!cookie) { throw new HTTPError("Missing cookie or already logged out", 400); }
+        next();
+    } catch (error) { next(error); }
 }
 
 export const USER_OPERATIONS = {
