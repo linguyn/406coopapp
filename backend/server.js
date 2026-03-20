@@ -10,8 +10,6 @@ import { HTTPError } from './errors.js';
 import cookieParser from 'cookie-parser';
 
 // TODO: connect to database and reconfigure database-services to actual database
-// TODO: test basic CRUD operations
-// TODO: document jwt tokens
 // TODO: add secrets instructions to README
 
 // loads .env contents into process.env

@@ -1,9 +1,6 @@
 import { USER_DETAILS } from './constants.js';
-import { HTTPError } from './errors.js';
-import { findUserInDatabase, getUserByEmail, getUserById, getSafeUser, addStudentToDatabase, addCoordinatorToDatabase, addSupervisorToDatabase } from './database-services.js';
 
 // TODO: move validation to schemas eventually so you can just call the validation from the schema
-// Note: although some functions look redundant, eventually the tests will change to make them different
 
 /**
  * @function hasValidEmail
@@ -13,7 +10,7 @@ import { findUserInDatabase, getUserByEmail, getUserById, getSafeUser, addStuden
  */
 
 function hasValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    return email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 /**
@@ -24,58 +21,107 @@ function hasValidEmail(email) {
  */
 
 function hasValidPassword(password) {
-    return password.length >= 8 && password.length <= 32;
+    return password && password.trim().length >= 8 && password.trim().length <= 32;
 }
 
 /**
  * @function hasValidStudentId
  * @description Validates a studentId
  * @param {String} studentId - A studentId
- * @returns {boolean} True if the studentId passes the regex (type) and length check
+ * @returns {boolean} True if the studentId passes the regex and length check
  */
 
 function hasValidStudentId(studentId) {
     const isNumber = (string) => /^\d+$/.test(string);
-    return studentId.length === 9 && isNumber(studentId);
+    return studentId.trim().length === 9 && isNumber(studentId);
 }
 
 /**
+ * @function hasValidName
+ * @description Validates a name
+ * @param {String} name 
+ * @returns {boolean} True if the name passes the regex and length check
+ */
+
+function hasValidName(name) {
+    const isName = (string) => /^[a-zA-Z\-\s']+$/.test(string);
+    return name.trim().length > 0 && isName(name);
+}
+
+/**
+ * @function isValidOptional
+ * @description Checks if an option is provided, if it is, it validates its format using the provided test function
+ * @param {String} option - a parameter to validate
+ * @param {function} testFunc - the function to test the option
+ * @returns {boolean} True if option is not provided or option passes format check 
+ */
+
+function isValidOptional(option, testFunc) {
+    return !option || testFunc(option);
+} 
+
+/**
  * @function isValidStudent
- * @description Validates the fields of a student
- * @param {String} email - A student's email
- * @param {String} password - A student's password
- * @param {String} studentId - A student's studentId
+ * @description Ensures mandatory fields are present and fields have the valid format
+ * @param {Object} studentData - contains all the student registration fields
+ * @param {String} studentData.email
+ * @param {String} studentData.password
+ * @param {String} studentData.studentId
+ * @param {String} [supervisorData.name] - optional
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidStudent({email, password, studentId}) {
-    const hasFields = email && password && studentId;
-    return hasFields && hasValidEmail(email) && hasValidPassword(password) && hasValidStudentId(studentId);
+export function isValidStudent({email, password, studentId, name}) {
+    if (!hasValidEmail(email) || !hasValidPassword(password) || !hasValidStudentId(studentId)) { return false; }
+
+    const hasValidOptional = isValidOptional(name, hasValidName);
+
+    return hasValidOptional;
 }
 
 /**
  * @function isValidCoordinator
- * @description Validates the fields of a coordinator
- * @param {String} email - A coordinator's email
- * @param {String} password - A coordinator's password
+ * @description Ensures mandatory fields are present and fields have the valid format
+ * @param {Object} coordinatorData - contains all the coordinator registration fields
+ * @param {String} coordinatorData.email
+ * @param {String} coordinatorData.password
+ * @param {String} [coordinatorData.name] - optional
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidCoordinator({email, password}) {
-    const hasFields = email && password;
-    return hasFields && hasValidEmail(email) && hasValidPassword(password);
+export function isValidCoordinator({email, password, name}) {
+    if (!hasValidEmail(email) || !hasValidPassword(password)) { return false; }
+
+    const hasValidOptional = isValidOptional(name, hasValidName);
+
+    return hasValidOptional;
 }
 
 /**
  * @function isValidSupervisor
- * @param {String} email - A supervisor's email
- * @param {String} password - A supervisor's password
+ * @description Ensures mandatory fields are present and fields have the valid format
+ * @param {Object} supervisorData - contains all of the supervisor registration fields
+ * @param {String} supervisorData.email
+ * @param {String} supervisorData.password
+ * @param {String} supervisorData.company
+ * @param {String} [supervisorData.location] - optional
+ * @param {String} [supervisorData.jobTitle] - optional
+ * @param {String} [supervisorData.name] - optional
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidSupervisor({email, password}) {
-    const hasFields = email && password;
-    return hasFields && hasValidEmail(email) && hasValidPassword(password);
+export function isValidSupervisor({email, password, company, location, jobTitle, name}) {
+    // does existence and format checks
+    if (!hasValidEmail(email) || !hasValidPassword(password) || !hasValidName(company)) { return false; }
+
+    // ensures all options are valid
+    const hasValidOptionals = [
+        isValidOptional(name, hasValidName),
+        isValidOptional(location, hasValidName),
+        isValidOptional(jobTitle, hasValidName)
+    ].every(optional => optional);
+
+    return hasValidOptionals;
 }
 
 /**
@@ -87,8 +133,7 @@ export function isValidSupervisor({email, password}) {
  */
 
 export function isValidLoginAttempt(email, password) {
-    const hasFields = email && password;
-    return hasFields && hasValidEmail(email) && hasValidPassword(password);
+    return hasValidEmail(email) && hasValidPassword(password);
 }
 
 /**
@@ -99,89 +144,6 @@ export function isValidLoginAttempt(email, password) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidStatusUpdate({status}) {
-    const hasFields = status;
-    return hasFields && USER_DETAILS.studentStatuses.includes(status);
-}
-
-
-
-
-export function validateLogin(req, res, next) {
-    const {email, password} = req.body;
-
-    try {
-        if (!isValidLoginAttempt(email, password)) { throw new HTTPError("Invalid login credentials", 400); }
-
-        const user = getUserByEmail(email);
-
-        // TODO: update when database implemented
-        if (user.password !== password) { throw new HTTPError("Login information does not match", 400); }
-
-        const safeUser = getSafeUser(user);
-
-        // user is valid, can safely update the user field in req for further use
-        req.user = safeUser;
-        next();
-    } catch(error) {
-        next(error);
-    }
-    
-};
-
-export function validateRegister(req, res, next) {
-    const {email, role} = req.body;
-    try {
-        const roleOperations = USER_OPERATIONS[role];
-        if (!role || !roleOperations) { throw new HTTPError("User type missing or invalid", 400); }
-        // TODO: add isBasicUser fuction?
-        // if (!isBasicUser(registerInfo)) { throw new HTTPError("Missing fields or invalid credentials", 400); }
-        if (findUserInDatabase(email)) { throw new HTTPError("User already exists", 409); }
-
-        if (!roleOperations.validate(req.body)) { throw new HTTPError("Missing fields or invalid credentials", 400); }
-        
-        next();
-    } catch (error) {
-        next(error);
-    }
-}
-
-export function validateStatusUpdate(req, res, next) {
-    // the user that made this request
-    const caller = req.user;
-    const { status } = req.body;
-
-    if (caller.role !== USER_DETAILS.roles.coordinator && caller.role !== USER_DETAILS.roles.admin) { throw new HTTPError("Missing permissions", 403); }
-    if (!isValidStatusUpdate(status)) { throw new HTTPError("Missing fields or invalid update", 400); }
-    try {
-        // the user we are modifying
-        const user = getUserById(req.params.id);
-        req.targetUser = user;
-        next();
-    } catch(error) {
-        next(error);
-    }
-}
-
-export function validateLogout(req, res, next) {
-    const cookie = req.cookies.refreshToken;
-    try {
-        if (!cookie) { throw new HTTPError("Missing cookie or already logged out", 400); }
-        next();
-    } catch (error) { next(error); }
-}
-
-export const USER_OPERATIONS = {
-    student : {
-        validate : isValidStudent,
-        add : addStudentToDatabase
-    },
-    supervisor : {
-        validate : isValidSupervisor,
-        add : addSupervisorToDatabase
-    },
-    coordinator : {
-        validate : isValidCoordinator,
-        add : addCoordinatorToDatabase
-    }
+export function isValidStatusUpdate(status) {
+    return status && USER_DETAILS.studentStatuses.includes(status);
 }

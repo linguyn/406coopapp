@@ -1,38 +1,10 @@
 import { tempUsers, getUserById, updateUserStatus, getSafeUser } from '../database-services.js';
 import express from 'express';
 import { HTTPError } from '../errors.js'
-import { validateStatusUpdate } from '../validate.js';
-import { authenticateToken, generateAccessToken } from '../server.js';
-import jwt from 'jsonwebtoken';
+import { validateStatusUpdate } from '../auth-middleware.js';
+import { authenticateToken } from '../server.js';
 
 export const userRouter = express.Router();
-
-/**
- * @api {POST} /api/user/refresh
- * @description Refreshes the user's access token given their refresh token is still valid
- * IMPORTANT: requires the withCredentials (axios) or credentials (fetch) property to be true when sending the cookie
- * @header {Cookie} refreshToken - The user's refresh token, used to verify their identity
- * @success {200} {Object} token - The user's new access token
- * @error {401} {Object} - Unauthorized, the refresh token is missing, expired, or the user doesn't exist
- * @error {403} {Object} - Forbidden, the refresh token has been tampered with
- * @error {500} {Object} - Internal server error
- */
-
-userRouter.post('/refresh', (req, res, next) => {
-    const refreshToken = req.cookies.refreshToken;
-    try {
-        if (!refreshToken) { throw new HTTPError("Session expired", 401); }
-        const decodedPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-        const role = getUserById(decodedPayload.sub).role;
-        const accessToken = generateAccessToken(decodedPayload.sub, role);
-        
-        return res.status(200).json({
-            token : accessToken
-        })
-    } catch(error) { 
-        next(error); 
-    }
-});
 
 /**
  * @api {GET} /api/user/list
