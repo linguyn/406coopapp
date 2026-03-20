@@ -4,10 +4,10 @@
 
 
 body{
-  background-color: #B2C9D4;
+  background-color: #c1d5e0;
   margin: 0;
   
-  font-family: Helvetica, sans-serif, Arial;
+  font-family: "Inter", Helvetica, "Roboto";
   font-size: 30px;
   font-weight: normal;
 
@@ -15,30 +15,31 @@ body{
 
 
 .login-page{
-  width: 80%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
 }
 
 
 .right-panel{
+  position: relative;;
   background-color: #FFFFFF;
-
   width: 700px;
   height: 1100px;
-
-  margin-left: 1700px;
-  margin-top: 190px;
-  
-
+  margin-left: 0;
+  margin-top: 0;
 }
 
 
 
 .inputs {
   text-align: center;
-  padding-top: 300px;
+  padding-top: 360px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 50px;
  
 }
 
@@ -52,33 +53,52 @@ body{
 /* email and password label */
 .inputs label {
   display: block;
-  padding-right: 490px;
+  padding-right: 540px;
+  font-size: 1.5rem;
 }
 
 .password-label {
-  padding-left: 60px;
+  padding-left: 53px;
 }
 
 
 
 
-
-.input [type='email'] {
+/* input box (email + password) */
+.input input[type='email'], 
+.input input[id='password'] {
+  background-color: rgb(213, 213, 213);
+  border: none;
   width: 600px;
   height: 80px;
-  font-size: 25px;
+  font-size: 1.4rem;
   padding-left: 55px;
 }
 
-.input [type='password'] {
-  width: 600px;
-  height: 80px;
-  font-size: 25x;
-  padding-left: 55px;
+.input input[type='email']:hover,
+.input input[type='password']:hover {
+  background-color: #eaeaea;
 }
+
+.input input[type='email']:focus,
+.input input[type='password']:focus {
+  background-color: white;
+}
+
+
+
+
 
 .input-field {
   position: relative;
+}
+
+.icon-eye {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 70px;
+  color: #555;
 }
 
 .icon {
@@ -86,9 +106,114 @@ body{
     top: 50%;
     transform: translateY(-50%);
     left: 60px;
-
     color: #555;
 }
+
+
+
+
+.options-row {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgot-password a { 
+  font-size: 1.4rem;
+  margin-right: 55px;
+  color: black;
+} 
+
+.forgot-password a:hover{
+  color: rgb(90, 90, 90);
+}
+
+
+.remember-me input[type='checkbox'] {
+    width: 20px;
+    height: 40px;
+    border-radius: 50%;
+    accent-color: #92DBFF;
+}
+
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  padding-left: 50px ;
+  gap: 2px;
+
+  font-size: 1.4rem;
+}
+
+
+.options-column {
+  height: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  display: flex; 
+  justify-content: center;
+  margin-top: 110px; 
+  gap:70px;
+}
+
+
+.sign-in-button button {
+  background-color: #92DBFF ;
+  width: 600px;
+  height: 60px;
+  border: none;
+  border-radius: 20px;
+
+  font-size: 1.3rem;
+  color: #424242;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+.sign-in-button button:hover {
+    background-color: #b3e4fd;
+}
+
+.create-account a {
+  font-size: 1.4rem;
+  color: black;
+}
+
+.create-account a:hover {
+     color: rgb(90, 90, 90);
+}
+
+
+
+
+.left-panel {
+  background-color: #92DBFF;
+  width: 1600px;
+  height: 1100px;
+  margin-left: 0;
+  color: #444E5E;
+  font-family: "Roboto", "Inter";
+}
+
+.left-panel h1 {
+  margin-left: 100px;
+  margin-top: 150px;
+  margin-bottom: 0px;
+  font-size: 5rem;
+  letter-spacing: -6px;
+}
+
+.left-panel p {
+  max-width: 900px;
+  text-align: left;
+  margin-left: 100px;
+  margin-top: 10px;
+  
+}
+
 
 
 

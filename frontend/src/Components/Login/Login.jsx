@@ -1,14 +1,32 @@
 import './Login.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {  } from '@fortawesome/free-regular-svg-icons';
-import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faUser, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { use, useState } from 'react';
 
 
 function Login() {
+    const [password, setPassword] = useState(''); 
+    const [visible, setVisible] = useState(false);
+    
+
     return (
 
         /* The container to contain the login box */
         <div className='login-page'>
+
+
+            <div className='left-panel'>
+
+                {/* sign in header */}
+                <h1>SIGN IN</h1>
+
+                <p>Access the university Co-op portal to manage job applications, 
+                   track your application status, and submit required reports. 
+                </p>
+
+            </div>
+
+
 
             {/* user inputs for email + password */}
             <div className='right-panel'>
@@ -23,7 +41,7 @@ function Login() {
 
                         <div className='input-field'>
                             <FontAwesomeIcon icon={faUser} className='icon'/>
-                            <input type="email"></input>
+                            <input type="email" placeholder='E-mail'/>
                         </div>
 
                     </div>
@@ -35,43 +53,53 @@ function Login() {
 
                         <div className='input-field'>
                             <FontAwesomeIcon icon={faLock} className='icon'/>
-                            <input type='password'></input>
+                            <input
+                                type={visible ? "text" : "password"} 
+                                value={password}
+                                id='password'
+                                placeholder='Enter your password'
+                                onChange={(e) => setPassword(e.target.value)}/>
+
+                            <FontAwesomeIcon icon={visible ? faEyeSlash : faEye} className='icon-eye'
+                                             onClick={() => visible ? setVisible(false) : setVisible(true)}/>
                         </div>
                         
                     </div>
 
                 </div>
 
-                {/*forgot password*/}
-                <div className='forgot-password'>
-                    <a href=''>Forgot password?</a>
+                <div className="options-row">
+
+                    <div className="remember-me">
+                        <input type="checkbox" id="remember"/>
+                        <label htmlFor="remember">Remember me</label>
+                    </div>
+
+                    <div className="forgot-password">
+                        <a href="">Forgot password?</a>
+                    </div>
+
                 </div>
 
-                {/* sign in button */}
-                <div className='sign-in'>
-                    <button className='submit'>Sign In</button>
+
+                {/* sign in button + create account option */}
+                <div className='options-column'>
+                    {/* sign in button */}
+                    <div className='sign-in-button'>
+                        <button>Sign In</button>
+                    </div>
+
+
+                    <div className='create-account'>
+                        <a href=''>Create Account</a>
+                    </div>
                 </div>
 
-                {/* remember me */}
-                <div className='remember-me'>
-                    <input type='checkbox'></input>
-                    <label>Remember me</label>
-                </div> 
+
 
 
             </div>
 
-
-            <div className='left-panel'>
-
-                {/* sign in header */}
-                <div className='header'>
-                    <h1>SIGN IN</h1>
-                </div>
-
-
-
-            </div>
         </div>
     );
 }
