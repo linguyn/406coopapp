@@ -32,6 +32,7 @@ authRouter.post('/login', validateLogin, (req, res, next) => {
 
     res.cookie("refreshToken", refreshToken, cookieOptions)
 
+    // send back a valid access token and a "safe" version of user's details
     return res.status(200).json({
         token : accessToken,
         user : user
@@ -76,6 +77,7 @@ authRouter.post('/register', validateRegister, (req, res, next) => {
 
         res.cookie("refreshToken", refreshToken, cookieOptions);
 
+        // send back a valid access token and a "safe" version of user's details
         return res.status(201).json({
             token : accessToken,
             user : safeUser
