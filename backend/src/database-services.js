@@ -62,35 +62,44 @@ export let tempUsers = [
         }
 ]
 
-export function addCoordinatorToDatabase({email, password}) {
+export function addCoordinatorToDatabase({email, password, name = "None"}) {
+    const id = Date.now();
     tempUsers.push({
         email: email,
         password: password,
+        name: name,
         role: "coordinator",
-        id: Date.now()
+        id: id
     });
-    return getUserByEmail(email);
+    return getUserById(id);
 }
 
-export function addSupervisorToDatabase({email, password}) {
+export function addSupervisorToDatabase({email, password, company, location = "None", name = "None", jobTitle = "None"}) {
+    const id = Date.now();
     tempUsers.push({
         email: email,
         password: password,
         role: "supervisor",
-        id: Date.now()
+        company : company,
+        name : name,
+        location : location,
+        jobTitle : jobTitle,
+        id: id
     });
-    return getUserByEmail(email);
+    return getUserById(id);
 }
 
-export function addStudentToDatabase({email, password, studentId}) {
+export function addStudentToDatabase({email, password, studentId, name = "None"}) {
+    const id = Date.now();
     tempUsers.push({
         studentId : studentId,
         email: email,
         password: password,
         role: "student",
-        id: Date.now()
+        name : name,
+        id: id
     });
-    return getUserByEmail(email);
+    return getUserById(id);
 }
 
 export function findUserInDatabase(email) {
