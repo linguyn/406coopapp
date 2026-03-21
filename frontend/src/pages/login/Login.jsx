@@ -17,9 +17,6 @@ function Login() {
 
             <div className='left-panel'>
 
-                {/* sign in header */}
-                <h1>SIGN IN</h1>
-
                 <p>Access the university Co-op portal to manage job applications, 
                    track your application status, and submit required reports. 
                 </p>
@@ -30,6 +27,9 @@ function Login() {
 
             {/* user inputs for email + password */}
             <div className='right-panel'>
+
+                <h1>SIGN IN</h1>
+
 
                 {/* user inputs for email + password */}
                 <div className='inputs'>
@@ -75,9 +75,6 @@ function Login() {
                         <label htmlFor="remember">Remember me</label>
                     </div>
 
-                    <div className="forgot-password">
-                        <a href="">Forgot password?</a>
-                    </div>
 
                 </div>
 
