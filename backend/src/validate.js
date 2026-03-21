@@ -1,6 +1,7 @@
 import { USER_DETAILS } from './constants.js';
 
 // TODO: move validation to schemas eventually so you can just call the validation from the schema
+// TODO: name should be a mandatory param, at least for students
 
 /**
  * @function hasValidEmail
