@@ -1,5 +1,5 @@
 import { HTTPError } from "./errors.js";
-import { USER_DETAILS } from "./constants.js";
+import { USER_DETAILS, LIST_CRITERIA } from "./constants.js";
 import { getSafeUser, getUserByEmail, findUserInDatabase, getUserById } from "./database-services.js";
 import { isValidStatusUpdate, isValidLoginAttempt } from "./validate.js";
 import { ROLE_OPERATIONS } from "./auth-constants.js";
@@ -65,4 +65,16 @@ export function validateLogout(req, res, next) {
         if (!cookie) { throw new HTTPError("Missing cookie or already logged out", 400); }
         next();
     } catch (error) { next(error); }
+}
+
+export function validateListRequest(req, res, next) {
+    const { role } = req.query;
+    try {
+        if (!role) { throw new HTTPError("Missing parameters", 422); }
+        if (!(role in USER_DETAILS.roles)) { throw new HTTPError("Invalid parameters", 400); }
+
+        next();
+    } catch(error) {
+        next(error);
+    }
 }

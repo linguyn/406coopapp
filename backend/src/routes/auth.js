@@ -1,4 +1,4 @@
-import { validateLogin, validateLogout, validateRegister } from '../auth-middleware.js';
+import { validateLogin, validateLogout, validateRegister } from '../validation-middleware.js';
 import { ROLE_OPERATIONS } from '../auth-constants.js';
 import express from 'express';
 import { generateAccessToken, generateRefreshToken } from '../server.js';
