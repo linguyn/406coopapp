@@ -1,0 +1,63 @@
+
+
+.main-page{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #F8F8F8;
+}
+
+
+.main-box{
+    height: 98vh;
+    width: 98vw;
+    background-color: white;
+    border: black 1px solid;
+    border-radius: 20px;
+    font-family: "Roboto", "Inter", Helvetica ;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.main-title{
+    color: #0C49A6;
+    font-size: 5rem;
+    letter-spacing: -5px;
+    margin-top: 5%;
+    margin-left: 5%;
+}
+
+.homepage{
+    font-size: 2rem;
+    margin-right: 5%;
+    margin-top: 6%;
+}
+
+.list-select{
+    display: flex;
+    flex-direction: row;
+    margin-left: 5%;
+    gap: 60px;
+    font-family: "Roboto", "Inter", Helvetica ;
+}
+
+.current-list{
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+h2{
+    font-size: 1.8rem;
+    font-weight: 100;
+}
+
+hr{
+    width: 95vw;
+    border: 0;
+    border-top: black solid;
+}
