@@ -1,21 +1,13 @@
-<<<<<<< HEAD
-import { useState } from 'react'
-import Login from './pages/login/Login'; 
-import UserList from './pages/userList/UserList';
-import "@fontsource/roboto";
-
-function App() {
-
-  return (
-    <UserList />
-=======
 import Login from './pages/login/Login'; 
 import Homepage from './pages/homepage/Homepage';
+import UserList from './pages/userList/UserList';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
 function App() {
-
+    const applicantData = [{title: "kevony"}]
   return (
+    <UserList title="APPLICANT LIST" users={applicantData}/>
 
+    /*
     <BrowserRouter>
       <Routes>
           <Route path='/' element={<Homepage />}/>
@@ -24,9 +16,8 @@ function App() {
           
       </Routes>
     </BrowserRouter>   
+    */
 
-
->>>>>>> main
   );
 }
 
