@@ -3,12 +3,16 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faLock, faUser, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { loginUser } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 
 function Login() {
     const [email, setEmail] = useState(''); 
     const [password, setPassword] = useState(''); 
     const [visible, setVisible] = useState(false);
+    const [serverError, setServerError] = useState('');
+    const navigate = useNavigate();
+
 
 
 
@@ -18,19 +22,21 @@ function Login() {
         event.preventDefault();
 
         try {
-            const data = await loginUser(
+            const response = await loginUser(
                 {
                     email: email, 
                     password: password
                 });
 
-                console.log("Login successful: " ,data);
-                alert("Successful log in");
-            
+            if (response.status == 200 || response) {
+                console.log("Login successful: " , response.status);
+                navigate("/homepage");
+            }
 
         } catch (error) {
-            alert("unsuccessful sign-in") 
-            console.error(error.response?.data || error.message);
+            const msg = error.response?.data.message;
+            console.error(msg);
+            setServerError(msg);
         }
     };
     
@@ -109,9 +115,15 @@ function Login() {
 
                     </div>
 
-
                     {/* sign in button + create account option */}
                     <div className='options-column'>
+                    
+                        {serverError && (
+                            <div className='error-message'>
+                            <p className='err'>{serverError}</p>
+                            </div>
+                        )}
+                        
                         {/* sign in button */}
                         <div className='sign-in-button'>
                             <button type='submit'>Sign In</button>
@@ -134,3 +146,6 @@ function Login() {
 }
 
 export default Login;
+
+
+
