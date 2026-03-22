@@ -1,56 +1,69 @@
-import { tempUsers, getUserById, updateUserStatus, getSafeUser } from '../database-services.js';
+import { getUserById, updateUserStatus, getSafeUser, getSanitizedUsers, getFilteredUsers } from '../database-services.js';
 import express from 'express';
 import { HTTPError } from '../errors.js'
-import { validateStatusUpdate } from '../auth-middleware.js';
+import { validateStatusUpdate, validateListRequest } from '../validation-middleware.js';
 import { authenticateToken } from '../server.js';
+import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
 
 export const userRouter = express.Router();
 
 /**
  * @api {GET} /api/user/list
- * @description Retrieves a filtered list of users with optional sorting
- * @query {String} role - The type of users. Options: "students", "supervisors", or "coordinators"
- * @query {String} [sortBy] - The sorting criteria. Options: "studentId", "email", "name"
- * @query {String} [order] - The sorting direction. Options: "asc" or "desc"
+ * @description Retrieves a search/query-filtered list of all users of a certain role with optional sorting
+ * @query {String} role - The type of users. Options: "student", "applicant", "supervisor", or "coordinator"
+ * @query {String} [searchStr] - Matches the search query to some searchable parameters (e.g. name, email, company, etc.)
+ * @query {String} [sortBy] - The sorting criteria. Options: "email", "name"
+ * @query {String} [order] - The sorting direction. Options: "asc", "desc"
  * @success {200} {Array} sortedUsers - The filtered and sorted list of users
  * @error {500} {Object} - Internal server error
  * @example
- *      GET /api/user/list?role=students&sortBy=studentId&order=desc
+ *      GET /api/user/list?role=student&sortBy=studentId&order=desc&searchStr=.com
  */
 
-userRouter.get('/list', authenticateToken, (req, res, next) => {
-    // TODO: validate queries more rigorously
-    const role = req.query.role;
-    // TODO: nothing preventing you from sorting by studentId for non-students
-    const sortBy = req.query.sortBy;
-    let order = req.query.order;
+userRouter.get('/list', authenticateToken, validateListRequest, (req, res, next) => {
+    const { role, searchStr = "", sortBy = "name", order = "asc" } = req.query;
 
-    if (!role) { throw new HTTPError('User role not specified', 400); }
-
-    // TODO: return safeUsers
-    const filteredUsers = tempUsers.filter(user => user.role === role);
-
-    if (!sortBy) {
-        // no sorting specified just return an unsorted copy
-        return res.status(200).json(filteredUsers);
-    }
-    
-    if (order === "desc") {
-        order = -1;
-    } else {
-        order = 1;
-    }
+    // don't fail if optional params are malformed, just assign them to default values
+    if (!LIST_CRITERIA.sorting.includes(sortBy)) { sortBy = "name"; }
+    if (!LIST_CRITERIA.order.includes(order)) { order = "asc"; }
 
     try {
-        const sortedUsers = filteredUsers.toSorted((user1, user2) => {
-            if (user1[sortBy] < user2[sortBy]) { return -1*order }
-            if (user1[sortBy] > user2[sortBy]) { return 1*order }
+        // TODO: should validate the filters and clean up this logic
+        const exactFilters = extractExactFilters(role, req.query);
+        const fuzzyFilters = USER_DETAILS.fuzzyFilters[role];
+        const filteredUsers = getFilteredUsers(role, searchStr, exactFilters, fuzzyFilters);
+
+        const safeUserOptions = USER_DETAILS.safeFields[role];
+        const sanitizedUsers = getSanitizedUsers(filteredUsers, safeUserOptions);
+        
+        let reverse;
+        if (order === "desc") { reverse = -1; }
+        else { reverse = 1; }
+
+        
+        const sortedUsers = sanitizedUsers.toSorted((user1, user2) => {
+            if (user1[sortBy] < user2[sortBy]) { return -1*reverse }
+            if (user1[sortBy] > user2[sortBy]) { return 1*reverse }
             return 0;
-        })
+        });
 
         return res.status(200).json(sortedUsers);
-    } catch (error) { next(error); }
+    } catch (error) { 
+        next(error);
+    }
 });
+
+function extractExactFilters(role, query) {
+    const exactFilters = {};
+    const allowedFilters = USER_DETAILS.exactFilters[role];
+    allowedFilters.forEach((key) => {
+        const queryValue = query[key];
+        if (queryValue) {
+            exactFilters[key] = queryValue;
+        }
+    });
+    return exactFilters;
+}
 
 /**
  * @api {PATCH} - /api/user/student/:id/status

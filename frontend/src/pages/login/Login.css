@@ -3,14 +3,12 @@
   } 
 
 
-body{
-  background-color: #c1d5e0;
+body {
+  background-color: #ffffff;
   margin: 0;
-  
-  font-family: "Inter", Helvetica, "Roboto";
-  font-size: 30px;
+  font-family: "Roboto", "Inter", Helvetica;
+  font-size: 1rem;
   font-weight: normal;
-
 }
 
 
@@ -19,33 +17,49 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0px;
+  gap: 0;
+  padding: 20px;
 }
 
 
-.right-panel{
+.right-panel {
   position: relative;;
   background-color: #FFFFFF;
-  width: 700px;
-  height: 1100px;
+  border: 0.1px groove black;
+  width: 38vw;
+  max-width: 520px;
+  min-width: 360px;
+  height: 85vh;
+  max-height: 700px;
+  min-height: 520px;
   margin-left: 0;
   margin-top: 0;
 }
 
 
+.right-panel h1 {
+  margin-left: 50px;
+  margin-top: 95px;
+  margin-bottom: 0;
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  letter-spacing: -3px;
+  color: #444E5E;
+  text-decoration: underline;
+}
+
 
 .inputs {
   text-align: center;
-  padding-top: 360px;
+  padding-top: 5vh;
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 28px;
  
 }
 
 
 .input {
-  line-height: 60px;
+  line-height: 1.9;
 }
 
 
@@ -53,12 +67,12 @@ body{
 /* email and password label */
 .inputs label {
   display: block;
-  padding-right: 540px;
-  font-size: 1.5rem;
+  padding-right: 75%;
+  font-size: 0.78rem;
 }
 
 .password-label {
-  padding-left: 53px;
+  padding-left: 30px;
 }
 
 
@@ -69,10 +83,10 @@ body{
 .input input[id='password'] {
   background-color: rgb(213, 213, 213);
   border: none;
-  width: 600px;
-  height: 80px;
-  font-size: 1.4rem;
-  padding-left: 55px;
+  width: 82%;
+  height: 46px;
+  font-size: 0.9rem;
+  padding-left: 35px;
 }
 
 .input input[type='email']:hover,
@@ -97,54 +111,47 @@ body{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  right: 70px;
+  right: 11%;
   color: #555;
+  font-size: 0.9rem;
 }
 
 .icon {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    left: 60px;
+    left: 11%;
     color: #555;
+    font-size: 0.9rem;
 }
 
 
 
 
 .options-row {
-  margin-top: 40px;
+  margin-top: 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.forgot-password a { 
-  font-size: 1.4rem;
-  margin-right: 55px;
-  color: black;
-} 
-
-.forgot-password a:hover{
-  color: rgb(90, 90, 90);
-}
 
 
 .remember-me input[type='checkbox'] {
-    width: 20px;
-    height: 40px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    accent-color: #92DBFF;
+    accent-color: #444E5E;
 }
 
 
 .remember-me {
   display: flex;
   align-items: center;
-  padding-left: 50px ;
-  gap: 2px;
+  padding-left: 9% ;
+  gap: 4px;
 
-  font-size: 1.4rem;
+  font-size: 0.72rem;
 }
 
 
@@ -154,31 +161,49 @@ body{
   flex-direction: column;
   align-items: center;
   display: flex; 
-  justify-content: center;
-  margin-top: 110px; 
-  gap:70px;
+  justify-content: space-around;
+  margin-top: 20px; 
+  gap: 10px;
 }
 
+.error-message {
+  height: 20px;
+  width: 82%;
+  display: flex;
+  align-items: center;
+}
+.err {
+  color: red;
+  font: 0rem;
+  font-family: sans-serif;
+}
+
+.sign-in-button {
+  width: 82%;
+  margin: 0 auto;
+}
 
 .sign-in-button button {
-  background-color: #92DBFF ;
-  width: 600px;
-  height: 60px;
+  display: block;
+  background-color: #0C49A6;
+  width: 100%;
+  height: 42px;
   border: none;
-  border-radius: 20px;
-
-  font-size: 1.3rem;
-  color: #424242;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  color: #FFFFFF;
   font-weight: bold;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
 }
 
+
+
 .sign-in-button button:hover {
-    background-color: #b3e4fd;
+    background-color: #2c64b8;
 }
 
 .create-account a {
-  font-size: 1.4rem;
+  font-size: 0.72rem;
   color: black;
 }
 
@@ -190,27 +215,28 @@ body{
 
 
 .left-panel {
-  background-color: #92DBFF;
-  width: 1600px;
-  height: 1100px;
+  background-color: #0C49A6;
+  border: 0.1px solid black;
+  width: 52vw;
+  max-width: 760px;
+  min-width: 420px;
+  height: 85vh;
+  max-height: 700px;
+  min-height: 520px;
   margin-left: 0;
-  color: #444E5E;
-  font-family: "Roboto", "Inter";
+  color: #FFFFFF;
+  font-family: "Roboto", "Inter", Helvetica;
 }
 
-.left-panel h1 {
-  margin-left: 100px;
-  margin-top: 150px;
-  margin-bottom: 0px;
-  font-size: 5rem;
-  letter-spacing: -6px;
-}
 
 .left-panel p {
-  max-width: 900px;
+  max-width: 500px;
   text-align: left;
-  margin-left: 100px;
-  margin-top: 10px;
+  margin-left: 70px;
+  margin-top: 100px;
+  font-size: 1rem;
+  line-height: 1.6;
+  letter-spacing: 0rem;
   
 }
 
