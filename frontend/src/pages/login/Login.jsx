@@ -71,7 +71,7 @@ function Login() {
                             <label className='email-label'>Email</label>
 
                             <div className='input-field'>
-                                <FontAwesomeIcon icon={faUser} className='icon'/>
+                                <FontAwesomeIcon icon={faUser} className='login-icon'/>
                                 <input type="email"
                                         placeholder='E-mail'
                                         value={email}
@@ -87,7 +87,7 @@ function Login() {
                             <label className='password-label'>Password</label>
 
                             <div className='input-field'>
-                                <FontAwesomeIcon icon={faLock} className='icon'/>
+                                <FontAwesomeIcon icon={faLock} className='login-icon'/>
                                 <input
                                     type={visible ? "text" : "password"} 
                                     value={password}

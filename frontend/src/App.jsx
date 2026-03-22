@@ -1,6 +1,8 @@
 import Login from './pages/login/Login'; 
-import Homepage from './pages/homepage/Homepage';
-import Signup from './pages/signup/Signup';
+import StudentHomepage from './pages/homepage/StudentHomepage';
+import StudentRegister from './pages/signup/StudentRegister';
+import SupervisorHomepage from './pages/homepage/SupervisorHomepage';
+import SupervisorRegister from './pages/signup/SupervisorRegister';
 import Roles from './pages/roles/Roles';
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom'; 
 function App() {
@@ -9,10 +11,11 @@ function App() {
 
     <BrowserRouter>
       <Routes>
-          <Route path='/' element={<Homepage />}/>
           <Route path='/login' element={<Login />}/>
-          <Route path='/homepage' element={<Homepage />}/>
-          <Route path='/signup' element={<Signup />}/>
+          <Route path='/student' element={<StudentHomepage />}/>
+          <Route path='/student/register' element={<StudentRegister />}/>
+          <Route path='/supervisor' element={<SupervisorHomepage />}/>
+          <Route path='/supervisor/register' element={<SupervisorRegister />}/>
           <Route path='/roles' element={<Roles />}/>
       </Routes>
     </BrowserRouter>   

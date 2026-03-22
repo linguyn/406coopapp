@@ -1,0 +1,123 @@
+* {
+    box-sizing: border-box;
+}
+body {
+  background-color: #ffffff;
+  margin: 0;
+  font-family: "Roboto", "Inter", Helvetica;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+
+.roles-page {   
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.big-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0.5%;
+    width: 99vw;
+    height: 98vh;
+    border: 1px solid #444E5E;
+    border-radius: 1%;
+}
+
+
+.header-box { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 99vw;
+    height: 15vh;
+    border-bottom: 2.5px solid black;
+}
+
+
+.header-box h1 { 
+    color: #0C49A6;
+    letter-spacing: -0.2rem;
+    font-size: clamp(1rem, 8vmin, 5rem);
+}
+
+
+.main-box { 
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 99vw;
+    height: 90vh;
+}
+
+
+.main-box h1 {
+    font-size: clamp(0.1rem, 8vmin, 3rem);
+    color: #444E5E;
+}
+
+
+
+.student-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items:center;
+    gap: 30px;
+    width: 30vw;
+    height: 70vh;
+}
+
+
+.supervisor-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items:center;
+    gap: 30px;
+    width: 30vw;
+    height: 70vh;
+}
+
+
+.button-wrapper {
+    position: relative;
+    width: 65%;
+    aspect-ratio: 1 / 1;
+    font-size: clamp(0.1rem, 6vmin, 5rem);
+}
+
+.button-wrapper button {
+    width: 100%;
+    height: 100%;
+    background-color: #0C49A6;
+    border: none;
+    border-radius: 8%;
+}
+
+
+.button-wrapper button:hover{
+    background-color: #2d6ed1
+}
+
+.roles-icon{
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    font-size: 3em;
+    transform: translate(-50%, -50%);
+    color: white;
+}
+
+
+.main-box p{
+    font-size: clamp(0.1rem, 2.5vmin, 2.5rem);;
+    font-weight: 400;
+    color: #444E5E;
+    text-align: center;
+    letter-spacing: -0.1rem;
+}
