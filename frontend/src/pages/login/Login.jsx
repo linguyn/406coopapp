@@ -11,7 +11,9 @@ function Login() {
     const [password, setPassword] = useState(''); 
     const [visible, setVisible] = useState(false);
     const [serverError, setServerError] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
+
 
 
 
@@ -25,7 +27,8 @@ function Login() {
             const response = await loginUser(
                 {
                     email: email, 
-                    password: password
+                    password: password,
+                    rememberMe: rememberMe
                 });
 
             if (response.status == 200 || response) {
@@ -108,7 +111,9 @@ function Login() {
                     <div className="options-row">
 
                         <div className="remember-me">
-                            <input type="checkbox" id="remember"/>
+                            <input type="checkbox" 
+                                   id="remember"
+                                   onChange={(e) => setRememberMe(e.target.checked)}/>
                             <label htmlFor="remember">Remember me</label>
                         </div>
 
