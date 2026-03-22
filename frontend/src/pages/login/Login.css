@@ -67,7 +67,7 @@ body {
 /* email and password label */
 .inputs label {
   display: block;
-  padding-right: 76%;
+  padding-right: 75%;
   font-size: 0.78rem;
 }
 
@@ -86,7 +86,7 @@ body {
   width: 82%;
   height: 46px;
   font-size: 0.9rem;
-  padding-left: 42px;
+  padding-left: 35px;
 }
 
 .input input[type='email']:hover,
