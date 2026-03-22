@@ -1,5 +1,4 @@
 
-
 .main-page{
     display: flex;
     align-items: center;
@@ -9,7 +8,6 @@
     background-color: #F8F8F8;
     letter-spacing: -7%;
 }
-
 
 .main-box{
     height: 98vh;
@@ -54,7 +52,6 @@
     margin-left: 5%;
     gap: 60px;
     font-family: "Roboto", "Inter", Helvetica ;
-    
 }
 
 .current-list{
