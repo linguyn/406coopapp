@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faLock, faUser, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { loginUser } from '../../services/authService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 
 function Login() {
@@ -13,10 +13,6 @@ function Login() {
     const [serverError, setServerError] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
-
-
-
-
 
 
     const handleSubmit = async (event) => {
@@ -59,9 +55,9 @@ function Login() {
             </div>
 
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className='right-panel'>
                 {/* user inputs for email + password */}
-                <div className='right-panel'>
+
 
                     <h1>SIGN IN</h1>
 
@@ -136,14 +132,10 @@ function Login() {
 
 
                         <div className='create-account'>
-                            <a href=''>Create Account</a>
+                            <Link to="/roles">Create Account</Link>
                         </div>
                     </div>
 
-
-
-
-                </div>
             </form>
 
         </div>
