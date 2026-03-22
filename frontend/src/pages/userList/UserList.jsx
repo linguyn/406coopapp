@@ -6,7 +6,6 @@ function UserList(props){
     return(
         <div className='main-page'>
 
-
             <div className='main-box'>
 
                 <div className='header'>
@@ -54,14 +53,12 @@ function UserList(props){
 
                     </div>
 
-
                 </div>
 
             </div>
         </div>
     );
 }
-
 
 export default UserList
 
