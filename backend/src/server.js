@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/user.js';
+import { applicationsRouter } from './routes/applications.js';
 import { API, TOKEN_OPTIONS } from './constants.js';
 import jwt from 'jsonwebtoken';
 import { HTTPError } from './errors.js';
@@ -39,6 +40,7 @@ app.use(cookieParser());
 // mount the routers to the app (first arg is just an api url prefix)
 app.use(API.prefixes.auth, authRouter);
 app.use(API.prefixes.user, userRouter);
+app.use(API.prefixes.applications, applicationsRouter);
 
 /**
  * @function generateAccessToken

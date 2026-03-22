@@ -4,7 +4,7 @@ const appRouter = express.Router();
 import { tempApplications } from '../database-services.js';
 import { hasValidEmail, hasValidReason } from '../validate.js';
 import { HTTPError } from '../errors.js'
-import { authenticateToken } from '../server.js';
+import { authenticateToken } from '../server.js'; 
 
 /**
  * @api {POST} /api/applications/submit
@@ -21,10 +21,10 @@ import { authenticateToken } from '../server.js';
  * @error {500} {Object} - Internal server error
  */
 
-appRouter.post('/submit', (req, res) => {
+appRouter.post('/submit', authenticateToken, (req, res, next) => {
     const { firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink } = req.body;
     try {
-        if (!firstName || !lastName.trim()) { throw new HTTPError(400, "First and last name is required"); }
+        if (!firstName.trim() || !lastName.trim()) { throw new HTTPError(400, "First and last name is required"); }
         if (!studentId || !studentId.trim()) { throw new HTTPError(400, "Student ID is required"); }
         if (!schoolEmail ||!hasValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
         if (typeof eligibility !== "boolean") { throw new HTTPError(400, "Eligibility must be a boolean value"); }
