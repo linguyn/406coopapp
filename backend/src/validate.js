@@ -148,3 +148,14 @@ export function isValidLoginAttempt(email, password) {
 export function isValidStatusUpdate(status) {
     return status && USER_DETAILS.studentStatuses.includes(status);
 }
+
+/**
+ * @function hasValidReason
+ * @description Validates reason to apply (150 words max)
+ * @param {String} reason - the reason to apply
+ * @returns {boolean} True if the reason is valid
+ */
+
+export function hasValidReason(reason) {
+    return reason && reason.trim().split(/\s+/).length <= 150;
+}
