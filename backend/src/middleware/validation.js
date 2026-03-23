@@ -1,21 +1,21 @@
-import { HTTPError } from "./errors.js";
-import { USER_DETAILS, LIST_CRITERIA } from "./constants.js";
-import { getSafeUser, getUserByEmail, findUserInDatabase, getUserById } from "./database-services.js";
-import { isValidStatusUpdate, isValidLoginAttempt } from "./validate.js";
-import { ROLE_OPERATIONS } from "./auth-constants.js";
+import { HTTPError } from "../errors.js";
+import { USER_DETAILS } from "../constants.js";
+import { getSanitizedUser, getUserByEmail, isEmailTaken, getUserById } from "../database-services.js";
+import { isValidStatusUpdate, isValidLogin } from "../validate.js";
+import { ROLE_OPERATIONS } from "../auth-services.js";
 
 export function validateLogin(req, res, next) {
     const {email, password} = req.body;
 
     try {
-        if (!isValidLoginAttempt(email, password)) { throw new HTTPError("Invalid login credentials", 400); }
+        if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 400); }
 
         const user = getUserByEmail(email);
 
         // TODO: update when database implemented
         if (user.password !== password) { throw new HTTPError("Login information does not match", 400); }
 
-        const safeUser = getSafeUser(user);
+        const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[user.role]);
 
         // user is valid, can safely update the user field in req for further use
         req.user = safeUser;
@@ -29,13 +29,11 @@ export function validateRegister(req, res, next) {
     const {email, role} = req.body;
     try {
         const roleOperations = ROLE_OPERATIONS[role];
-        if (!role || !roleOperations) { throw new HTTPError("User type missing or invalid", 400); }
-        // TODO: add isBasicUser fuction?
-        // if (!isBasicUser(registerInfo)) { throw new HTTPError("Missing fields or invalid credentials", 400); }
-        if (findUserInDatabase(email)) { throw new HTTPError("User already exists", 409); }
 
-        if (!roleOperations.validate(req.body)) { throw new HTTPError("Missing fields or invalid credentials", 400); }
-        
+        if (!roleOperations.validate(req.body)) { throw new HTTPError("Missing fields or invalid format", 400); }
+
+        if (isEmailTaken(email)) { throw new HTTPError("Email taken by another user", 409); }
+
         next();
     } catch (error) {
         next(error);

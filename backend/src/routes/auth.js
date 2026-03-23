@@ -1,10 +1,11 @@
-import { validateLogin, validateLogout, validateRegister } from '../validation-middleware.js';
-import { ROLE_OPERATIONS } from '../auth-constants.js';
+import { validateLogin, validateLogout, validateRegister } from '../middleware/validation.js';
+import { ROLE_OPERATIONS } from '../auth-services.js';
 import express from 'express';
 import { generateAccessToken, generateRefreshToken } from '../server.js';
-import { getSafeUser, getUserById } from '../database-services.js';
-import { TOKEN_OPTIONS } from '../constants.js';
+import { getSanitizedUser, getUserById } from '../database-services.js';
+import { TOKEN_OPTIONS, USER_DETAILS } from '../constants.js';
 import jwt from 'jsonwebtoken';
+import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
 
 export const authRouter = express.Router();
 
@@ -20,9 +21,9 @@ export const authRouter = express.Router();
  * @error {500} {Object} - Internal server error
  */
 
-authRouter.post('/login', validateLogin, (req, res, next) => {
+authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
     const user = req.user;
-    const rememberMe = req.body.rememberMe || false;
+    const rememberMe = req.body.rememberMe;
 
     const accessToken = generateAccessToken(user.id, user.role);
     const refreshToken = generateRefreshToken(user.id, user.role, rememberMe);
@@ -61,12 +62,12 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  * @error {500} {Object} - Internal server error
  */
 
-authRouter.post('/register', validateRegister, (req, res, next) => {
-    const { role, rememberMe = false } = req.body;
+authRouter.post('/register', sanitizeRegister, validateRegister, (req, res, next) => {
+    const { role, rememberMe } = req.body;
 
     try {
         const user = ROLE_OPERATIONS[role].add(req.body);
-        const safeUser = getSafeUser(user);
+        const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[role]);
 
         const accessToken = generateAccessToken(user.id, user.role);
         const refreshToken = generateRefreshToken(user.id, user.role, rememberMe);
