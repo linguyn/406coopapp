@@ -5,6 +5,9 @@ import mongoose from 'mongoose';
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/user.js';
 import { API } from './constants.js';
+import Coor from './models/Coordinator.js';
+import Student from './models/Student.js';
+
 
 // TODO: connect to database and reconfigure database-services to actual database
 // TODO: test basic CRUD operations
