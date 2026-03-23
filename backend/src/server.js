@@ -8,6 +8,8 @@ import { API, TOKEN_OPTIONS } from './constants.js';
 import jwt from 'jsonwebtoken';
 import { HTTPError } from './errors.js';
 import cookieParser from 'cookie-parser';
+import Coor from '.models/Coordinator.js';
+import Student from '.models/Student.js';
 
 // TODO: connect to database and reconfigure database-services to actual database
 // TODO: add secrets instructions to README
