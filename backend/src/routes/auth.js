@@ -15,6 +15,7 @@ export const authRouter = express.Router();
  * IMPORTANT: requires the withCredentials (axios) or credentials (fetch) property to be true to save the cookie
  * @body {String} email - The user's email
  * @body {String} password - The user's password
+ * @body {Boolean} rememberMe - if true, extends the life span of the refresh token
  * @success {200} {Object} - Returns the user's information and authorizes new access and refresh tokens
  * @error {400} {Object} - Invalid login credentials format
  * @error {401} {Object} - User not found
@@ -52,10 +53,9 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
 
 /**
  * @api {POST} /api/auth/register
- * @description Registers a user to the database
- * @body {String} role - The user's role
- * @body {Object} otherRegistrationInfo - Other information relevant to the user's registration
- * Note: complete list of registration information has yet to be implemented in this feature
+ * @description Registers a user to the database. To find a complete list of all required and optional
+ *  fields you can provide in the request per user, see ../constants.js -> REGISTRATION_FIELDS
+ * @body {String} role - The user's role. Options: "student", "supervisor", "coordinator"
  * @success {200} {Object} - Returns the user's information and authorizes new access and refresh tokens
  * @error {400} {Object} - Invalid login credentials format
  * @error {409} {Object} - User already exists
