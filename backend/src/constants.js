@@ -33,15 +33,18 @@ export const USER_DETAILS = {
 };
 
 export const REGISTRATION_FIELDS = {
+    // NOTE: general fields should apply to every user type
     required : {
-        student : ["role", "firstName", "lastName", "email", "password", "studentId"],
-        coordinator : ["role", "firstName", "lastName", "email", "password"],
-        supervisor : ["role", "firstName", "lastName", "email", "password","company"]
+        general : ["role", "firstName", "lastName", "email", "password"],
+        student : ["studentId"],
+        coordinator : [],
+        supervisor : ["company"]
     },
     optional : {
-        student : ["rememberMe", "report", "reflection", "applications", "status", "location", "resume", "coverLetter", "transcript", "program", "gpa", "year"],
-        coordinator : ["rememberMe"],
-        supervisor : ["rememberMe", "jobTitle", "status", "location", "interns"]
+        general : ["rememberMe"],
+        student : ["report", "reflection", "applications", "status", "location", "resume", "coverLetter", "transcript", "program", "gpa", "year"],
+        coordinator : [],
+        supervisor : ["jobTitle", "status", "location", "interns"]
     }
 }
 
