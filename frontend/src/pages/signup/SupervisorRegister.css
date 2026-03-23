@@ -1,0 +1,77 @@
+
+body {
+  background-color: #ffffff;
+  margin: 0;
+  font-family: "Roboto", "Inter", Helvetica;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+#supervisor-container { 
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%; 
+
+    border: 1px solid black;
+
+}
+
+#supervisor-field-1,
+#supervisor-field-2,
+#supervisor-field-3,
+#supervisor-field-4  {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 80%;
+    height: 15%;
+    gap: 5%;
+    
+}   
+   
+#supervisor-field-5 {
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    height: 42px;
+    margin-top: 10px;
+
+
+
+}
+
+
+.input-field-1, .input-field-2 { 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    gap: 5px;
+
+}
+
+
+
+#supervisor-container input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40%;
+}
+
+
+.blue-button {
+    width: 100%;
+    background-color: #0C49A6;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    color: #FFFFFF;
+}
+
