@@ -9,4 +9,4 @@ const student = new studentSchema({
 
 const Student = mongoose.model('Student', student);
 
-export default Student;cd 
+export default Student;
