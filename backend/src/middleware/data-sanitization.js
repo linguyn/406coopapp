@@ -73,17 +73,9 @@ export function sanitizeLogin(req, res, next) {
     sanitize(required, optional, CLEANING.options)(req,res,next);
 }
 
-const reqRegister = {
-    student : ["studentId"],
-    coordinator : [],
-    supervisor : ["company"]
-}
 
-const optRegister = {
-    student : ["report", "reflection", "applications", "status", "location", "resume", "coverLetter", "transcript", "program", "gpa", "year"],
-    coordinator : [],
-    supervisor : ["jobTitle", "status", "location", "interns"]
-}
+const reqRegister = REGISTRATION_FIELDS.required;
+const optRegister = REGISTRATION_FIELDS.optional;
 
 /**
  * @function sanitizeRegister
@@ -99,8 +91,8 @@ export function sanitizeRegister(req, res, next) {
             throw new HTTPError("Missing required field: role", 422);
         }
 
-        const required = ["role", "firstName", "lastName", "email", "password", ...reqRegister[role]];
-        const optional = ["rememberMe", ...optRegister[role]];
+        const required = [...reqRegister.general, ...reqRegister[role]];
+        const optional = [...reqRegister.optional, ...optRegister[role]];
         
         return sanitize(required, optional, CLEANING.options)(req, res, next);
     } catch(error) {

@@ -1,7 +1,7 @@
 import { USER_DETAILS } from './constants.js';
 
 // TODO: move validation to schemas eventually so you can just call the validation from the schema
-// TODO: create hasStrongPassword validation
+// TODO: create hasStrongPassword validation (low priority)
 // TODO: better name regex (low priority)
 
 /**
