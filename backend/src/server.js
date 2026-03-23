@@ -28,7 +28,7 @@ const app = express();
     The cors add-on is a way of permitting the communication
 */
 app.use(cors({
-    origin : `https://localhost:${frontendPort}`,   // frontend url
+    origin : `http://localhost:${frontendPort}`,   // frontend url
     credentials : true  // allow cookies
 }));  
 
@@ -92,6 +92,8 @@ export function authenticateToken(req, res, next) {
         // get the token from the second part of string i.e. authorization : Bearer <token>
         const token = header.split(' ')[1];
 
+        if (!token) { throw new HTTPError("Bearer token not found", 401); }
+        
         const decodedPayload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
         req.user = decodedPayload;

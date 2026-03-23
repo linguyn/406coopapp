@@ -1,7 +1,7 @@
-import { getUserById, updateUserStatus, getSafeUser, getSanitizedUsers, getFilteredUsers } from '../database-services.js';
+import { getUserById, updateUserStatus, getSanitizedUser, getSanitizedUsers, getFilteredUsers } from '../database-services.js';
 import express from 'express';
 import { HTTPError } from '../errors.js'
-import { validateStatusUpdate, validateListRequest } from '../validation-middleware.js';
+import { validateStatusUpdate, validateListRequest } from '../middleware/validation.js';
 import { authenticateToken } from '../server.js';
 import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
 
@@ -9,7 +9,7 @@ export const userRouter = express.Router();
 
 /**
  * @api {GET} /api/user/list
- * @description Retrieves a search/query-filtered list of all users of a certain role with optional sorting
+ * @description Retrieves a filtered list of all users of a certain role based on queries with optional sorting
  * @query {String} role - The type of users. Options: "student", "applicant", "supervisor", or "coordinator"
  * @query {String} [searchStr] - Matches the search query to some searchable parameters (e.g. name, email, company, etc.)
  * @query {String} [sortBy] - The sorting criteria. Options: "email", "name"
@@ -28,13 +28,12 @@ userRouter.get('/list', authenticateToken, validateListRequest, (req, res, next)
     if (!LIST_CRITERIA.order.includes(order)) { order = "asc"; }
 
     try {
-        // TODO: should validate the filters and clean up this logic
+        // TODO: should validate the filters
         const exactFilters = extractExactFilters(role, req.query);
         const fuzzyFilters = USER_DETAILS.fuzzyFilters[role];
         const filteredUsers = getFilteredUsers(role, searchStr, exactFilters, fuzzyFilters);
 
-        const safeUserOptions = USER_DETAILS.safeFields[role];
-        const sanitizedUsers = getSanitizedUsers(filteredUsers, safeUserOptions);
+        const sanitizedUsers = getSanitizedUsers(filteredUsers, USER_DETAILS.safeFields[role]);
         
         let reverse;
         if (order === "desc") { reverse = -1; }
@@ -53,6 +52,7 @@ userRouter.get('/list', authenticateToken, validateListRequest, (req, res, next)
     }
 });
 
+// TODO: move this to a more appropriate place
 function extractExactFilters(role, query) {
     const exactFilters = {};
     const allowedFilters = USER_DETAILS.exactFilters[role];
@@ -84,7 +84,7 @@ userRouter.patch('/student/:id/status', authenticateToken, validateStatusUpdate,
         const user = req.targetUser;
         updateUserStatus(user, status);
 
-        const safeUser = getSafeUser(user);
+        const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[user.role]);
         return res.status(200).json(safeUser);
     } catch(error) {
         next(error);
@@ -110,10 +110,9 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  */
 
 userRouter.get('/:id', authenticateToken, (req, res, next) => {
-    // TODO: implement general user information i.e. name, email, id, status, role, etc.
     try {
         const user = getUserById(req.params.id);
-        const safeUser = getSafeUser(user);
+        const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[user.role]);
         return res.status(200).json(safeUser);
     } catch(error) { 
         next(error); 
