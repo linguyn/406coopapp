@@ -1,5 +1,5 @@
 import { HTTPError } from "../errors.js";
-import { CLEANING } from "../constants.js";
+import { CLEANING, REGISTRATION_FIELDS } from "../constants.js";
 
 /**
  * @function sanitize

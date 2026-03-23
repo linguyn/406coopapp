@@ -32,6 +32,19 @@ export const USER_DETAILS = {
     }
 };
 
+export const REGISTRATION_FIELDS = {
+    required : {
+        student : ["role", "firstName", "lastName", "email", "password", "studentId"],
+        coordinator : ["role", "firstName", "lastName", "email", "password"],
+        supervisor : ["role", "firstName", "lastName", "email", "password","company"]
+    },
+    optional : {
+        student : ["rememberMe", "report", "reflection", "applications", "status", "location", "resume", "coverLetter", "transcript", "program", "gpa", "year"],
+        coordinator : ["rememberMe"],
+        supervisor : ["rememberMe", "jobTitle", "status", "location", "interns"]
+    }
+}
+
 export const CLEANING = {
     options : {
         trimOnly : ["firstName", "lastName", "report", "reflection", "jobTitle", "company", "location", "program", "gpa", "studentId"],
