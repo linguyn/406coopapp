@@ -1,5 +1,5 @@
 const BASE_FUZZY = [ "name", "email"];
-const BASE_SAFE = [ "firstName", "lastName", "email", "status"];
+const BASE_SAFE = [ "firstName", "lastName", "email", "status", "role"];
 
 export const USER_DETAILS = {
     roles : {
@@ -33,15 +33,15 @@ export const USER_DETAILS = {
 };
 
 export const REGISTRATION_FIELDS = {
-    // NOTE: general fields should apply to every user type
+    // NOTE: general fields apply to every user type
     required : {
-        general : ["role", "firstName", "lastName", "email", "password"],
+        general : ["role", "firstName", "lastName", "email", "password", "passwordAgain"],
         student : ["studentId"],
         coordinator : [],
         supervisor : ["company"]
     },
     optional : {
-        general : ["rememberMe"],
+        general : [],
         student : ["report", "reflection", "applications", "status", "location", "resume", "coverLetter", "transcript", "program", "gpa", "year"],
         coordinator : [],
         supervisor : ["jobTitle", "status", "location", "interns"]

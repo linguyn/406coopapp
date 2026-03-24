@@ -8,8 +8,10 @@ import { API, TOKEN_OPTIONS } from './constants.js';
 import jwt from 'jsonwebtoken';
 import { HTTPError } from './errors.js';
 import cookieParser from 'cookie-parser';
-import Coor from '.models/Coordinator.js';
-import Student from '.models/Student.js';
+import Coor from './models/Coordinator.js';
+import Student from './models/Student.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
 
 // TODO: connect to database and reconfigure database-services to actual database
 // TODO: add secrets instructions to README
@@ -42,6 +44,28 @@ app.use(cookieParser());
 app.use(API.prefixes.auth, authRouter);
 app.use(API.prefixes.user, userRouter);
 
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Co-op app',
+            description: 'API for co-op app',
+            version: '1.0.0'
+        },
+        servers : [{url : `http://localhost:${backendPort}`}]
+    },
+    apis: [
+        './src/routes/*.js',
+        './src/models/*.js',
+        './src/errors.js'
+    ]
+}
+
+const swaggerDoc = swaggerJsDoc(swaggerOptions);
+
+app.use('/api-docs', swaggerUi.serve);
+app.use('/api-docs', swaggerUi.setup(swaggerDoc));
+
 /**
  * @function generateAccessToken
  * @description Generates a unique access token based on the user and secret key that expires in 15 minutes.
@@ -67,7 +91,7 @@ export function generateAccessToken(id, role) {
  * @returns {String} token - The unique refresh token
  */
 
-export function generateRefreshToken(id, role, isLong) {
+export function generateRefreshToken(id, role, isLong = false) {
     let refreshOptions;
     if (isLong) { refreshOptions = TOKEN_OPTIONS.refreshLong; } 
     else { refreshOptions = TOKEN_OPTIONS.refreshShort; }

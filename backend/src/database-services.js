@@ -7,7 +7,7 @@ export let tempUsers = [
             studentId: '123456789',
             firstName : "alex",
             lastName : "something",
-            email: 'student@example.ca',
+            email: 'jinwoo@example.ca',
             password: 'password123',
             role: 'student',
             status : "searching",

@@ -91,9 +91,11 @@ export function sanitizeRegister(req, res, next) {
             throw new HTTPError("Missing required field: role", 422);
         }
 
+        console.log("before trying required n optional");
         const required = [...reqRegister.general, ...reqRegister[role]];
-        const optional = [...reqRegister.optional, ...optRegister[role]];
-        
+        const optional = [...optRegister.general, ...optRegister[role]];
+        console.log("affter trying required n optionlal");
+
         return sanitize(required, optional, CLEANING.options)(req, res, next);
     } catch(error) {
         next(error);

@@ -8,12 +8,12 @@ export function validateLogin(req, res, next) {
     const {email, password} = req.body;
 
     try {
-        if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 400); }
+        if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 422); }
 
         const user = getUserByEmail(email);
 
         // TODO: update when database implemented
-        if (user.password !== password) { throw new HTTPError("Login information does not match", 400); }
+        if (user.password !== password) { throw new HTTPError("Login information does not match", 422); }
 
         const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[user.role]);
 
@@ -26,12 +26,12 @@ export function validateLogin(req, res, next) {
 };
 
 export function validateRegister(req, res, next) {
-    const {email, role} = req.body;
+    const {email, role, password, passwordAgain} = req.body;
     try {
         const roleOperations = ROLE_OPERATIONS[role];
 
-        if (!roleOperations.validate(req.body)) { throw new HTTPError("Missing fields or invalid format", 400); }
-
+        if (password != passwordAgain) { throw new HTTPError("Passwords do not match", 422); }
+        if (!roleOperations.validate(req.body)) { throw new HTTPError("Missing fields or invalid format", 422); }
         if (isEmailTaken(email)) { throw new HTTPError("Email taken by another user", 409); }
 
         next();
