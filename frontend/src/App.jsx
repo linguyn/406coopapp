@@ -67,16 +67,56 @@ const fakeApplicantData = [
   }
 ];
 
-function App() {
-    const applicantData = [{title: "kevony"}]
-  return (
-<<<<<<< HEAD
-        
-=======
-    
-    <UserList title="APPLICANT LIST" users={applicantData}/>
+const fakeStudentData = [
+  {
+    id: "stu-101",
+    NAME: "Kevin Miller",
+    EMAIL: "kevin.m@student.uwaterloo.ca",
+    STUDENTID: "20984432",
+    PROGRAM: "Computer Science",
+    APPLICATIONSSENT: 12,
+    PROGRESSREPORT: "Pending",
+    STATUS: "Interviewing"
+  },
+  {
+    id: "stu-102",
+    NAME: "Aisha Khan",
+    EMAIL: "a.khan@student.utoronto.ca",
+    STUDENTID: "20875561",
+    PROGRAM: "Software Engineering",
+    APPLICATIONSSENT: 8,
+    PROGRESSREPORT: "Completed",
+    STATUS: "Placed"
+  }
+];
 
->>>>>>> main
+const fakeSupervisorData = [
+  {
+    id: "sup-001",
+    NAME: "Dr. Sarah Chen",
+    COMPANY: "Sectra",
+    JOBTITLE: "Senior Software Architect",
+    EMAIL: "s.chen@sectra.com",
+    INTERNS: ["Kevin Miller"], 
+    PROGRESSREPORTS: "2/3 Submitted",
+    STATUS: "Active"
+  },
+  {
+    id: "sup-002",
+    NAME: "Marcus Thorne",
+    COMPANY: "Home Trust",
+    JOBTITLE: "Cloud Operations Manager",
+    EMAIL: "m.thorne@hometrust.ca",
+    INTERNS: ["Jordan Smith"],
+    PROGRESSREPORTS: "1/1 Submitted",
+    STATUS: "On Leave"
+  }
+];
+
+function App() {
+
+  return (
+        
     /*
     <BrowserRouter>
       <Routes>
@@ -89,7 +129,7 @@ function App() {
     */
 
      /* ignore this, just to see my ui (uncomment to see) */
-    <UserList title="APPLICANT LIST" applicantData={fakeApplicantData}/>
+    <UserList applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData}/>
     
   );
 }
