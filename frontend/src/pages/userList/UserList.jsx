@@ -53,7 +53,6 @@ function UserList(props){
 
                     </div>
 
-
                 </div>
 
             </div>
