@@ -4,112 +4,112 @@ import UserList from './pages/userList/UserList';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
 
 //fake data (ignore this)
-const fakeApplicantData = [
+const fakeApplicantData =[
   {
     id: 1,
-    DATE: "2026-03-23",
-    NAME: "Sung Jin-woo",
-    EMAIL: "sjwoo@ahjin.com",
-    STUDENTID: "00000001",
-    PROGRAM: "Hunter Academy",
-    YEAR: "4",
-    STUGPA: "4.0",
-    COVERLETTER: "arise.pdf",
-    STATUS: "Approved"
+    date: "2026-03-23",
+    name: "Sung Jin-woo",
+    email: "sjwoo@ahjin.com",
+    studentId: "00000001",
+    program: "Hunter Academy",
+    year: "4",
+    gpa: "4.0",
+    coverLetter: "arise.pdf",
+    status: "Approved"
   },
   {
     id: 2,
-    DATE: "2026-03-02",
-    NAME: "Sarah Chen",
-    EMAIL: "schen99@university.edu",
-    STUDENTID: "10095562",
-    PROGRAM: "Software Engineering",
-    YEAR: "2",
-    STUGPA: "3.9",
-    COVERLETTER: "sarah_cl_final.pdf",
-    STATUS: "Approved"
+    date: "2026-03-02",
+    name: "Sarah Chen",
+    email: "schen99@university.edu",
+    studentId: "10095562",
+    program: "Software Engineering",
+    year: "2",
+    gpa: "3.9",
+    coverLetter: "sarah_cl_final.pdf",
+    status: "Approved"
   },
   {
     id: 3,
-    DATE: "2026-03-05",
-    NAME: "Marcus Johnson",
-    EMAIL: "mjohnson@university.edu",
-    STUDENTID: "10074412",
-    PROGRAM: "Data Science",
-    YEAR: "4",
-    STUGPA: "3.5",
-    COVERLETTER: "mj_cover_v2.pdf",
-    STATUS: "Rejected"
+    date: "2026-03-05",
+    name: "Marcus Johnson",
+    email: "mjohnson@university.edu",
+    studentId: "10074412",
+    program: "Data Science",
+    year: "4",
+    gpa: "3.5",
+    coverLetter: "mj_cover_v2.pdf",
+    status: "Rejected"
   },
   {
     id: 4,
-    DATE: "2026-03-10",
-    NAME: "Elena Rodriguez",
-    EMAIL: "erodriguez@university.edu",
-    STUDENTID: "10103321",
-    PROGRAM: "Computer Science",
-    YEAR: "1",
-    STUGPA: "4.0",
-    COVERLETTER: "elena_apply.pdf",
-    STATUS: "Pending"
+    date: "2026-03-10",
+    name: "Elena Rodriguez",
+    email: "erodriguez@university.edu",
+    studentId: "10103321",
+    program: "Computer Science",
+    year: "1",
+    gpa: "4.0",
+    coverLetter: "elena_apply.pdf",
+    status: "Pending"
   },
   {
     id: 5,
-    DATE: "2026-03-12",
-    NAME: "Alex Kim",
-    EMAIL: "akim_dev@university.edu",
-    STUDENTID: "10061189",
-    PROGRAM: "Information Systems",
-    YEAR: "3",
-    STUGPA: "3.2",
-    COVERLETTER: "resume_cl.pdf",
-    STATUS: "Interviewing"
+    date: "2026-03-12",
+    name: "Alex Kim",
+    email: "akim_dev@university.edu",
+    studentId: "10061189",
+    program: "Information Systems",
+    year: "3",
+    gpa: "3.2",
+    coverLetter: "resume_cl.pdf",
+    status: "Interviewing"
   }
-];
+]
 
 const fakeStudentData = [
   {
     id: "stu-101",
-    NAME: "Kevin Miller",
-    EMAIL: "kevin.m@student.uwaterloo.ca",
-    STUDENTID: "20984432",
-    PROGRAM: "Computer Science",
-    APPLICATIONSSENT: 12,
-    PROGRESSREPORT: "Pending",
-    STATUS: "Interviewing"
+    name: "Kevin Miller",
+    email: "kevin.m@student.uwaterloo.ca",
+    studentId: "20984432",
+    program: "Computer Science",
+    applications: 12,
+    report: "Pending",
+    status: "Interviewing"
   },
   {
     id: "stu-102",
-    NAME: "Aisha Khan",
-    EMAIL: "a.khan@student.utoronto.ca",
-    STUDENTID: "20875561",
-    PROGRAM: "Software Engineering",
-    APPLICATIONSSENT: 8,
-    PROGRESSREPORT: "Completed",
-    STATUS: "Placed"
+    name: "Aisha Khan",
+    email: "a.khan@student.utoronto.ca",
+    studentId: "20875561",
+    program: "Software Engineering",
+    applications: 8,
+    report: "Completed",
+    status: "Placed"
   }
 ];
 
 const fakeSupervisorData = [
   {
     id: "sup-001",
-    NAME: "Dr. Sarah Chen",
-    COMPANY: "Sectra",
-    JOBTITLE: "Senior Software Architect",
-    EMAIL: "s.chen@sectra.com",
-    INTERNS: ["Kevin Miller"], 
-    PROGRESSREPORTS: "2/3 Submitted",
-    STATUS: "Active"
+    name: "Dr. Sarah Chen",
+    company: "Sectra",
+    jobTitle: "Senior Software Architect",
+    email: "s.chen@sectra.com",
+    interns: ["Kevin Miller"], 
+    progressReports: "2/3 Submitted",
+    status: "Active"
   },
   {
     id: "sup-002",
-    NAME: "Marcus Thorne",
-    COMPANY: "Home Trust",
-    JOBTITLE: "Cloud Operations Manager",
-    EMAIL: "m.thorne@hometrust.ca",
-    INTERNS: ["Jordan Smith"],
-    PROGRESSREPORTS: "1/1 Submitted",
-    STATUS: "On Leave"
+    name: "Marcus Thorne",
+    company: "Home Trust",
+    jobTitle: "Cloud Operations Manager",
+    email: "m.thorne@hometrust.ca",
+    interns: ["Jordan Smith"],
+    progressReports: "1/1 Submitted",
+    status: "On Leave"
   }
 ];
 

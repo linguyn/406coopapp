@@ -4,47 +4,47 @@ import React, {useState} from 'react'
 const applicantListHeaders = [
     {
         id: 1,
-        KEY: "DATE",
+        KEY: "date",
         LABEL: "Date",
     },
     {
         id: 2,
-        KEY: "NAME",
+        KEY: "name",
         LABEL: "Name",
     },
     {
         id: 3,
-        KEY: "EMAIL",
+        KEY: "email",
         LABEL: "Email",
     },
     {
         id: 4,
-        KEY: "STUDENTID",
+        KEY: "studentId",
         LABEL: "Student ID",
     },
     {
         id: 5,
-        KEY: "PROGRAM",
+        KEY: "program",
         LABEL: "Program",
     },
     {
         id: 6,
-        KEY: "YEAR",
+        KEY: "year",
         LABEL: "Year",
     },
     {
         id: 7,
-        KEY: "STUGPA",
+        KEY: "gpa",
         LABEL: "GPA",
     },
     {
         id: 8,
-        KEY: "COVERLETTER",
+        KEY: "coverLetter",
         LABEL: "Cover Letter",
     },
     {
         id: 9,
-        KEY: "STATUS",
+        KEY: "status",
         LABEL: "Status",
     }
 ]
@@ -52,37 +52,37 @@ const applicantListHeaders = [
 const coopStudentListHeaders = [
     {
         id: 1,
-        KEY: "NAME",
+        KEY: "name",
         LABEL: "Name",
     },
     {
         id: 2,
-        KEY: "EMAIL",
+        KEY: "email",
         LABEL: "Email",
     },
     {
         id: 3,
-        KEY: "STUDENTID",
+        KEY: "studentId",
         LABEL: "Student ID",
     },
     {
         id: 4,
-        KEY: "PROGRAM",
+        KEY: "program",
         LABEL: "Program",
     },
     {
         id: 5,
-        KEY: "APPLICATIONSSENT",
+        KEY: "applications",
         LABEL: "Applications sent",
     },
     {
         id: 6,
-        KEY: "PROGRESSREPORT",
+        KEY: "report",
         LABEL: "Progress Report",
     },
     {
         id: 7,
-        KEY: "STATUS",
+        KEY: "status",
         LABEL: "Status",
     }
 ]
@@ -90,37 +90,37 @@ const coopStudentListHeaders = [
 const supervisorListHeaders = [
     {
         id: 1,
-        KEY: "NAME",
+        KEY: "name",
         LABEL: "Name",
     },
     {
         id: 2,
-        KEY: "EMAIL",
+        KEY: "email",
         LABEL: "Email",
     },
     {
         id: 3,
-        KEY: "COMPANY",
+        KEY: "company",
         LABEL: "Company",
     },
     {
         id: 4,
-        KEY: "JOBTITLE",
+        KEY: "jobTitle",
         LABEL: "Job Title",
     },
     {
         id: 5,
-        KEY: "INTERNS",
+        KEY: "interns",
         LABEL: "Interns",
     },
     {
         id: 6,
-        KEY: "PROGRESSREPORTS",
+        KEY: "report",
         LABEL: "Progress Report",
     },
     {
         id: 7,
-        KEY: "STATUS",
+        KEY: "status",
         LABEL: "Status",
     }
 ]

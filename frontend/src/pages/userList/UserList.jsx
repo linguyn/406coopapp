@@ -9,12 +9,32 @@ import DataTable from '../../components/DataTable.jsx'
 
 function UserList(props){
 
-    const [titleName, setName] = useState("APPLICANT LIST");
     const [listType, setListName] = useState("applicant")
     const [userData, setUserData] = useState(props.applicantData)
     const [totalNumberOfUsers, setTotalNumberOfUsers] = useState(props.applicantData.length)
-    const [currentNumberOfUsers, setcurrentNumberOfUsers] = useState(props.applicantData.length)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [usersPerPage, setUsersPerPage] = useState(5)
     console.log(totalNumberOfUsers)
+
+    //pages logic
+    const endIndex = currentPage * usersPerPage;
+    const beginningIndex = endIndex - usersPerPage;
+    const currentUserData = userData.slice(beginningIndex, endIndex);
+    const totalPages = Math.ceil(userData.length / usersPerPage);
+
+    const nextPage = () => {
+        if(currentPage < totalPages){
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const prevPage = () => {
+        if(currentPage > 1){
+            setCurrentPage(currentPage - 1);
+        }
+    }
+    //title change 
+    const [titleName, setName] = useState("APPLICANT LIST");
 
     function toggleSelected(arg){
         const element = document.getElementById(arg)
@@ -41,6 +61,7 @@ function UserList(props){
     const updateTitleName = (arg) => {
 
         if (arg == "coop-student"){
+            setCurrentPage(1);
             setName("CO-OP STUDENT LIST");
             setListName(arg)
             toggleSelected(arg);
@@ -50,6 +71,7 @@ function UserList(props){
             changeCurrentNumberOfUsers(props.studentData.length);
         }
         else if (arg == "applicant"){
+            setCurrentPage(1);
             setName("APPLICANT LIST")
             setListName(arg)
             toggleSelected(arg);
@@ -59,16 +81,21 @@ function UserList(props){
             changeCurrentNumberOfUsers(props.applicantData.length);
         }
         else if (arg == "supervisor"){
+            setCurrentPage(1);
             setName("SUPERVISOR LIST")
             setListName(arg)
             toggleSelected(arg);
             removeSelected("applicant", "coop-student");
             setUserData(props.supervisorData);
             setTotalNumberOfUsers(props.supervisorData.length);
-            changeCurrentNumberOfUsers(supervisorData.length);
+            changeCurrentNumberOfUsers(props.supervisorData.length);
         }
     }
-    const handleClick = () => console.log(titleName);
+
+    const handleChangeNumberOfEntries = (e) => {
+        setUsersPerPage(e.target.value);
+        console.log(e.target.value);
+    }
 ``
     return(
         
@@ -98,7 +125,7 @@ function UserList(props){
                 
                     <div className='entries'>
 
-                        <select className='select-number-entries' defaultValue={5}>
+                        <select className='select-number-entries' defaultValue={5} onChange={handleChangeNumberOfEntries}>
                             <option value='1'>1</option>
                             <option value='2'>2</option>
                             <option value='3'>3</option>
@@ -123,12 +150,17 @@ function UserList(props){
 
                 </div>
 
-            <DataTable userData={userData} listType={listType}></DataTable>
+            <DataTable userData={currentUserData} listType={listType}></DataTable>
 
                 <div className='bottom-header'>
-                    <h2>{currentNumberOfUsers} of {totalNumberOfUsers}</h2>
-                    <img src={LeftArrowIcon} ></img>
-                    <img src={RightArrowIcon} ></img>
+                    <h2>{currentPage} of {totalPages}</h2>
+                    <button className='page-button'>
+                        <img src={LeftArrowIcon} onClick={prevPage} disabled={currentPage === 1}></img>
+                    </button>
+                    <button className='page-button'>
+                        <img src={RightArrowIcon} onClick={nextPage} disabled={currentPage === totalPages}></img>
+                    </button>
+                    
                     
 
                 </div>

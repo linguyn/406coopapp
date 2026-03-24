@@ -173,4 +173,11 @@ table{
     margin-top: 5%;
 }
 
+.page-button {
+    border:none;
+    background: none;
+    cursor: pointer;
+    margin-top: 4%;
+}
+
 
