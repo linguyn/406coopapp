@@ -17,7 +17,7 @@ function hasValidEmail(email) {
  * @function hasValidPassword
  * @description Validates a password
  * @param {String} password - A password
- * @returns {boolean} True if the password passes the length check
+ * @returns {boolean} True if the password passes the length cheSk
  */
 
 function hasValidPassword(password) {

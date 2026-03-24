@@ -1,9 +1,40 @@
 import './StudentRegister.css'
 import AuthLayout from '../../components/AuthLayout';
+import { signIn } from '../../services/authService';
+import { useState } from 'react';
+import { isSamePassword, isValidEmail, isValidPassword, isValidStudentId } from '../../services/validate-frontend';
 
 function StudentRegister()
 {
-    const handleSubmit = null;
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [studentId, setStudentId] = useState('');
+    const [password, setPassword] = useState('');
+    const [temp, setTemp] = useState('');
+    const [pageError, setPageError] = useState('');
+
+
+    const handleChange = (e) => 
+    {
+        isValidEmail(temp, email) ? setPageError('') : setPageError('Please enter a valid email')
+    }
+
+
+    const handleSubmit = async(event) => {
+        event.preventDefault(); 
+
+        try{
+
+            const response = signIn({
+                email: email, 
+                password: password,
+                rememberMe: rememberMe
+            })
+        } catch (error) {
+            console.log("Login successful: " , response.status);
+        }
+    };
 
     return(
         <AuthLayout title='STUDENT REGISTRATION'
@@ -14,12 +45,20 @@ function StudentRegister()
                             <div id='student-field-1'>
                                 <div className='input-field-1'>
                                     <label>First Name</label>
-                                    <input type="text"></input>
+                                    <input type="text"
+                                           value={firstName}
+                                           onChange={(e) => {setFirstName(e.target.value);
+                                                            handleChange(e);}}
+                                           required>
+                                    </input>
                                 </div>
 
                                 <div className='input-field-2'>
                                     <label>Last Name</label>
-                                    <input type="text"></input>
+                                    <input type="text"
+                                           value={lastName}
+                                           onChange={(e) => {setLastName(e.target.value); handleChange(e);}}
+                                           required></input>
                                 </div>
                             </div>
 
@@ -27,12 +66,20 @@ function StudentRegister()
                             <div id='student-field-2'>
                                 <div className='input-field-1'>
                                     <label>Student Email</label>
-                                    <input type="text"></input>
+                                    <input type="text"
+                                           value={email}
+                                           onChange={(e) => {setEmail(e.target.value); handleChange(e);}}
+                                           required>
+                                    </input>
                                 </div>
+                                            
 
                                 <div className='input-field-2'>
                                     <label>Student ID</label>
-                                    <input type="text"></input>
+                                    <input type="text"
+                                           value={studentId}
+                                           onChange={(e) => {setStudentId(e.target.value); handleChange(e);}}
+                                           required></input>
                                 </div>
                             </div>
 
@@ -40,12 +87,18 @@ function StudentRegister()
                             <div id='student-field-3'>
                                 <div className='input-field-1'>
                                     <label>Password</label>
-                                    <input type="text"></input>
+                                    <input type="text"
+                                           value={password}
+                                           onChange={(e) => {setPassword(e.target.value); handleChange(e);}}
+                                           required></input>
                                 </div>
 
                                 <div className='input-field-2'>
                                     <label>Re-enter password</label>
-                                    <input type="text"></input>
+                                    <input type="text"
+                                           value={temp}
+                                           onChange={(e) => {setTemp(e.target.value); handleChange(e);}}
+                                           required></input>
                                 </div>
                             </div>
 
