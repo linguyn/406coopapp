@@ -1,0 +1,72 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+  background-color: #ffffff;
+  margin: 0;
+  font-family: "Roboto", "Inter", Helvetica;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.auth-layout {
+    margin-top: 10vh;
+    padding: 20px; /* Thêm chút padding để không dính sát mép màn hình khi thu nhỏ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.auth-box {
+    display: flex;
+    width: 80vw;
+    min-width: 700px; /* Không cho cái box co lại quá mức gây nát layout */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1); /* Thêm tí bóng cho chuyên nghiệp */
+    background-color: #ffffff;
+    overflow: hidden; /* Đảm bảo các phần tử con không tràn ra ngoài bo góc nếu có */
+}
+
+.auth-left {
+    display: flex;
+    flex-direction: column;
+    flex: 3; /* Chiếm 3 phần chiều rộng */
+    min-width: 280px; /* Đảm bảo phần xanh đủ rộng để chứa chữ "SUPERVISOR" */
+    height: 80vh;
+    padding: 60px 40px;
+    gap: 24px;
+    background-color: #0C49A6;
+    color: #ffffff;
+}
+
+.auth-left h1 {
+    margin: 0;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    line-height: 1.2;
+    letter-spacing: -0.05rem;
+    text-decoration: underline;
+    width: 100%;
+    
+    /* FIX LỖI ĐÈ CHỮ: Ép từ dài xuống dòng */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.auth-left p {
+    margin: 0;
+    width: 100%;
+    font-size: clamp(0.9rem, 1.2vw, 1.2rem);
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.auth-right {
+    flex: 5; /* Chiếm 5 phần chiều rộng (rộng hơn bên trái) */
+    height: 80vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
