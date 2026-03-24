@@ -1,10 +1,10 @@
-const express = require('express');
-const appRouter = express.Router();
+import express from 'express';
+export const applicationsRouter = express.Router();
 
 import { tempApplications } from '../database-services.js';
 import { hasValidEmail, hasValidReason } from '../validate.js';
-import { HTTPError } from '../errors.js'
-import { authenticateToken } from '../server.js'; 
+import { HTTPError } from '../errors.js';
+import { authenticateToken } from '../server.js';
 
 /**
  * @api {POST} /api/applications/submit
@@ -21,7 +21,7 @@ import { authenticateToken } from '../server.js';
  * @error {500} {Object} - Internal server error
  */
 
-appRouter.post('/submit', authenticateToken, (req, res, next) => {
+applicationsRouter.post('/submit', authenticateToken, (req, res, next) => {
     const { firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink } = req.body;
     try {
         if (!firstName.trim() || !lastName.trim()) { throw new HTTPError(400, "First and last name is required"); }

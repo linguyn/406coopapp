@@ -10,7 +10,7 @@ import { USER_DETAILS } from './constants.js';
  * @returns {boolean} True if the email passes the regex check
  */
 
-function hasValidEmail(email) {
+export function hasValidEmail(email) {
     return email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
