@@ -64,7 +64,8 @@ export const LIST_CRITERIA = {
 export const API = {
     prefixes : {
         user : "/api/user",
-        auth : "/api/auth"
+        auth : "/api/auth",
+        applications : "/api/applications"
     }
 };
 
