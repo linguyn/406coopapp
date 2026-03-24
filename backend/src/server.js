@@ -9,6 +9,10 @@ import { API, TOKEN_OPTIONS } from './constants.js';
 import jwt from 'jsonwebtoken';
 import { HTTPError } from './errors.js';
 import cookieParser from 'cookie-parser';
+import Coor from './models/Coordinator.js';
+import Student from './models/Student.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
 
 // TODO: connect to database and reconfigure database-services to actual database
 // TODO: add secrets instructions to README
@@ -27,7 +31,7 @@ const app = express();
     The cors add-on is a way of permitting the communication
 */
 app.use(cors({
-    origin : `https://localhost:${frontendPort}`,   // frontend url
+    origin : `http://localhost:${frontendPort}`,   // frontend url
     credentials : true  // allow cookies
 }));  
 
@@ -41,6 +45,28 @@ app.use(cookieParser());
 app.use(API.prefixes.auth, authRouter);
 app.use(API.prefixes.user, userRouter);
 app.use(API.prefixes.applications, applicationsRouter);
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Co-op app',
+            description: 'API for co-op app',
+            version: '1.0.0'
+        },
+        servers : [{url : `http://localhost:${backendPort}`}]
+    },
+    apis: [
+        './src/routes/*.js',
+        './src/models/*.js',
+        './src/errors.js'
+    ]
+}
+
+const swaggerDoc = swaggerJsDoc(swaggerOptions);
+
+app.use('/api-docs', swaggerUi.serve);
+app.use('/api-docs', swaggerUi.setup(swaggerDoc));
 
 /**
  * @function generateAccessToken
@@ -67,7 +93,7 @@ export function generateAccessToken(id, role) {
  * @returns {String} token - The unique refresh token
  */
 
-export function generateRefreshToken(id, role, isLong) {
+export function generateRefreshToken(id, role, isLong = false) {
     let refreshOptions;
     if (isLong) { refreshOptions = TOKEN_OPTIONS.refreshLong; } 
     else { refreshOptions = TOKEN_OPTIONS.refreshShort; }
@@ -92,6 +118,8 @@ export function authenticateToken(req, res, next) {
         // get the token from the second part of string i.e. authorization : Bearer <token>
         const token = header.split(' ')[1];
 
+        if (!token) { throw new HTTPError("Bearer token not found", 401); }
+        
         const decodedPayload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
         req.user = decodedPayload;
