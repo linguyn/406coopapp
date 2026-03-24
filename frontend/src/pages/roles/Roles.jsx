@@ -18,7 +18,7 @@ function Roles () {
                 </div>
 
 
-                <div className='main-box'>
+                <div className='main-box-roles'>
 
                     <div className='student-card'>
                         <h1>STUDENT</h1>

@@ -4,6 +4,7 @@ import StudentRegister from './pages/signup/StudentRegister';
 import SupervisorHomepage from './pages/homepage/SupervisorHomepage';
 import SupervisorRegister from './pages/signup/SupervisorRegister';
 import Roles from './pages/roles/Roles';
+import UserList from './pages/userList/UserList';
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom'; 
 function App() {
     const applicantData = [{title: "kevony"}]
@@ -11,7 +12,7 @@ function App() {
     /*
     <UserList title="APPLICANT LIST" users={applicantData}/>
     */
-   
+    
     <BrowserRouter>
       <Routes>
           <Route path='/login' element={<Login />}/>
@@ -22,6 +23,7 @@ function App() {
           <Route path='/roles' element={<Roles />}/>
       </Routes>
     </BrowserRouter>   
+
 
 
   );

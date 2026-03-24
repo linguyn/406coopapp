@@ -112,13 +112,15 @@ body {
   border: none;
   width: 82%;
   height: 46px;
-  font-size: 0.9rem;
   padding-left: 35px;
+  border-radius: 4px; 
+  transition: background 0.3s;
 }
 
 .input input[type='email']:hover,
 .input input[type='password']:hover {
   background-color: #eaeaea;
+  
 }
 
 .input input[type='email']:focus,
@@ -221,6 +223,7 @@ body {
   color: #FFFFFF;
   font-weight: bold;
   letter-spacing: 1px;
+  transition: background 0.3s;
 }
 
 
