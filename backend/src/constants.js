@@ -1,36 +1,60 @@
 const BASE_FUZZY = [ "name", "email"];
-const BASE_SAFE = [ "name", "email", "status"];
+const BASE_SAFE = [ "firstName", "lastName", "email", "status", "role"];
 
 export const USER_DETAILS = {
     roles : {
         student : "student",
-        applicant : "applicant",
         supervisor : "supervisor",
         coordinator : "coordinator",
         admin : "admin"
     },
-    studentStatuses : ["searching", "placed"],
-    applicantStatuses : ["applying", "applied", "offered", "rejected", "waitlisted", "probation"],
+    studentStatuses : ["applying", "applied", "offered", "rejected", "waitlisted", "probation", "searching", "placed"],
     supervisorStatuses : ["active", "inactive"],
     fuzzyFilters : {
         student : [...BASE_FUZZY, "studentId"],
-        applicant : [...BASE_FUZZY, "studentId"],
         supervisor : [...BASE_FUZZY, "company"],
         coordinator : [...BASE_FUZZY]
     },
     exactFilters : {
-        student : ["status", "program", "date"],
-        applicant : ["status", "program", "date", "gpa", "year"],
+        student : ["status", "program", "date", "gpa", "year"],
         supervisor : ["status"],
         coordinator : []
     },
     safeFields : {
-        student : [...BASE_SAFE, "studentId", "program", "applications", "report", "reflection"],
-        applicant : [...BASE_SAFE, "date", "studentId", "program", "year", "gpa", "coverLetter", "resume", "transcript"],
+        student : [...BASE_SAFE, "studentId", "applications", "report", "reflection", "date", "year", "program", "gpa", "coverLetter", "resume", "transcript", "location"],
         supervisor : [...BASE_SAFE, "company", "jobTitle", "report", "interns"],
         coordinator : [...BASE_SAFE]
+    },
+    fieldConstraints : {
+        lengthStudentId : 9,
+        minPasswordLength : 8,
+        maxPasswordLength : 32
     }
 };
+
+export const REGISTRATION_FIELDS = {
+    // NOTE: general fields apply to every user type
+    required : {
+        general : ["role", "firstName", "lastName", "email", "password", "passwordAgain"],
+        student : ["studentId"],
+        coordinator : [],
+        supervisor : ["company"]
+    },
+    optional : {
+        general : [],
+        student : ["report", "reflection", "applications", "status", "location", "resume", "coverLetter", "transcript", "program", "gpa", "year"],
+        coordinator : [],
+        supervisor : ["jobTitle", "status", "location", "interns"]
+    }
+}
+
+export const CLEANING = {
+    options : {
+        trimOnly : ["firstName", "lastName", "report", "reflection", "jobTitle", "company", "location", "program", "gpa", "studentId"],
+        lookUps : ["email", "id", "role", "status"],
+        booleans : ["rememberMe"]
+    }
+}
 
 export const LIST_CRITERIA = {
     sorting : ["name", "email", "applications", "status", "studentId"],
@@ -46,7 +70,7 @@ export const API = {
 
 export const TOKEN_OPTIONS = {
     refreshCookie : {
-        secure : true,              // only used with https
+        secure : false,              // only used with https
         httpOnly : true,            // only accessible by a web server
         path : '/',                 // cookie is visible to all routes
         sameSite : "lax"            // allows cookie to be sent across websites

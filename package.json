@@ -1,7 +1,7 @@
 {
   "name": "406coopapp",
   "version": "1.0.0",
-  "description": "",
+  "description": "* This project is divided into two main sections: backend and frontend\r * In the backend folder you will find the express server and all of the resources the backend and database teams create\r * In the frontend folder you will find the react app and all of the resources the frontend team creates\r * Each section, including the root, has a unique package.json which serves as a \"recipe\" containing related metadata, scripts, and dependencies\r * By following the instructions below, these recipes will tell node the dependencies that it needs to install or the files it should run when you use the developer commands\r * We have installed a react dependency in the frontend folder, but the frontend team should determine which dependencies they actually need and install/uninstall accordingly\r * Please do not hesitate to reach out if you encounter an issue or need help understanding how something works",
   "scripts": {
     "install-all": "npm install && npm install --prefix backend && npm install --prefix frontend",
     "server": "npm run dev --prefix backend",
@@ -20,7 +20,38 @@
   "devDependencies": {
     "concurrently": "^9.2.1"
   },
+  "main": "index.js",
   "dependencies": {
+    "ansi-regex": "^5.0.1",
+    "ansi-styles": "^4.3.0",
+    "chalk": "^4.1.2",
+    "cliui": "^8.0.1",
+    "color-convert": "^2.0.1",
+    "color-name": "^1.1.4",
+    "dotenv": "^17.3.1",
+    "emoji-regex": "^8.0.0",
+    "escalade": "^3.2.0",
+    "express": "^5.2.1",
+    "get-caller-file": "^2.0.5",
+    "has-flag": "^4.0.0",
+    "is-fullwidth-code-point": "^3.0.0",
+    "mongoose": "^9.3.1",
+    "require-directory": "^2.1.1",
+    "rxjs": "^7.8.2",
+    "shell-quote": "^1.8.3",
+    "string-width": "^4.2.3",
+    "strip-ansi": "^6.0.1",
+    "supports-color": "^8.1.1",
+    "tree-kill": "^1.2.2",
+    "tslib": "^2.8.1",
+    "wrap-ansi": "^7.0.0",
+    "y18n": "^5.0.8",
+    "yargs": "^17.7.2",
+    "yargs-parser": "^21.1.1",
     "react-router-dom": "^7.13.1"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/IsAlexAvailable/406coopapp/issues"
+  },
+  "homepage": "https://github.com/IsAlexAvailable/406coopapp#readme"
 }

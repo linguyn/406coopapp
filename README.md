@@ -88,3 +88,12 @@ npm install <dependency> --prefix <directory-name>   # Installs a dependency in 
 npm uninstall <dependency> --prefix <directory-name> # Uninstalls a dependency in the specified directory
 ```
 
+## 5. Accessing API documentation
+
+After starting the backend server, find a deatiled view of the API by navigating to:
+
+```bash
+http://localhost:<BACKEND_PORT>/api-docs/   # replace <BACKEND_PORT> with the port your server is running on (likely 5000 or 5005)
+```
+
+This documentation allows you to see request/response requirements for the api endpoints and test them with sample input.

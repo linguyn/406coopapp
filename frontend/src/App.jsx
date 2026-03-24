@@ -68,9 +68,15 @@ const fakeApplicantData = [
 ];
 
 function App() {
-
+    const applicantData = [{title: "kevony"}]
   return (
+<<<<<<< HEAD
         
+=======
+    
+    <UserList title="APPLICANT LIST" users={applicantData}/>
+
+>>>>>>> main
     /*
     <BrowserRouter>
       <Routes>

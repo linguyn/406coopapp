@@ -1,52 +1,58 @@
 import { USER_DETAILS } from './constants.js';
 
 // TODO: move validation to schemas eventually so you can just call the validation from the schema
-// TODO: name should be a mandatory param, at least for students
+// TODO: create hasStrongPassword validation (low priority)
+// TODO: better name regex (low priority)
 
 /**
- * @function hasValidEmail
+ * @function isValidEmail
  * @description Validates an email using regex
  * @param {String} email - An email
  * @returns {boolean} True if the email passes the regex check
  */
 
-function hasValidEmail(email) {
-    return email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function isValidEmail(email) {
+    const isEmail = (string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(string);
+    return isEmail(email);
 }
 
 /**
- * @function hasValidPassword
+ * @function isValidPassword
  * @description Validates a password
  * @param {String} password - A password
  * @returns {boolean} True if the password passes the length check
  */
 
-function hasValidPassword(password) {
-    return password && password.trim().length >= 8 && password.trim().length <= 32;
+function isValidPassword(password) {
+    const minLength = USER_DETAILS.fieldConstraints.minPasswordLength;
+    const maxLength = USER_DETAILS.fieldConstraints.maxPasswordLength;
+    return password.length >= minLength && password.length <= maxLength;
 }
 
 /**
- * @function hasValidStudentId
- * @description Validates a studentId
+ * @function isValidStudentId
+ * @description Validates a studentId using regex
  * @param {String} studentId - A studentId
- * @returns {boolean} True if the studentId passes the regex and length check
+ * @returns {boolean} True if the studentId passes the regex check
  */
 
-function hasValidStudentId(studentId) {
-    const isNumber = (string) => /^\d+$/.test(string);
-    return studentId.trim().length === 9 && isNumber(studentId);
+function isValidStudentId(studentId) {
+    const length = USER_DETAILS.fieldConstraints.lengthStudentId;
+    // this regex verifies the studentId consists of exactly 9 digits
+    const regex = new RegExp(`^\\d{${length}}$`);
+    return regex.test(studentId);
 }
 
 /**
- * @function hasValidName
+ * @function isValidName
  * @description Validates a name
  * @param {String} name 
- * @returns {boolean} True if the name passes the regex and length check
+ * @returns {boolean} True if the name passes the regex check
  */
 
-function hasValidName(name) {
-    const isName = (string) => /^[a-zA-Z\-\s']+$/.test(string);
-    return name.trim().length > 0 && isName(name);
+function isValidName(name) {
+    const isName = (string) => /^[a-zA-Z][a-zA-Z\-\s']*[a-zA-Z]$/.test(string);
+    return isName(name);
 }
 
 /**
@@ -58,26 +64,28 @@ function hasValidName(name) {
  */
 
 function isValidOptional(option, testFunc) {
-    return !option || testFunc(option);
+    return option === null || testFunc(option);
 } 
+
+function isValidUser(email, password, firstName, lastName) {
+    return (isValidEmail(email) && isValidPassword(password) && isValidName(firstName) && isValidName(lastName));
+}
 
 /**
  * @function isValidStudent
- * @description Ensures mandatory fields are present and fields have the valid format
- * @param {Object} studentData - contains all the student registration fields
+ * @description Checks if required student fields follow the valid format
+ * @param {Object} studentData - contains all of the student registration fields
  * @param {String} studentData.email
  * @param {String} studentData.password
  * @param {String} studentData.studentId
- * @param {String} [supervisorData.name] - optional
+ * @param {String} studentData.firstName
+ * @param {String} studentData.lastName
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidStudent({email, password, studentId, name}) {
-    if (!hasValidEmail(email) || !hasValidPassword(password) || !hasValidStudentId(studentId)) { return false; }
-
-    const hasValidOptional = isValidOptional(name, hasValidName);
-
-    return hasValidOptional;
+export function isValidStudent({email, password, studentId, firstName, lastName}) {
+    if (!isValidUser(email, password, firstName, lastName)) { return false; }
+    return isValidStudentId(studentId);
 }
 
 /**
@@ -90,12 +98,8 @@ export function isValidStudent({email, password, studentId, name}) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidCoordinator({email, password, name}) {
-    if (!hasValidEmail(email) || !hasValidPassword(password)) { return false; }
-
-    const hasValidOptional = isValidOptional(name, hasValidName);
-
-    return hasValidOptional;
+export function isValidCoordinator({email, password, firstName, lastName}) {
+    return isValidUser(email, password, firstName, lastName);
 }
 
 /**
@@ -111,15 +115,13 @@ export function isValidCoordinator({email, password, name}) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidSupervisor({email, password, company, location, jobTitle, name}) {
-    // does existence and format checks
-    if (!hasValidEmail(email) || !hasValidPassword(password) || !hasValidName(company)) { return false; }
+export function isValidSupervisor({email, password, company, location, jobTitle, firstName, lastName}) {
+    if (!isValidUser(email, password, firstName, lastName) || !isValidName(company)) { return false; }
 
-    // ensures all options are valid
+    // ensures all optionals are valid
     const hasValidOptionals = [
-        isValidOptional(name, hasValidName),
-        isValidOptional(location, hasValidName),
-        isValidOptional(jobTitle, hasValidName)
+        isValidOptional(location, isValidName),
+        isValidOptional(jobTitle, isValidName)
     ].every(optional => optional);
 
     return hasValidOptionals;
@@ -133,8 +135,8 @@ export function isValidSupervisor({email, password, company, location, jobTitle,
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidLoginAttempt(email, password) {
-    return hasValidEmail(email) && hasValidPassword(password);
+export function isValidLogin(email, password) {
+    return isValidEmail(email) && isValidPassword(password);
 }
 
 /**
@@ -146,5 +148,5 @@ export function isValidLoginAttempt(email, password) {
  */
 
 export function isValidStatusUpdate(status) {
-    return status && USER_DETAILS.studentStatuses.includes(status);
+    return USER_DETAILS.studentStatuses.includes(status);
 }
