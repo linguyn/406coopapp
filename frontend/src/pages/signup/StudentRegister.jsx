@@ -14,26 +14,13 @@ function StudentRegister()
     const [temp, setTemp] = useState('');
     const [pageError, setPageError] = useState('');
 
+    const handleSubmit = async (e) => {
+        e.preventDefault(); 
+        try { 
+            
+        } catch (error) { 
 
-    const handleChange = (e) => 
-    {
-        isValidEmail(temp, email) ? setPageError('') : setPageError('Please enter a valid email')
-    }
-
-
-    const handleSubmit = async(event) => {
-        event.preventDefault(); 
-
-        try{
-
-            const response = signIn({
-                email: email, 
-                password: password,
-                rememberMe: rememberMe
-            })
-        } catch (error) {
-            console.log("Login successful: " , response.status);
-        }
+        }; 
     };
 
     return(
@@ -47,8 +34,7 @@ function StudentRegister()
                                     <label>First Name</label>
                                     <input type="text"
                                            value={firstName}
-                                           onChange={(e) => {setFirstName(e.target.value);
-                                                            handleChange(e);}}
+                                           onChange={(e) => setFirstName(e.target.value)}
                                            required>
                                     </input>
                                 </div>
@@ -57,7 +43,7 @@ function StudentRegister()
                                     <label>Last Name</label>
                                     <input type="text"
                                            value={lastName}
-                                           onChange={(e) => {setLastName(e.target.value); handleChange(e);}}
+                                           onChange={(e) => setLastName(e.target.value)}
                                            required></input>
                                 </div>
                             </div>
@@ -68,7 +54,7 @@ function StudentRegister()
                                     <label>Student Email</label>
                                     <input type="text"
                                            value={email}
-                                           onChange={(e) => {setEmail(e.target.value); handleChange(e);}}
+                                           onChange={(e) => setEmail(e.target.value)}
                                            required>
                                     </input>
                                 </div>
@@ -78,7 +64,7 @@ function StudentRegister()
                                     <label>Student ID</label>
                                     <input type="text"
                                            value={studentId}
-                                           onChange={(e) => {setStudentId(e.target.value); handleChange(e);}}
+                                           onChange={(e) => setStudentId(e.target.value)}
                                            required></input>
                                 </div>
                             </div>
@@ -89,7 +75,7 @@ function StudentRegister()
                                     <label>Password</label>
                                     <input type="text"
                                            value={password}
-                                           onChange={(e) => {setPassword(e.target.value); handleChange(e);}}
+                                           onChange={(e) => setPassword(e.target.value)}
                                            required></input>
                                 </div>
 
@@ -97,13 +83,17 @@ function StudentRegister()
                                     <label>Re-enter password</label>
                                     <input type="text"
                                            value={temp}
-                                           onChange={(e) => {setTemp(e.target.value); handleChange(e);}}
+                                           onChange={(e) => setTemp(e.target.value)}
                                            required></input>
                                 </div>
                             </div>
 
 
-
+                            {pageError && (
+                                        <div className='register-error'>
+                                        <p className='student-error'>{pageError}</p>
+                                        </div>
+                                    )}
 
                             <div id='student-field-4'>
                                 <button className='blue-button'>Register</button>

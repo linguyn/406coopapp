@@ -1,0 +1,130 @@
+
+.main-page{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #F8F8F8;
+    letter-spacing: -7%;
+}
+
+.main-box{
+    height: 98vh;
+    width: 98vw;
+    background-color: white;
+    border: black 1px solid;
+    border-radius: 20px;
+    font-family: "Roboto", "Inter", Helvetica ;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.main-title{
+    color: #0C49A6;
+    font-size: 5rem;
+    letter-spacing: -5px;
+    margin-top: 5%;
+    margin-left: 5%;
+}
+
+.homepage{
+    display: flex;
+    align-items: center;
+    width: 15%;
+    font-size: 2rem;
+    margin-top: 2%;
+    color: #444E5E;
+}
+
+.home-icon{
+    width: 15%;
+    max-width: 40px;
+    margin-right: 2%;
+}
+
+.list-select{
+    display: flex;
+    flex-direction: row;
+    margin-left: 5%;
+    gap: 60px;
+    font-family: "Roboto", "Inter", Helvetica ;
+    
+}
+
+.current-list{
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+h2{
+    font-size: 1.8rem;
+    font-weight: 100;
+}
+
+hr{
+    width: 95vw;
+    border: 0;
+    border-top: black solid;
+}
+
+.entry-search-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5%;
+    margin-left: 4%;
+    margin-right: 4%;
+}
+
+.entries{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    width: 20%;
+}
+
+.select-number-entries{
+    height:80%;
+    width: 50%;
+    max-width: 50px;
+    font-weight: bold;
+    font-size: 1rem;
+    padding:5px;
+    border-radius: 5px;
+    border: 1px #444E5E solid;
+}
+
+.entry-text{
+    color: #5E4448;
+    opacity: 50%;
+}
+
+.search-section{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 50%;
+    gap: 20px;
+}
+
+input[type="search"]{
+    height: 35px;
+    width: 320px;
+    border-radius: 5px;
+    border: 1px #444E5E solid;
+}
+
+.search-bar{
+    position: relative;
+}
+
+.search-icon{
+    position:absolute;
+    width: 15%;
+    max-width: 38px;
+    right: 5px;
+}
