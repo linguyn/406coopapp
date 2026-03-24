@@ -1,9 +1,14 @@
 import './UserList.css'
 import HomeIcon from '../../assets/whiteHome.svg'
 import SearchIcon from '../../assets/searchIcon.svg'
+import LeftArrowIcon from '../../assets/leftArrow.svg'
+import RightArrowIcon from '../../assets/rightArrow.svg'
+import DataTable from '../../components/DataTable.jsx'
+
 
 function UserList(props){
     return(
+        
         <div className='main-page'>
 
             <div className='main-box'>
@@ -30,12 +35,12 @@ function UserList(props){
                 
                     <div className='entries'>
 
-                        <select className='select-number-entries'>
+                        <select className='select-number-entries' defaultValue={5}>
                             <option value='1'>1</option>
                             <option value='2'>2</option>
                             <option value='3'>3</option>
                             <option value='4'>4</option>
-                            <option value='5'selected>5</option>
+                            <option value='5'>5</option>
                         </select>
 
                         <h2 className='entry-text'>Entries per page</h2>
@@ -55,6 +60,15 @@ function UserList(props){
 
                 </div>
 
+            <DataTable applicantData={props.applicantData}></DataTable>
+
+                <div className='bottom-header'>
+                    <h2>5 of 5</h2>
+                    <img src={LeftArrowIcon} ></img>
+                    <img src={RightArrowIcon} ></img>
+                    
+
+                </div>
             </div>
         </div>
     );
