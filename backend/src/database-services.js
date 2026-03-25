@@ -142,6 +142,21 @@ export function addApplicationToDatabase({firstName, lastName, studentId, school
     return newApp;
 }
 
+export function updateApplication(applicationId, newAppData) {
+    const application = tempApplications.find(app => app.id === applicationId);
+    if (!application) {
+        throw new HTTPError("Application not found", 404);
+    }
+    if (newAppData.firstName) { application.firstName = newAppData.firstName.trim(); }
+    if (newAppData.lastName) { application.lastName = newAppData.lastName.trim(); }
+    if (newAppData.studentId) { application.studentId = newAppData.studentId.trim(); }
+    if (newAppData.schoolEmail) { application.schoolEmail = newAppData.schoolEmail.trim(); }
+    if (typeof newAppData.eligibility === "boolean") { application.eligibility = newAppData.eligibility; }
+    if (newAppData.reasonToApply) { application.reasonToApply = newAppData.reasonToApply.trim(); }
+    if (newAppData.portfolioLink) { application.portfolioLink = newAppData.portfolioLink.trim(); }
+    return application;
+}
+
 export function addStudentToDatabase({email, password, studentId, firstName, lastName, program, applications, status, report, reflection, gpa, year, date, coverLetter, resume, transcript, location}) {
     const newStudent = {
         studentId : studentId,
