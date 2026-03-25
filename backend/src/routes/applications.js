@@ -1,7 +1,7 @@
 import express from 'express';
 export const applicationsRouter = express.Router();
 
-import { tempApplications } from '../database-services.js';
+import { tempApplications, updateApplication } from '../database-services.js';
 import { isValidEmail, hasValidReason } from '../validate.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
@@ -46,6 +46,18 @@ applicationsRouter.post('/submit', authenticateToken, (req, res, next) => {
         return res.status(201).json({ 
             message: "Application submitted successfully", 
             applicationId: newApp.id });
+    } catch (error) {
+        next(error);
+    }
+});
+
+applicationsRouter.patch('/update/:id', authenticateToken, (req, res, next) => {
+    try {
+        const updatedApplication = updateApplication(parseInt(req.params.id), req.body);
+        return res.status(200).json({
+            message: "Application updated successfully",
+            application: updatedApplication
+        });
     } catch (error) {
         next(error);
     }
