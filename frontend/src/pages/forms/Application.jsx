@@ -1,4 +1,4 @@
-import './StudentRegister.css'
+import './Application.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import AuthLayout from '../../components/AuthLayout';
@@ -6,8 +6,7 @@ import { signIn } from '../../services/authService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function StudentRegister()
-{
+function Application() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -19,38 +18,17 @@ function StudentRegister()
     const [visibleTemp, setVisibleTemp] = useState(false); 
     const navigate = useNavigate(); 
 
-    const handleSubmit = async (e) => {
-        e.preventDefault(); 
-        try { 
-            const response = await signIn({
-                role: 'student', 
-                email: email, 
-                password: password, 
-                passwordAgain: temp, 
-                firstName: firstName, 
-                lastName: lastName, 
-                studentId: studentId
-            });
+    const handleSubmit = (e) => { 
+        null; 
+    }
 
-
-            if (response.status == 200 || response){
-                console.log("Register successful: ", response.data);
-                navigate('/login'); 
-            }
-        } catch (error) { 
-            const msg = error.response?.data.message;
-            console.error(msg);
-            setPageError(msg);
-        }; 
-    };
-
-    return(
-        <AuthLayout title='STUDENT REGISTRATION'
-                    description='“Access the university Co-op portal to manage job applications, track your application status, and submit required reports.”'
+    return (
+        <AuthLayout title='CO-OP APPLICATION'
+                    description='"Fill out the application with your placement details and required documents. Once submitted, your faculty supervisor will review your application for Co-op credit eligibility."'
                     rightPanel={
-                        <form id='student-container' onSubmit={handleSubmit}>
+                        <form id='application-container' onSubmit={handleSubmit}>
                             
-                            <div id='student-field-1'>
+                            <div id='apply-field-1'>
                                 <div className='input-field-1'>
                                     <label>First Name</label>
                                     <input type="text"
@@ -72,7 +50,7 @@ function StudentRegister()
                             </div>
 
 
-                            <div id='student-field-2'>
+                            <div id='apply-field-2'>
                                 <div className='input-field-1'>
                                     <label>Student Email</label>
                                     <input type="email"
@@ -95,7 +73,7 @@ function StudentRegister()
                             </div>
 
 
-                            <div id='student-field-3'>
+                            <div id='apply-field-3'>
                                 <div className='input-field-1'>
                                     <label>Password</label>
                                     <div className='register-icon-field'>
@@ -140,12 +118,11 @@ function StudentRegister()
                             
                         </form>
                     }
+        
+        
         />
-    );
 
-};
+    ); 
+} 
 
-export default StudentRegister;
-
-
-
+export default Application; 
