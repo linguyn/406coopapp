@@ -9,12 +9,11 @@ import DataTable from '../../components/DataTable.jsx'
 
 function UserList(props){
 
-    const [listType, setListName] = useState("applicant")
-    const [userData, setUserData] = useState(props.applicantData)
-    const [totalNumberOfUsers, setTotalNumberOfUsers] = useState(props.applicantData.length)
+    const [listType, setListName] = useState(props.listType)
+    const [userData, setUserData] = useState(props.starterData)
+    const [totalNumberOfUsers, setTotalNumberOfUsers] = useState(props.starterData.length)
     const [currentPage, setCurrentPage] = useState(1)
     const [usersPerPage, setUsersPerPage] = useState(5)
-    console.log(totalNumberOfUsers)
 
     //pages logic
     const endIndex = currentPage * usersPerPage;
@@ -34,7 +33,7 @@ function UserList(props){
         }
     }
     //title change 
-    const [titleName, setName] = useState("APPLICANT LIST");
+    const [titleName, setName] = useState(`${props.listType.toUpperCase()} LIST`);
 
     function toggleSelected(arg){
         const element = document.getElementById(arg)
@@ -94,7 +93,6 @@ function UserList(props){
 
     const handleChangeNumberOfEntries = (e) => {
         setUsersPerPage(e.target.value);
-        console.log(e.target.value);
     }
 ``
     return(
@@ -114,9 +112,9 @@ function UserList(props){
                 </div>
 
                 <div className='list-select'> 
-                    <h2 className='current-list' id='applicant' onClick={() => updateTitleName("applicant")}> Applicants </h2>
-                    <h2 id='coop-student' onClick={() => updateTitleName("coop-student")}> Co-op Students </h2>
-                    <h2 id='supervisor' onClick={() => updateTitleName("supervisor")}> Supervisors </h2>
+                    <h2 className={String(props.listType) === 'applicant' ? 'current-list' : ''} id='applicant' onClick={() => updateTitleName("applicant")}> Applicants </h2>
+                    <h2 className={String(props.listType) === 'coop-student' ? 'current-list' : ''} id='coop-student' onClick={() => updateTitleName("coop-student")}> Co-op Students </h2>
+                    <h2 className={String(props.listType) === 'supervisor' ? 'current-list' : ''} id='supervisor' onClick={() => updateTitleName("supervisor")}> Supervisors </h2>
                 </div>
             
                 <hr></hr>

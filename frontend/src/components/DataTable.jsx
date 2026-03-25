@@ -77,11 +77,16 @@ const coopStudentListHeaders = [
     },
     {
         id: 6,
+        KEY: "interviews",
+        LABEL: "Interviews",
+    },
+    {
+        id: 7,
         KEY: "report",
         LABEL: "Progress Report",
     },
     {
-        id: 7,
+        id: 8,
         KEY: "status",
         LABEL: "Status",
     }
@@ -135,10 +140,7 @@ function DataTable(props) {
     const listType = (listTypeMap.get(String(props.listType)));
 
     const users = props.userData
-    console.log(props.listType)
-    console.log(users)
-    console.log(listType)
-
+    
     return(
         <div className="data-table">
 

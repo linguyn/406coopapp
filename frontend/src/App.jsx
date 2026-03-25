@@ -135,11 +135,16 @@ function App() {
           <Route path='/student/register' element={<StudentRegister />}/>
           <Route path='/supervisor/register' element={<SupervisorRegister />}/>
           <Route path='/roles' element={<Roles />}/>
+
+          {/*coordinator list*/}
+          <Route path='/coordinator/applicant-list' element={<UserList starterData={fakeApplicantData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"applicant"}/>}></Route>
+          <Route path='/coordinator/student-list' element={<UserList starterData={fakeStudentData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"coop-student"}/>}></Route>
+          <Route path='/coordinator/supervisor-list' element={<UserList starterData={fakeSupervisorData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"supervisor"}/>}></Route>
       </Routes>
     </BrowserRouter>   
 
 
-     /* ignore this, just to see my ui (uncomment to see) 
+    /* ignore this, just to see my ui (uncomment to see) 
     <UserList applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData}/>
     */
   );
