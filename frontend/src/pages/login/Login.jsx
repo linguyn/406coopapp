@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faLock, faUser, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { loginUser } from '../../services/authService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 
 function Login() {
@@ -11,10 +11,8 @@ function Login() {
     const [password, setPassword] = useState(''); 
     const [visible, setVisible] = useState(false);
     const [serverError, setServerError] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
-
-
-
 
 
     const handleSubmit = async (event) => {
@@ -25,7 +23,8 @@ function Login() {
             const response = await loginUser(
                 {
                     email: email, 
-                    password: password
+                    password: password,
+                    rememberMe: rememberMe
                 });
 
             if (response.status == 200 || response) {
@@ -56,9 +55,9 @@ function Login() {
             </div>
 
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className='right-panel'>
                 {/* user inputs for email + password */}
-                <div className='right-panel'>
+
 
                     <h1>SIGN IN</h1>
 
@@ -72,7 +71,7 @@ function Login() {
                             <label className='email-label'>Email</label>
 
                             <div className='input-field'>
-                                <FontAwesomeIcon icon={faUser} className='icon'/>
+                                <FontAwesomeIcon icon={faUser} className='login-icon'/>
                                 <input type="email"
                                         placeholder='E-mail'
                                         value={email}
@@ -88,7 +87,7 @@ function Login() {
                             <label className='password-label'>Password</label>
 
                             <div className='input-field'>
-                                <FontAwesomeIcon icon={faLock} className='icon'/>
+                                <FontAwesomeIcon icon={faLock} className='login-icon'/>
                                 <input
                                     type={visible ? "text" : "password"} 
                                     value={password}
@@ -108,7 +107,9 @@ function Login() {
                     <div className="options-row">
 
                         <div className="remember-me">
-                            <input type="checkbox" id="remember"/>
+                            <input type="checkbox" 
+                                   id="remember"
+                                   onChange={(e) => setRememberMe(e.target.checked)}/>
                             <label htmlFor="remember">Remember me</label>
                         </div>
 
@@ -131,14 +132,10 @@ function Login() {
 
 
                         <div className='create-account'>
-                            <a href=''>Create Account</a>
+                            <Link to="/roles">Create Account</Link>
                         </div>
                     </div>
 
-
-
-
-                </div>
             </form>
 
         </div>

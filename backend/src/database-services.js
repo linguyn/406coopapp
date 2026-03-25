@@ -1,6 +1,6 @@
 import { HTTPError } from "./errors.js";
 
-// TEMP REPRESENTATION OF USERS
+// TEMP REPRESENTATION OF USERS AND APPLICATIONS
 
 export let tempUsers = [
         {
@@ -81,6 +81,18 @@ export let tempUsers = [
             role: 'coordinator',
             id: '1741766400008'
         }
+]
+
+export let tempApplications = [
+    {
+        firstName: "Michael",
+        lastName: "Scott",
+        studentId: "123456789",
+        schoolEmail: "michael.scott@example.com",
+        eligibility: true,
+        reasonToApply: "I'm the most creative boss.",
+        portfolioLink: "https://www.example.com/portfolio/michael-scott"
+    },
 ]
 
 export function addCoordinatorToDatabase({email, password, firstName, lastName}) {
