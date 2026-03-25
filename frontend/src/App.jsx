@@ -4,6 +4,7 @@ import StudentRegister from './pages/signup/StudentRegister';
 import SupervisorHomepage from './pages/homepage/SupervisorHomepage';
 import SupervisorRegister from './pages/signup/SupervisorRegister';
 import Roles from './pages/roles/Roles';
+import Application from './pages/forms/Application';
 import UserList from './pages/userList/UserList';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
 import ThankYouPage from './pages/thankYouPage/ThankYouPage';
@@ -151,6 +152,10 @@ function App() {
           <Route path= 'applicant/application-status/under-review' element={<ApplicantStatusPage status={"underReview"}></ApplicantStatusPage>}></Route>
           <Route path= 'applicant/application-status/accepted' element={<ApplicantStatusPage status={"accepted"}></ApplicantStatusPage>}></Route>
           <Route path= 'applicant/application-status/rejected' element={<ApplicantStatusPage status={"rejected"}></ApplicantStatusPage>}></Route>
+
+          {/*application page*/}
+          <Route path='/student/apply' element={<Application/>}/>
+
       </Routes>
     </BrowserRouter>   
 
