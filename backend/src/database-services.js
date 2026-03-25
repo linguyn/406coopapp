@@ -126,6 +126,22 @@ export function addSupervisorToDatabase({email, password, status, company, locat
     return newSupervisor;
 }
 
+export function addApplicationToDatabase({firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink}) {
+    const newApp = {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        studentId: studentId.trim(),
+        schoolEmail: schoolEmail.trim(),
+        eligibility,
+        reasonToApply: reasonToApply.trim(),
+        portfolioLink: portfolioLink ? portfolioLink.trim() : null,
+        submittedAt: new Date()
+    };
+
+    tempApplications.push(newApp);
+    return newApp;
+}
+
 export function addStudentToDatabase({email, password, studentId, firstName, lastName, program, applications, status, report, reflection, gpa, year, date, coverLetter, resume, transcript, location}) {
     const newStudent = {
         studentId : studentId,
