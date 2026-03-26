@@ -15,10 +15,8 @@ export function validateLogin(req, res, next) {
         // TODO: update when database implemented
         if (user.password !== password) { throw new HTTPError("Login information does not match", 422); }
 
-        const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[user.role]);
-
         // user is valid, can safely update the user field in req for further use
-        req.user = safeUser;
+        req.user = user;
         next();
     } catch(error) {
         next(error);

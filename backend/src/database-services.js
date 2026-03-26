@@ -4,54 +4,124 @@ import { HTTPError } from "./errors.js";
 
 export let tempUsers = [
         {
+            academics : {
+                program:"comp sci",
+                year:null,
+                gpa:null,
+                department:null
+            },
+            support : {
+                facultyAdvisors:null,
+                coordinators:null
+            },
+            documents : {
+                report:null,
+                reflection:null,
+                coverLetter:null,
+                resume:null,
+                transcript:null
+            },
+            termActivity : {
+                applications:null,
+                interviews:null,
+                workTerms:null,
+                startTerm:null
+            },
             studentId: '123456789',
             firstName : "alex",
             lastName : "something",
             email: 'jinwoo@example.ca',
             password: 'password123',
             role: 'student',
-            status : "searching",
+            status : "applied",
             id: '1741766400000',
-            program:"comp sci",
-            applications:3,
-            report:null,
-            reflection:null,
-            date:null,
-            year:null,
-            gpa:null,
-            coverLetter:null,
-            resume:null,
-            transcript:null
-
+            dateCreated:null,
+            isApplicant: true
         },
         {
+            academics : {
+                program:"comp sci",
+                year:null,
+                gpa:null,
+                department:null
+            },
+            support : {
+                facultyAdvisors:null,
+                coordinators:null
+            },
+            documents : {
+                report:null,
+                reflection:null,
+                coverLetter:null,
+                resume:null,
+                transcript:null
+            },
+            termActivity : {
+                applications:3,
+                interviews:null,
+                workTerms:null,
+                startTerm:null
+            },
             studentId: '423456789',
-            name : "anjani",
+            firstName : "anjani",
+            lastName : "the greatest",
             email: 'aaaatudent@example.ca',
             password: 'password123',
             role: 'student',
             status : "searching",
-            id: '1741766400001'
+            id: '1741766400001',
+            dateCreated:null,
+            isApplicant: true
         },
         {
+            academics : {
+                program:"comp sci",
+                year:null,
+                gpa:null,
+                department:null
+            },
+            support : {
+                facultyAdvisors:null,
+                coordinators:null
+            },
+            documents : {
+                report:null,
+                reflection:null,
+                coverLetter:null,
+                resume:null,
+                transcript:null
+            },
+            termActivity : {
+                applications:3,
+                interviews:null,
+                workTerms:null,
+                startTerm:null
+            },
             studentId: '323456789',
-            name : "linh",
+            firstName : "linh",
+            lastName : "the greatest",
             email: 'ffftudent@example.com',
             password: 'password123',
             role: 'student',
             status : "searching",
-            id: '1741766400002'
+            id: '1741766400002',
+            dateCreated:null,
+            isApplicant: false
         },
         {
             email: 'supervisor@example.ca',
             password: 'password123',
             role: 'supervisor',
+            firstName: 'kevin',
+            lastName: 'the goat',
             id: '1741766400003'
         },
         {
             email: 'aaaasupervisor@example.com',
             password: 'password123',
             role: 'supervisor',
+            firstName: 'jose',
+            lastName: 'the goat',
             id: '1741766400004'
         },
         {
@@ -62,7 +132,8 @@ export let tempUsers = [
         },
         {
             email: 'coordinator@example.com',
-            name : "jinwoo",
+            firstName : "jinwoo",
+            lastName : "sung",
             password: 'password123',
             role: 'coordinator',
             id: '1741766400006'
@@ -70,14 +141,16 @@ export let tempUsers = [
         {
             email: 'aaaacoordinator@example.com',
             password: 'password123',
-            name : "elijah",
+            firstName : "elijah",
+            lastName : "eliot",
             role: 'coordinator',
             id: '1741766400007'
         },
         {
             email: 'ffffffcoordinator@example.com',
             password: 'password123',
-            name:"trump",
+            firstName:"Donald",
+            lastName: "poopy",
             role: 'coordinator',
             id: '1741766400008'
         }
@@ -94,6 +167,18 @@ export let tempApplications = [
         portfolioLink: "https://www.example.com/portfolio/michael-scott"
     },
 ]
+
+export let tempStats = {
+    currentTerm : "winter 2026",
+    newPostings : 12,
+    openPostings : 144,
+    totalStudents : 6767,
+    totalActive : 6760,
+    totalPendingApproval : 67,
+    totalSeeking : 676,
+    totalInterviewing: 7,
+    totalPlaced: 6 
+}
 
 export function addCoordinatorToDatabase({email, password, firstName, lastName}) {
     const newCoordinator = {
@@ -200,11 +285,13 @@ export function getUserByEmail(email) {
 export function getUserById(id) {
     const user = tempUsers.find(user => user.id === id);
     if (!user) {
-        throw new HTTPError("User doesn't exist", 401);
+        throw new HTTPError("User doesn't exist", 404);
     }
     return user;
 }
 
+
+// deprecated, use a class such as UserResponse or UserLoginResponse to get a response-ready user
 /**
  * @function getSanitizedUser
  * @description Extracts a sanitized user, which copies all of the fields from the user as specified by options
@@ -219,6 +306,10 @@ export function getSanitizedUser(user, options) {
         return acc;
     }, {});
     return safeUser;
+}
+
+export function getGlobalStats() {
+    return tempStats;
 }
 
 export function updateUserStatus(user, newStatus) {
