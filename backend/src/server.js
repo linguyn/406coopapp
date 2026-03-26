@@ -49,21 +49,21 @@ app.use(express.json());
  *  */ 
 app.post('/api/students', async (req, res) => {
     try{  
-        const newStudent = new Student(req.body);
+        const newStudent = new Student(req.body); //move this line to auth.js
         const savedStudent = await newStudent.save();
         res.status(201).json(savedStudent);
     } catch (error) {
-        res.status(400).json({error: error.message});
+        res.status(400).json(error); 
     }
 });
 
-app.post('api/coordinators', async(req, res) => {
+app.post('/api/coordinators', async(req, res) => {
     try {
         const newCoordinator = new Coor(req.body);
         const savedCoordinator = await newCoordinator.save();
         res.status(201).json(savedCoordinator);
     } catch (error) {
-        res.status(400).json({error: error.message});
+        res.status(400).json(error);
     }
 });
 
