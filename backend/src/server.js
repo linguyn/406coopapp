@@ -88,12 +88,27 @@ const swaggerOptions = {
             description: 'API for co-op app',
             version: '1.0.0'
         },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [
+        {
+            bearerAuth: [],
+        },
+        ],
         servers : [{url : `http://localhost:${backendPort}`}]
     },
     apis: [
         './src/routes/*.js',
         './src/models/*.js',
-        './src/errors.js'
+        './src/errors.js',
+        './src/classes/*.js'
     ]
 }
 
