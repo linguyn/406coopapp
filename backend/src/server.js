@@ -11,8 +11,10 @@ import { HTTPError } from './errors.js';
 import cookieParser from 'cookie-parser';
 import Coor from './models/Coordinator.js';
 import Student from './models/Student.js';
+import connectDB from './database.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
+
 
 // TODO: connect to database and reconfigure database-services to actual database
 // TODO: add secrets instructions to README
@@ -22,6 +24,9 @@ dotenv.config()
 
 const backendPort = process.env.BACKEND_PORT || 5000;
 const frontendPort = process.env.FRONTEND_PORT || 3000;
+
+//Connect to MongoDB
+connectDB();
 
 const app = express();
 
@@ -37,6 +42,35 @@ app.use(cors({
 
 // parses JSON data from requests into a processable object (so that all you have to do is call req.body to get the object)
 app.use(express.json());
+
+
+//Creating a post route to input into the database.
+/** Still trying to figure out where to put 
+ *  */ 
+app.post('/api/students', async (req, res) => {
+    try{  
+        const newStudent = new Student(req.body); //move this line to auth.js
+        const savedStudent = await newStudent.save();
+        res.status(201).json(savedStudent);
+    } catch (error) {
+        res.status(400).json(error); 
+    }
+});
+
+app.post('/api/coordinators', async(req, res) => {
+    try {
+        const newCoordinator = new Coor(req.body);
+        const savedCoordinator = await newCoordinator.save();
+        res.status(201).json(savedCoordinator);
+    } catch (error) {
+        res.status(400).json(error);
+    }
+});
+
+
+
+
+
 
 // parses cookies from requests (so you can call req.cookies.<cookie-name> to get the cookie)
 app.use(cookieParser());
