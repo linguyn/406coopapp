@@ -28,8 +28,8 @@
  *                 interns: { type: DNE, example: DNE }
  *                 status: { type: string, example: active}
  *   examples:
- *     SupervisorRegister:
+ *     SupervisorRegisterEx:
  *       value: { role: supervisor, email: jinwoo@thegreatest.com, password: password123, passwordAgain: password123, firstName: Jin-Woo, lastName: Sung, company: Palantir, jobTitle: poopy, location: Idaho }
- *     SupervisorSanitized:
+ *     SupervisorSanitizedEx:
  *       value: { role: supervisor, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, company: Palantir, jobTitle: ploopy, location: Idaho, status: active, interns : DNE, id : "238945789237457817" }
  */

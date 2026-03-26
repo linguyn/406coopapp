@@ -49,8 +49,8 @@ export default Student;
  *                 resume: { type: DNE, example: DNE }
  *                 transcript: { type: DNE, example: DNE }
  *   examples:
- *     StudentRegister:
+ *     StudentRegisterEx:
  *       value: { role: student, email: jinwoo@thegreatest.com, password: password123, passwordAgain: password123, firstName: Jin-Woo, lastName: Sung, studentId: "123456789" }
- *     StudentSanitized:
+ *     StudentSanitizedEx:
  *       value: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, studentId: "123456789", id: "238945789237457817", program: Computer Science, status: searching, applications: 3, report: DNE, reflection: DNE, date: 2004-02-24, year: 2, gpa: "4.23", coverLetter: DNE, resume: DNE, transcript: DNE }
  */

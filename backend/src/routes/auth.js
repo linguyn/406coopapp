@@ -55,11 +55,11 @@ export const authRouter = express.Router();
  *                 - $ref: '#/components/schemas/CoordinatorSanitized'
  *             examples:
  *               student:
- *                 $ref: '#/components/examples/StudentSanitized'
+ *                 $ref: '#/components/examples/StudentSanitizedEx'
  *               supervisor:
- *                 $ref: '#/components/examples/SupervisorSanitized'
+ *                 $ref: '#/components/examples/SupervisorSanitizedEx'
  *               coordinator:
- *                 $ref: '#/components/examples/CoordinatorSanitized'
+ *                 $ref: '#/components/examples/CoordinatorSanitizedEx'
  *       422:
  *         description: Missing login fields or invalid format
  *       404:
@@ -130,11 +130,11 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *             - $ref: '#/components/schemas/CoordinatorRegister'
  *           examples:
  *             student:
- *               $ref: '#/components/examples/StudentRegister'
+ *               $ref: '#/components/examples/StudentRegisterEx'
  *             supervisor:
- *               $ref: '#/components/examples/SupervisorRegister'
+ *               $ref: '#/components/examples/SupervisorRegisterEx'
  *             coordinator:
- *               $ref: '#/components/examples/CoordinatorRegister'
+ *               $ref: '#/components/examples/CoordinatorRegisterEx'
  *     responses:
  *       201:
  *         description: Registration successful
@@ -145,13 +145,13 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *                 - $ref: '#/components/schemas/StudentSanitized'
  *                 - $ref: '#/components/schemas/SupervisorSanitized'
  *                 - $ref: '#/components/schemas/CoordinatorSanitized'
- *           examples:
- *             student:
- *               $ref: '#/components/examples/StudentSanitized'
- *             supervisor:
- *               $ref: '#/components/examples/SupervisorSanitized'
- *             coordinator:
- *               $ref: '#/components/examples/CoordinatorSanitized'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentSanitizedEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorSanitizedEx'
+ *               coordinator:
+ *                 $ref: '#/components/examples/CoordinatorSanitizedEx'
  *       422:
  *         description: Missing registration fields or invalid format
  *       409:

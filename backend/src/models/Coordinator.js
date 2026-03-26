@@ -52,8 +52,8 @@ export default Coor;
  *           allOf:
  *             - $ref: '#/components/schemas/UserBase'
  *   examples:
- *     CoordinatorRegister:
+ *     CoordinatorRegisterEx:
  *       value: { role: coordinator, email: supevisor@examplee.com, password: password123, passwordAgain: password123, firstName: Jin-Woo, lastName: Sung }
- *     CoordinatorSanitized:
+ *     CoordinatorSanitizedEx:
  *       value: { role: coordinator, email: supevisor@examplee.com, firstName: Jin-Woo, lastName: Sung, id : "238945789237457817" }
  */
