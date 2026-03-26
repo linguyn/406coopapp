@@ -64,7 +64,7 @@ FRONTEND_PORT=5173
 ACCESS_TOKEN_SECRET=<paste-your-access-token-key-here>
 REFRESH_TOKEN_SECRET=<paste-your-refresh-token-key-here>
 
-MONGO_URI= # Ignore this for now
+MONGO_URI=mongodb://localhost:27017/406_Project
 ```
 ```bash
 cd <project-directory>/frontend
@@ -97,3 +97,7 @@ http://localhost:<BACKEND_PORT>/api-docs/   # replace <BACKEND_PORT> with the po
 ```
 
 This documentation allows you to see request/response requirements for the api endpoints and test them with sample input.
+
+
+## 6. Database and Postman
+
