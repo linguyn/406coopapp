@@ -1,6 +1,5 @@
 import './ThankYouPage.css'
 import YellowWave from '../../assets/yellowWave.svg'
-import React, {useState} from 'react'
 
 function ThankYouPage(props){
     return(
