@@ -33,3 +33,19 @@
  *     SupervisorSanitized:
  *       value: { role: supervisor, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, company: Palantir, jobTitle: ploopy, location: Idaho, status: active, interns : DNE, id : "238945789237457817" }
  */
+
+import mongoose from 'mongoose';
+
+const supervisorSchema = mongoose.Schema;
+const supervisor = new supervisorSchema({
+    firstName:{type: String, required: true},
+    lastName:{type: String, required: true},
+    email: { type: String, required: true, },
+    password: { type: String, required: true },
+    role: { type: String, required: true},
+    company: {type: String, required: true},
+}, { timestamps: true });
+
+const Supervisor = mongoose.model('Supervisor', supervisor);
+
+export default Supervisor;

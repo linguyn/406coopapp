@@ -2,10 +2,16 @@ import mongoose from 'mongoose';
 
 //Coop Coordinator Schema
 const coorSchema = new mongoose.Schema ({
-    username:{
+    firstName:{
         type: String,
         required: true,
         unique: true,
+        trim: true,
+    },
+    lastName:{
+        type: String, 
+        required: true, 
+        unique: true, 
         trim: true,
     },
     email:{
@@ -21,6 +27,11 @@ const coorSchema = new mongoose.Schema ({
     isAdmin:{
         type: Boolean,
         default: true,
+    },
+    role:{
+        type: String,
+        required: true,
+        lowercase: true,
     }
 },
 { tiemstamps: true});
