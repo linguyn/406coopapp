@@ -6,6 +6,7 @@ import SupervisorRegister from './pages/signup/SupervisorRegister';
 import Roles from './pages/roles/Roles';
 import UserList from './pages/userList/UserList';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
+import ThankYouPage from './pages/thankYouPage/ThankYouPage';
 
 //fake data (ignore this)
 const fakeApplicantData =[
@@ -140,13 +141,14 @@ function App() {
           <Route path='/coordinator/applicant-list' element={<UserList starterData={fakeApplicantData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"applicant"}/>}></Route>
           <Route path='/coordinator/student-list' element={<UserList starterData={fakeStudentData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"coop-student"}/>}></Route>
           <Route path='/coordinator/supervisor-list' element={<UserList starterData={fakeSupervisorData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"supervisor"}/>}></Route>
+
+          {/*thank-you pages*/}
+          <Route path='supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submittion!"} secondaryText={"An email has been sent to your inbox with details of your submittion"} type="supervisor"></ThankYouPage>}></Route>
+          <Route path='applicant/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n applying!"} secondaryText={"An email has been sent to your inbox with details of your application"} type="applicant"></ThankYouPage>}></Route>
+
       </Routes>
     </BrowserRouter>   
 
-
-    /* ignore this, just to see my ui (uncomment to see) 
-    <UserList applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData}/>
-    */
   );
 }
 
