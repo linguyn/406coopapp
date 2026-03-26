@@ -10,6 +10,12 @@
  *         email: { type: string, example: jinwoo@thegreatest.com }
  *         firstName: { type: string, example: Jin-Woo }
  *         lastName: { type: string, example: Sung }
+ *     UserProcessedBase:
+ *       required: [id, dateCreated]
+ *       type: object
+ *       properties:
+ *         id: { type: string, example: 238945789237457817 }
+ *         dateCreated: { type: string, example: DNE }
  *     UserRegister:
  *       required: [password, passwordAgain]
  *       allOf:
