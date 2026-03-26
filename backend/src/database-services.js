@@ -168,6 +168,18 @@ export let tempApplications = [
     },
 ]
 
+export let tempReflections = [
+    {
+        company : "Aperture Science",
+        supervisor : "GLaDOS",
+        jobTitle : "Test Subject",
+        termDuration : "8 months",
+        skills : "How to survive being tested on by a sadistic AI",
+        challenges : "Not being killed by GLaDOS",
+        supported : "GLaDOS was very supportive and provided me with cake"
+    },
+]
+
 export let tempStats = {
     currentTerm : "winter 2026",
     newPostings : 12,
