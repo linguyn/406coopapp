@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const applicationSchema = mongoose.Schema;
 const application = new applicationSchema({
-    id: {type: Int, required: true, unique: true},
     firstName: { type: String, required: true},
     lastName: { type: String, required: true },
     studentId: { type: String, required: true },
