@@ -11,7 +11,7 @@ import { USER_DETAILS } from './constants.js';
  * @returns {boolean} True if the email passes the regex check
  */
 
-function isValidEmail(email) {
+export function isValidEmail(email) {
     const isEmail = (string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(string);
     return isEmail(email);
 }
@@ -20,7 +20,7 @@ function isValidEmail(email) {
  * @function isValidPassword
  * @description Validates a password
  * @param {String} password - A password
- * @returns {boolean} True if the password passes the length check
+ * @returns {boolean} True if the password passes the length cheSk
  */
 
 function isValidPassword(password) {
@@ -149,4 +149,15 @@ export function isValidLogin(email, password) {
 
 export function isValidStatusUpdate(status) {
     return USER_DETAILS.studentStatuses.includes(status);
+}
+
+/**
+ * @function hasValidReason
+ * @description Validates reason to apply (150 words max)
+ * @param {String} reason - the reason to apply
+ * @returns {boolean} True if the reason is valid
+ */
+
+export function hasValidReason(reason) {
+    return reason && reason.trim().split(/\s+/).length <= 150;
 }
