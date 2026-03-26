@@ -1,5 +1,5 @@
 const BASE_FUZZY = [ "name", "email"];
-const BASE_SAFE = [ "firstName", "lastName", "email", "status", "role"];
+const BASE_SAFE = [ "firstName", "lastName", "email", "role", "id"];
 
 export const USER_DETAILS = {
     roles : {
@@ -21,14 +21,19 @@ export const USER_DETAILS = {
         coordinator : []
     },
     safeFields : {
-        student : [...BASE_SAFE, "studentId", "applications", "report", "reflection", "date", "year", "program", "gpa", "coverLetter", "resume", "transcript", "location"],
-        supervisor : [...BASE_SAFE, "company", "jobTitle", "report", "interns"],
+        student : [...BASE_SAFE, "status", "studentId", "applications", "report", "reflection", "date", "year", "program", "gpa", "coverLetter", "resume", "transcript", "location"],
+        supervisor : [...BASE_SAFE, "status", "company", "jobTitle", "report", "interns"],
         coordinator : [...BASE_SAFE]
     },
     fieldConstraints : {
         lengthStudentId : 9,
         minPasswordLength : 8,
         maxPasswordLength : 32
+    },
+    afterLogin : {
+        student : [...BASE_SAFE, "applications", "interviews", "totalWorkTerms", "date", "startTerm", "program", "department", "coordinators", "facultyAdvisor"],
+        supervisor : [],
+        coordinator : []
     }
 };
 
@@ -42,15 +47,15 @@ export const REGISTRATION_FIELDS = {
     },
     optional : {
         general : [],
-        student : ["report", "reflection", "applications", "status", "location", "resume", "coverLetter", "transcript", "program", "gpa", "year"],
+        student : [],
         coordinator : [],
-        supervisor : ["jobTitle", "status", "location", "interns"]
+        supervisor : ["jobTitle", "location"]
     }
 }
 
 export const CLEANING = {
     options : {
-        trimOnly : ["firstName", "lastName", "report", "reflection", "jobTitle", "company", "location", "program", "gpa", "studentId"],
+        trimOnly : ["firstName", "lastName", "report", "reflection", "jobTitle", "company", "location", "program", "data", "gpa", "studentId"],
         lookUps : ["email", "id", "role", "status"],
         booleans : ["rememberMe"]
     }
