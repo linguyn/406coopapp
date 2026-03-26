@@ -164,7 +164,7 @@ authRouter.post('/register', sanitizeRegister, validateRegister, (req, res, next
     const { role } = req.body;
 
     try {
-        const user = ROLE_OPERATIONS[role].add(req.body);
+        const user = ROLE_OPERATIONS[role].add(req.body); // replace this line of code with the server.js 
         const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[role]);
 
         // send back a "safe" version of user's details
