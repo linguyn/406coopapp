@@ -2,10 +2,16 @@ import mongoose from 'mongoose';
 
 //Coop Coordinator Schema
 const coorSchema = new mongoose.Schema ({
-    username:{
+    firstName:{
         type: String,
         required: true,
         unique: true,
+        trim: true,
+    },
+    lastName:{
+        type: String, 
+        required: true, 
+        unique: true, 
         trim: true,
     },
     email:{
@@ -21,6 +27,11 @@ const coorSchema = new mongoose.Schema ({
     isAdmin:{
         type: Boolean,
         default: true,
+    },
+    role:{
+        type: String,
+        required: true,
+        lowercase: true,
     }
 },
 { tiemstamps: true});
@@ -39,17 +50,21 @@ export default Coor;
  *     CoordinatorRegister:
  *       allOf:
  *       - $ref: '#/components/schemas/UserBase'
+ *       - $ref: '#/components/schemas/UserProcessedBase'
  *       - $ref: '#/components/schemas/UserRegister'
  *     CoordinatorSanitized:
- *       required: [id]
- *       allOf:
- *       - $ref: '#/components/schemas/UserBase'
- *       - type: object
- *         properties:
- *           id: { type: string, example: 238945789237457817 }
+ *       type: object
+ *       required: [accessToken, user]
+ *       properties:
+ *         accessToken: { type: string, example: "aDASDadDS2e23423ADASD" }
+ *         user:
+ *           type: object
+ *           required: []
+ *           allOf:
+ *             - $ref: '#/components/schemas/UserBase'
  *   examples:
  *     CoordinatorRegister:
  *       value: { role: coordinator, email: supevisor@examplee.com, password: password123, passwordAgain: password123, firstName: Jin-Woo, lastName: Sung }
  *     CoordinatorSanitized:
- *       value: { role: coordinator, email: supevisor@examplee.com, firstName: Jin-Woo, lastName: Sung, id : "238945789237457817"}
+ *       value: { role: coordinator, email: supevisor@examplee.com, firstName: Jin-Woo, lastName: Sung, id : "238945789237457817" }
  */

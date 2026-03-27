@@ -2,10 +2,15 @@ import { validateLogin, validateLogout, validateRegister } from '../middleware/v
 import { ROLE_OPERATIONS } from '../auth-services.js';
 import express from 'express';
 import { generateAccessToken, generateRefreshToken } from '../server.js';
-import { getSanitizedUser, getUserById } from '../database-services.js';
+import { getSanitizedUser, getUserById, getGlobalStats } from '../database-services.js';
 import { TOKEN_OPTIONS, USER_DETAILS } from '../constants.js';
 import jwt from 'jsonwebtoken';
 import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
+import { UserLoginResponse } from '../classes/UserLoginResponse.js';
+import Student from '../models/Student.js';
+import Coor from '../models/Coordinator.js';
+import Supervisor from '../models/Supervisor.js';
+
 
 export const authRouter = express.Router();
 
@@ -26,6 +31,8 @@ export const authRouter = express.Router();
  * @swagger
  * /api/auth/login:
  *   post:
+ *     security:
+ *       - []
  *     summary: Logs in an existing user
  *     description: Takes login information and verifies the user exists in the database. Returns newly issued access and refresh tokens and the sanitized user in the response. A sanitized user excludes sensitive information such as a password.
  *     tags:
@@ -59,7 +66,7 @@ export const authRouter = express.Router();
  *                 $ref: '#/components/examples/CoordinatorSanitized'
  *       422:
  *         description: Missing login fields or invalid format
- *       401:
+ *       404:
  *         description: User not found
  *       500:
  *         description: Internal server error
@@ -68,6 +75,9 @@ export const authRouter = express.Router();
 authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
     const user = req.user;
     const rememberMe = req.body.rememberMe;
+    const stats = getGlobalStats();
+
+    const safeUser = UserLoginResponse.createUserLoginResponse(user, stats);
 
     const accessToken = generateAccessToken(user.id, user.role);
     const refreshToken = generateRefreshToken(user.id, user.role, rememberMe);
@@ -80,7 +90,7 @@ authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
     // send back a valid access token and a "safe" version of user's details
     return res.status(200).json({
         accessToken : accessToken,
-        user : user
+        user : safeUser
     });
 });
 
@@ -107,6 +117,8 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  * @swagger
  * /api/auth/register:
  *   post:
+ *     security:
+ *       - []
  *     summary: Register a new user
  *     description: Takes user registration information, validates the info (e.g. checking if email is taken, password matches re-entered password, etc.), creates a new record of the user in the database, and returns the sanitized user in the response. A sanitized user excludes sensitive information such as a password.
  *     tags:
@@ -127,8 +139,6 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *               $ref: '#/components/examples/SupervisorRegister'
  *             coordinator:
  *               $ref: '#/components/examples/CoordinatorRegister'
- *           discriminator:
- *             propertyName: role
  *     responses:
  *       201:
  *         description: Registration successful
@@ -139,13 +149,13 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *                 - $ref: '#/components/schemas/StudentSanitized'
  *                 - $ref: '#/components/schemas/SupervisorSanitized'
  *                 - $ref: '#/components/schemas/CoordinatorSanitized'
- *             examples:
- *               student:
- *                 $ref: '#/components/examples/StudentSanitized'
- *               supervisor:
- *                 $ref: '#/components/examples/SupervisorSanitized'
- *               coordinator:
- *                 $ref: '#/components/examples/CoordinatorSanitized'
+ *           examples:
+ *             student:
+ *               $ref: '#/components/examples/StudentSanitized'
+ *             supervisor:
+ *               $ref: '#/components/examples/SupervisorSanitized'
+ *             coordinator:
+ *               $ref: '#/components/examples/CoordinatorSanitized'
  *       422:
  *         description: Missing registration fields or invalid format
  *       409:
@@ -154,17 +164,34 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *         description: Internal server error
  */
 
-authRouter.post('/register', sanitizeRegister, validateRegister, (req, res, next) => {
+authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res, next) => {
     const { role } = req.body;
 
     try {
-        const user = ROLE_OPERATIONS[role].add(req.body);
-        const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[role]);
+        if (role === 'student'){
+            const newStudent = new Student(req.body);
+            const savedStudent = await newStudent.save();
+            return res.status(201).json({message: "Student saved!", data: savedStudent}); //message and data can be removed at a later time if not being used.
+        }
+
+        if (role === 'coordinator'){
+            const newCoordinator = new Coor(req.body);
+            const savedCoordinator = await newCoordinator.save();
+            return res.status(201).json({message: "Coordinator saved!", data: savedCoordinator}); //message and data can be removed at a later time.
+        }
+        if(role === 'supervisor'){
+            const newSupervisor = new Supervisor(req.body);
+            const savedSupervisor = await newSupervisor.save();
+            return res.status(201).json({message: "Supervisor saved!", data: savedSupervisor}); //message and data can be removed at a later time.
+        }
+
+
+        return res.status(400).json({message: "Invalid role specified."});
+
+       // const user = ROLE_OPERATIONS[role].add(req.body); // replace this line of code with the server.js 
+       // const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[role]);
 
         // send back a "safe" version of user's details
-        return res.status(201).json({
-            user : safeUser
-        });
     } catch(error) { 
         next(error);
     }    

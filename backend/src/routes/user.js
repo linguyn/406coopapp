@@ -4,6 +4,7 @@ import { HTTPError } from '../errors.js'
 import { validateStatusUpdate, validateListRequest } from '../middleware/validation.js';
 import { authenticateToken } from '../server.js';
 import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
+import { UserResponse } from '../classes/UserResponse.js';
 
 export const userRouter = express.Router();
 
@@ -39,7 +40,6 @@ userRouter.get('/list', authenticateToken, validateListRequest, (req, res, next)
         if (order === "desc") { reverse = -1; }
         else { reverse = 1; }
 
-        
         const sortedUsers = sanitizedUsers.toSorted((user1, user2) => {
             if (user1[sortBy] < user2[sortBy]) { return -1*reverse }
             if (user1[sortBy] > user2[sortBy]) { return 1*reverse }
@@ -109,10 +109,54 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  * @error {401} {Object} - User doesn't exist or missing authorization header
  */
 
-userRouter.get('/:id', authenticateToken, (req, res, next) => {
+/**
+ * @swagger
+ * /api/user/{userId}:
+ *   get:
+ *     summary: Gets a user by id and returns a complete response depending on the user role
+ *     tags: 
+ *       - User
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user's unique identifier
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/StudentResponse' 
+ *                 - $ref: '#/components/schemas/SupervisorResponse' 
+ *                 - $ref: '#/components/schemas/CoordinatorResponse' 
+ *                 - $ref: '#/components/schemas/UserResponse'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentResponseEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorResponseEx'
+ *               coordinator:
+ *                 $ref: '#/components/examples/CoordinatorResponseEx'
+ *       401:
+ *         description: Missing the authorization header. Please include a valid access token
+ *       404:
+ *         description: User not found
+ *       422:
+ *         description: Missing userId parameter or invalid format
+ *       500:
+ *         description: Internal server error
+ */
+
+userRouter.get('/:userId', authenticateToken, (req, res, next) => {
     try {
-        const user = getUserById(req.params.id);
-        const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[user.role]);
+        const id = req.params.userId;
+        if (!id) { throw new HTTPError("Missing userId parameter or invalid format", 422); }
+        const user = getUserById(id);
+        const safeUser = UserResponse.createUserResponse(user);
         return res.status(200).json(safeUser);
     } catch(error) { 
         next(error); 

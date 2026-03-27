@@ -11,7 +11,6 @@ function UserList(props){
 
     const [listType, setListName] = useState(props.listType)
     const [userData, setUserData] = useState(props.starterData)
-    const [totalNumberOfUsers, setTotalNumberOfUsers] = useState(props.starterData.length)
     const [currentPage, setCurrentPage] = useState(1)
     const [usersPerPage, setUsersPerPage] = useState(5)
 
@@ -66,7 +65,6 @@ function UserList(props){
             toggleSelected(arg);
             removeSelected("applicant", "supervisor");
             setUserData(props.studentData);
-            setTotalNumberOfUsers(props.studentData.length);
             changeCurrentNumberOfUsers(props.studentData.length);
         }
         else if (arg == "applicant"){
@@ -76,7 +74,6 @@ function UserList(props){
             toggleSelected(arg);
             removeSelected("coop-student", "supervisor");
             setUserData(props.applicantData);
-            setTotalNumberOfUsers(props.applicantData.length);
             changeCurrentNumberOfUsers(props.applicantData.length);
         }
         else if (arg == "supervisor"){
@@ -86,7 +83,6 @@ function UserList(props){
             toggleSelected(arg);
             removeSelected("applicant", "coop-student");
             setUserData(props.supervisorData);
-            setTotalNumberOfUsers(props.supervisorData.length);
             changeCurrentNumberOfUsers(props.supervisorData.length);
         }
     }
