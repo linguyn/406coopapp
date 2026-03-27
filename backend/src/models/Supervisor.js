@@ -59,3 +59,19 @@
  *     SupervisorLoginResEx:
  *       value: { accessToken: AKDJSNAKSJFBkjbskdjBFK, user: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, fullName: Jin-Woo Sung, id : "238945789237457817", dateCreated : "DNE", status : "active" } }
  */
+
+import mongoose from 'mongoose';
+
+const supervisorSchema = mongoose.Schema;
+const supervisor = new supervisorSchema({
+    firstName:{type: String, required: true},
+    lastName:{type: String, required: true},
+    email: { type: String, required: true, },
+    password: { type: String, required: true },
+    role: { type: String, required: true},
+    company: {type: String, required: true},
+}, { timestamps: true });
+
+const Supervisor = mongoose.model('Supervisor', supervisor);
+
+export default Supervisor;
