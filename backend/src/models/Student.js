@@ -16,42 +16,98 @@ export default Student;
  * @swagger
  * components:
  *   schemas:
- *     StudentRegister:
+ *     StudentRes:
+ *       required: [academics, documents, termActivity, support, isApplicant, studentId, location, status]
+ *       allOf:
+ *         - $ref: '#/components/schemas/UserRes'
+ *         - type: object
+ *           properties:
+ *             academics:
+ *               $ref: '#/components/schemas/Academics'
+ *             documents:
+ *               $ref: '#/components/schemas/Documents' 
+ *             termActivity:
+ *               $ref: '#/components/schemas/TermActivity'
+ *             support:
+ *               $ref: '#/components/schemas/Support'
+ *             isApplicant: { type: boolean, example: true }
+ *             studentId: { type: string, example: 123456789 }
+ *             location: { type: string, example: Xi'an }
+ *             status: { type: string, example: applied }
+ *         - $ref: '#/components/schemas/StudentStats'
+ *     StudentRegisterReq:
  *       required: [studentId]
  *       allOf:
  *       - $ref: '#/components/schemas/UserBase'
- *       - $ref: '#/components/schemas/UserProcessedBase'
  *       - $ref: '#/components/schemas/UserRegister'
  *       - type: object
  *         properties:
  *           studentId: { type: string, example: 123456789 }
- *     StudentSanitized:
+ *     StudentLoginRes:
  *       type: object
  *       required: [accessToken, user]
  *       properties:
  *         accessToken: { type: string, example: "aDASDadDS2e23423ADASD" }
  *         user:
  *           type: object
- *           required: [studentId, program, applications, report, reflection, date, year, gpa, coverLetter, resume, transcript]
+ *           required: [termActivity, support, studentId, isApplicant, status]
  *           allOf:
- *             - $ref: '#/components/schemas/UserBase'
+ *             - $ref: '#/components/schemas/UserRes'
  *             - type: object
  *               properties:
+ *                 termActivity:
+ *                   $ref: '#/components/schemas/TermActivity'
+ *                 support:
+ *                   $ref: '#/components/schemas/Support'
+ *                 isApplicant: { type: boolean, example: false }
  *                 studentId: { type: string, example: 123456789 }
- *                 program: { type: string, example: Computer Science }
  *                 status: { type: string, example: searching }
- *                 applications: { type: number, example: 3 }
- *                 report: { type: DNE, example: DNE }
- *                 reflection: { type: DNE, example: DNE }
- *                 date: { type: string, format: date, example: 2004-02-24 }
- *                 year: { type: number, example: 2 }
- *                 gpa: { type: string, example: 4.23 }
- *                 coverLetter: { type: DNE, example: DNE }
- *                 resume: { type: DNE, example: DNE }
- *                 transcript: { type: DNE, example: DNE }
+ *             - $ref: '#/components/schemas/StudentStats'
+ *     StudentRegisterRes:
+ *       type: object
+ *       required: [message]
+ *       properties:
+ *         message: { type: string, example: Student successfully registered }
+ *     TermActivity:
+ *       type: object
+ *       required: [applications, interviews, applied, interviewed, shortlisted, workTerms, startTerm]
+ *       properties:
+ *         applications: { type: number, example: 1241 }
+ *         interviews: { type: number, example: 1 }
+ *         applied: { type: number, example: 1000 }
+ *         interviewed: { type: number, example: 0 }
+ *         shortlisted: { type: number, example: 2200 }
+ *         workTerms: { type: number, example: 2 }
+ *         startTerm: { type: string, example: Summer 2025 }
+ *     Documents:
+ *       type: object
+ *       required: [resume, coverLetter, transcript, reflection]
+ *       properties:
+ *         resume: { type: string, example: DNE }
+ *         coverLetter: { type: string, example: DNE }
+ *         transcript: { type: string, example: DNE }
+ *         reflection: { type: string, example: DNE }
+ *     Academics:
+ *       type: object
+ *       required: [program, year, gpa, department]
+ *       properties:
+ *         program: { type: string, example: Computer Science }
+ *         year: { type: number, example: 2 }
+ *         gpa: { type: string, example: 3.23 }
+ *         department: { type: string, example: Faculty of Science }
+ *     StudentStats:
+ *       type: object
+ *       required: [newPostings, openPostings]
+ *       properties:
+ *         newPostings: { type: number, example: 677 }
+ *         openPostings: { type: number, example: 677 }
  *   examples:
- *     StudentRegisterEx:
+ *     StudentResEx:
+ *       value: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, fullName: Jin-Woo Sung, studentId: "123456789", id : "238945789237457817", dateCreated : "DNE", isApplicant : false, location: Texas, status: searching, academics: { program: Computer Science, year: 2, gpa: 4.22, department: Faculty of Science }, documents: { resume: "DNE", coverLetter: "DNE", transcript: "DNE", report: "DNE", reflection: "DNE"}, termActivity: {applications: 1234, interviews: 67, applied: 67, interviewed: 67, shortlisted: 76, workTerms: 2, startTerm: Summer 2025}, support: { facultyAdvisor: Mickey Mouse, coordinators: [Michael, Louise, Jin-Woo] }, newPostings: 677, openPostings: 667 }
+ *     StudentRegisterReqEx:
  *       value: { role: student, email: jinwoo@thegreatest.com, password: password123, passwordAgain: password123, firstName: Jin-Woo, lastName: Sung, studentId: "123456789" }
- *     StudentSanitizedEx:
- *       value: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, studentId: "123456789", id: "238945789237457817", program: Computer Science, status: searching, applications: 3, report: DNE, reflection: DNE, date: 2004-02-24, year: 2, gpa: "4.23", coverLetter: DNE, resume: DNE, transcript: DNE }
+ *     StudentRegisterResEx:
+ *       value: { message: Student successfully registered }
+ *     StudentLoginResEx:
+ *       value: { accessToken: AKDJSNAKSJFBkjbskdjBFK, user: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, fullName: Jin-Woo Sung, studentId: "123456789", id : "238945789237457817", dateCreated : "DNE", isApplicant : false, status: searching, termActivity: {applications: 1234, interviews: 67, applied: 67, interviewed: 67, shortlisted: 76, workTerms: 2, startTerm: Summer 2025}, support: { facultyAdvisor: Mickey Mouse, coordinators: [Michael, Louise, Jin-Woo] }, newPostings: 677, openPostings: 667 } }
  */
