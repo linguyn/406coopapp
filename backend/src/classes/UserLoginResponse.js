@@ -92,16 +92,21 @@ class StudentLoginResponse extends UserLoginResponse {
 }
 
 class SupervisorLoginResponse extends UserLoginResponse {
+    #status;
 
     constructor(userData, stats) {
         super(userData, stats);
         // TODO: figure out what specific info to return for supervisor login
+        const { status } = userData;
+        const {} = stats;
+
+        this.#status = status;
     }
 
     toJSON() {
         return {
             ...super.toJSON(),
-            
+            status : this.#status
         }
     }
 }

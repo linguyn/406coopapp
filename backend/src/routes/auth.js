@@ -54,16 +54,16 @@ export const authRouter = express.Router();
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/StudentSanitized'
- *                 - $ref: '#/components/schemas/SupervisorSanitized'
- *                 - $ref: '#/components/schemas/CoordinatorSanitized'
+ *                 - $ref: '#/components/schemas/StudentLoginRes'
+ *                 - $ref: '#/components/schemas/SupervisorLoginRes'
+ *                 - $ref: '#/components/schemas/CoordinatorLoginRes'
  *             examples:
  *               student:
- *                 $ref: '#/components/examples/StudentSanitized'
+ *                 $ref: '#/components/examples/StudentLoginResEx'
  *               supervisor:
- *                 $ref: '#/components/examples/SupervisorSanitized'
+ *                 $ref: '#/components/examples/SupervisorLoginResEx'
  *               coordinator:
- *                 $ref: '#/components/examples/CoordinatorSanitized'
+ *                 $ref: '#/components/examples/CoordinatorLoginResEx'
  *       422:
  *         description: Missing login fields or invalid format
  *       404:
@@ -129,16 +129,16 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *         application/json:
  *           schema:
  *             oneOf:
- *             - $ref: '#/components/schemas/StudentRegister'
- *             - $ref: '#/components/schemas/SupervisorRegister'
- *             - $ref: '#/components/schemas/CoordinatorRegister'
+ *             - $ref: '#/components/schemas/StudentRegisterReq'
+ *             - $ref: '#/components/schemas/SupervisorRegisterReq'
+ *             - $ref: '#/components/schemas/CoordinatorRegisterReq'
  *           examples:
  *             student:
- *               $ref: '#/components/examples/StudentRegister'
+ *               $ref: '#/components/examples/StudentRegisterReqEx'
  *             supervisor:
- *               $ref: '#/components/examples/SupervisorRegister'
+ *               $ref: '#/components/examples/SupervisorRegisterReqEx'
  *             coordinator:
- *               $ref: '#/components/examples/CoordinatorRegister'
+ *               $ref: '#/components/examples/CoordinatorRegisterReqEx'
  *     responses:
  *       201:
  *         description: Registration successful
@@ -146,16 +146,16 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/StudentSanitized'
- *                 - $ref: '#/components/schemas/SupervisorSanitized'
- *                 - $ref: '#/components/schemas/CoordinatorSanitized'
- *           examples:
- *             student:
- *               $ref: '#/components/examples/StudentSanitized'
- *             supervisor:
- *               $ref: '#/components/examples/SupervisorSanitized'
- *             coordinator:
- *               $ref: '#/components/examples/CoordinatorSanitized'
+ *                 - $ref: '#/components/schemas/StudentRegisterRes'
+ *                 - $ref: '#/components/schemas/SupervisorRegisterRes'
+ *                 - $ref: '#/components/schemas/CoordinatorRegisterRes'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentRegisterResEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorRegisterResEx'
+ *               coordinator:
+ *                 $ref: '#/components/examples/CoordinatorRegisterResEx'
  *       422:
  *         description: Missing registration fields or invalid format
  *       409:
