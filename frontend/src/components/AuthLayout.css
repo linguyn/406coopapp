@@ -47,7 +47,6 @@ body {
     font-size: clamp(2.5rem, 4vw, 4rem);
     line-height: 1.2;
     letter-spacing: -0.05rem;
-    text-decoration: underline;
     width: 100%;
     
 

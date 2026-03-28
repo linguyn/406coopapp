@@ -4,11 +4,13 @@ import StudentRegister from './pages/signup/StudentRegister';
 import SupervisorHomepage from './pages/homepage/SupervisorHomepage';
 import SupervisorRegister from './pages/signup/SupervisorRegister';
 import Roles from './pages/roles/Roles';
-import Application from './pages/forms/Application';
+import Application from './pages/forms/CoopApplication';
 import UserList from './pages/userList/UserList';
-import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
 import ThankYouPage from './pages/thankYouPage/ThankYouPage';
-import ApplicantStatusPage from './pages/applicantStatusPage/ApplicantStatusPage';
+import ApplicantStatusPage from './pages/applicantStatusPage/ApplicantStatusPage'; 
+import CoopReflection from './pages/forms/CoopReflection';   
+import StudentProgress from './pages/forms/StudentProgress';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
 
 //fake data (ignore this)
 const fakeApplicantData =[
@@ -142,6 +144,12 @@ function App() {
 
           {/*application page*/}
           <Route path='/student/apply' element={<Application/>}/>
+
+          {/*coop reflection page*/}
+          <Route path='/student/reflection' element={<CoopReflection/>}/>
+
+          {/*student progress page*/}
+          <Route path='/supervisor/student-progress' element={<StudentProgress/>}/>
 
           {/*coordinator list*/}
           <Route path='/coordinator/applicant-list' element={<UserList starterData={fakeApplicantData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"applicant"}/>}></Route>
