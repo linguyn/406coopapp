@@ -9,11 +9,6 @@ const reflection = new reflectionSchema({
     skills: { type: String, required: true },
     challenges: { type: String, required: true },
     supported: { type: String, required: true },
-    student: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Student',
-        required: true
-    }
 }, { timestamps: true });
 
 const Reflection = mongoose.model('Reflection', reflection);

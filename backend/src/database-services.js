@@ -225,6 +225,7 @@ export function addSupervisorToDatabase({email, password, status, company, locat
 
 export function addApplicationToDatabase({firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink}) {
     const newApp = {
+        id : tempApplications.length + 1,
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         studentId: studentId.trim(),
@@ -234,7 +235,6 @@ export function addApplicationToDatabase({firstName, lastName, studentId, school
         portfolioLink: portfolioLink ? portfolioLink.trim() : null,
         submittedAt: new Date()
     };
-
     tempApplications.push(newApp);
     return newApp;
 }
@@ -252,6 +252,37 @@ export function updateApplication(applicationId, newAppData) {
     if (newAppData.reasonToApply) { application.reasonToApply = newAppData.reasonToApply.trim(); }
     if (newAppData.portfolioLink) { application.portfolioLink = newAppData.portfolioLink.trim(); }
     return application;
+}
+
+export function addReflectionToDatabase({company, supervisor, jobTitle, termDuration, skills, challenges, supported}) {
+    const newReflection = {
+        id : tempReflections.length + 1,
+        company : company.trim(),
+        supervisor : supervisor.trim(),
+        jobTitle : jobTitle.trim(),
+        termDuration : termDuration.trim(),
+        skills : skills.trim(),
+        challenges : challenges.trim(),
+        supported : supported.trim(),
+        submittedAt : new Date()
+    }
+    tempReflections.push(newReflection);
+    return newReflection;
+}
+
+export function updateReflection(reflectionId, newReflectionData) {
+    const reflection = tempReflections.find(ref => ref.id === reflectionId);
+    if (!reflection) {
+        throw new HTTPError("Reflection not found", 404);
+    }
+    if (newReflectionData.company) { reflection.company = newReflectionData.company.trim(); }
+    if (newReflectionData.supervisor) { reflection.supervisor = newReflectionData.supervisor.trim(); }
+    if (newReflectionData.jobTitle) { reflection.jobTitle = newReflectionData.jobTitle.trim(); }
+    if (newReflectionData.termDuration) { reflection.termDuration = newReflectionData.termDuration.trim(); }
+    if (newReflectionData.skills) { reflection.skills = newReflectionData.skills.trim(); }
+    if (newReflectionData.challenges) { reflection.challenges = newReflectionData.challenges.trim(); }
+    if (newReflectionData.supported) { reflection.supported = newReflectionData.supported.trim(); }
+    return reflection;
 }
 
 export function addStudentToDatabase({email, password, studentId, firstName, lastName, program, applications, status, report, reflection, gpa, year, date, coverLetter, resume, transcript, location}) {

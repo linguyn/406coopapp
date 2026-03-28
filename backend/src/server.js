@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/user.js';
+import { reflectionsRouter } from './routes/reflections.js';
 import { applicationsRouter } from './routes/applications.js';
 import { API, TOKEN_OPTIONS } from './constants.js';
 import jwt from 'jsonwebtoken';
@@ -79,6 +80,8 @@ app.use(cookieParser());
 app.use(API.prefixes.auth, authRouter);
 app.use(API.prefixes.user, userRouter);
 app.use(API.prefixes.applications, applicationsRouter);
+app.use(API.prefixes.reflections, reflectionsRouter);
+
 
 const swaggerOptions = {
     definition: {
