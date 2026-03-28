@@ -168,6 +168,18 @@ export let tempApplications = [
     },
 ]
 
+export let tempReflections = [
+    {
+        company : "Aperture Science",
+        supervisor : "GLaDOS",
+        jobTitle : "Test Subject",
+        termDuration : "8 months",
+        skills : "How to survive being tested on by a sadistic AI",
+        challenges : "Not being killed by GLaDOS",
+        supported : "GLaDOS was very supportive and provided me with cake"
+    },
+]
+
 export let tempStats = {
     currentTerm : "winter 2026",
     newPostings : 12,
@@ -209,6 +221,68 @@ export function addSupervisorToDatabase({email, password, status, company, locat
     };
     tempUsers.push(newSupervisor);
     return newSupervisor;
+}
+
+export function addApplicationToDatabase({firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink}) {
+    const newApp = {
+        id : tempApplications.length + 1,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        studentId: studentId.trim(),
+        schoolEmail: schoolEmail.trim(),
+        eligibility,
+        reasonToApply: reasonToApply.trim(),
+        portfolioLink: portfolioLink ? portfolioLink.trim() : null,
+        submittedAt: new Date()
+    };
+    tempApplications.push(newApp);
+    return newApp;
+}
+
+export function updateApplication(applicationId, newAppData) {
+    const application = tempApplications.find(app => app.id === applicationId);
+    if (!application) {
+        throw new HTTPError("Application not found", 404);
+    }
+    if (newAppData.firstName) { application.firstName = newAppData.firstName.trim(); }
+    if (newAppData.lastName) { application.lastName = newAppData.lastName.trim(); }
+    if (newAppData.studentId) { application.studentId = newAppData.studentId.trim(); }
+    if (newAppData.schoolEmail) { application.schoolEmail = newAppData.schoolEmail.trim(); }
+    if (typeof newAppData.eligibility === "boolean") { application.eligibility = newAppData.eligibility; }
+    if (newAppData.reasonToApply) { application.reasonToApply = newAppData.reasonToApply.trim(); }
+    if (newAppData.portfolioLink) { application.portfolioLink = newAppData.portfolioLink.trim(); }
+    return application;
+}
+
+export function addReflectionToDatabase({company, supervisor, jobTitle, termDuration, skills, challenges, supported}) {
+    const newReflection = {
+        id : tempReflections.length + 1,
+        company : company.trim(),
+        supervisor : supervisor.trim(),
+        jobTitle : jobTitle.trim(),
+        termDuration : termDuration.trim(),
+        skills : skills.trim(),
+        challenges : challenges.trim(),
+        supported : supported.trim(),
+        submittedAt : new Date()
+    }
+    tempReflections.push(newReflection);
+    return newReflection;
+}
+
+export function updateReflection(reflectionId, newReflectionData) {
+    const reflection = tempReflections.find(ref => ref.id === reflectionId);
+    if (!reflection) {
+        throw new HTTPError("Reflection not found", 404);
+    }
+    if (newReflectionData.company) { reflection.company = newReflectionData.company.trim(); }
+    if (newReflectionData.supervisor) { reflection.supervisor = newReflectionData.supervisor.trim(); }
+    if (newReflectionData.jobTitle) { reflection.jobTitle = newReflectionData.jobTitle.trim(); }
+    if (newReflectionData.termDuration) { reflection.termDuration = newReflectionData.termDuration.trim(); }
+    if (newReflectionData.skills) { reflection.skills = newReflectionData.skills.trim(); }
+    if (newReflectionData.challenges) { reflection.challenges = newReflectionData.challenges.trim(); }
+    if (newReflectionData.supported) { reflection.supported = newReflectionData.supported.trim(); }
+    return reflection;
 }
 
 export function addStudentToDatabase({email, password, studentId, firstName, lastName, program, applications, status, report, reflection, gpa, year, date, coverLetter, resume, transcript, location}) {

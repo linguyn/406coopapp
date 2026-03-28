@@ -15,8 +15,6 @@ function Application() {
     const [github, setGithub] = useState('');
     const [file, setFile] = useState(null);
     const [pageError, setPageError] = useState('');
-    const [visible, setVisible] = useState(false); 
-    const [visibleTemp, setVisibleTemp] = useState(false); 
     const navigate = useNavigate(); 
 
 
@@ -65,7 +63,7 @@ function Application() {
                         <form id='application-container' onSubmit={handleSubmit}>
                             
                             <div id='apply-field-1'>
-                                <div className='input-field-1'>
+                                <div className='apply-input-field-1'>
                                     <label>First Name</label>
                                     <input type="text"
                                            value={firstName}
@@ -75,7 +73,7 @@ function Application() {
                                     </input>
                                 </div>
 
-                                <div className='input-field-2'>
+                                <div className='apply-input-field-2'>
                                     <label>Last Name</label>
                                     <input type="text"
                                            value={lastName}
@@ -87,7 +85,7 @@ function Application() {
 
 
                             <div id='apply-field-2'>
-                                <div className='input-field-1'>
+                                <div className='apply-input-field-1'>
                                     <label>Student Email</label>
                                     <input type="email"
                                            value={email}
@@ -98,7 +96,7 @@ function Application() {
                                 </div>
                                             
 
-                                <div className='input-field-2'>
+                                <div className='apply-input-field-2'>
                                     <label>Student ID</label>
                                     <input type="text"
                                            value={studentId}
@@ -156,8 +154,7 @@ function Application() {
                             </div>
 
 
-
-                            <div id='student-field-4'>
+                            <div id='apply-field-6'>
                                 {pageError && (
                                         <div className='register-error'>
                                         <p className='apply-error'>{pageError}</p>
@@ -165,6 +162,7 @@ function Application() {
                                     )}
                                 <button className='blue-button'>Register</button>
                             </div>
+                            
 
                             
                         </form>
