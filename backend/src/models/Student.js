@@ -7,7 +7,35 @@ const student = new studentSchema({
     studentId: { type: String, required: true, unique: true, trim: true},
     email: { type: String, required: true },
     password: { type: String, required: true },
-    role: { type: String, required: true}
+    role: { type: String, required: true},
+    isApplicant: { type: Boolean, required: false, default: true},
+    location : { type: String, required: false, default: null},
+    status : { type: String, required: false, default: null},
+    academics : {
+        program: {type: String, required: false, default: null},
+        year:{type: String, required: false, default: null},
+        department:{type: String, required: false, default: null},
+        gpa:{type: String, required: false, default: null}
+    },
+    documents : {
+        resume : { type: String, required: false, default: null},
+        coverLetter:{ type: String, required: false, default: null},
+        transcript:{ type: String, required: false, default:null},
+        reflection:{ type: String, required: false, default:null}
+    },
+    termActivity: {
+        applications:{ type: Number, required: false, default: 67},
+        interviewed:{ type: Number, required: false, default: 67},
+        applied:{ type: Number, required: false, default: 67},
+        interviews:{ type: Number, required: false, default: 67},
+        shortlisted:{ type: Number, required: false, default: 67},
+        workTerms:{ type: Number, required: false, default: 67},
+        startTerm:{ type: String, required: false, default: null}
+    },
+    support : {
+        facultyAdvisor: {type: String, required: false, default: null},
+        coordinators:{ type: Array, required: false, default: null}
+    }
 }, { timestamps: true });
 
 const Student = mongoose.model('Student', student);

@@ -74,9 +74,9 @@ export const authRouter = express.Router();
 
 authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
     const user = req.user;
+
     const rememberMe = req.body.rememberMe;
     const stats = getGlobalStats();
-
     const safeUser = UserLoginResponse.createUserLoginResponse(user, stats);
 
     const accessToken = generateAccessToken(user.id, user.role);
@@ -170,19 +170,19 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
     try {
         if (role === 'student'){
             const newStudent = new Student(req.body);
-            const savedStudent = await newStudent.save();
-            return res.status(201).json({message: "Student saved!", data: savedStudent}); //message and data can be removed at a later time if not being used.
+            await newStudent.save();
+            return res.status(201).json({message: "Student saved!"}); //message and data can be removed at a later time if not being used.
         }
 
         if (role === 'coordinator'){
             const newCoordinator = new Coor(req.body);
-            const savedCoordinator = await newCoordinator.save();
-            return res.status(201).json({message: "Coordinator saved!", data: savedCoordinator}); //message and data can be removed at a later time.
+            await newCoordinator.save();
+            return res.status(201).json({message: "Coordinator saved!"}); //message and data can be removed at a later time.
         }
         if(role === 'supervisor'){
             const newSupervisor = new Supervisor(req.body);
-            const savedSupervisor = await newSupervisor.save();
-            return res.status(201).json({message: "Supervisor saved!", data: savedSupervisor}); //message and data can be removed at a later time.
+            await newSupervisor.save();
+            return res.status(201).json({message: "Supervisor saved!"}); //message and data can be removed at a later time.
         }
 
 

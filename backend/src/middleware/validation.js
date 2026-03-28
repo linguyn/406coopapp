@@ -3,14 +3,24 @@ import { USER_DETAILS } from "../constants.js";
 import { getSanitizedUser, getUserByEmail, isEmailTaken, getUserById } from "../database-services.js";
 import { isValidStatusUpdate, isValidLogin } from "../validate.js";
 import { ROLE_OPERATIONS } from "../auth-services.js";
+import Student from '../models/Student.js';
+import Coordinator from '../models/Coordinator.js';
+import Supervisor from '../models/Supervisor.js';
 
-export function validateLogin(req, res, next) {
+export async function validateLogin(req, res, next) {
     const {email, password} = req.body;
+            console.log("HELLO", req.body);
 
     try {
         if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 422); }
 
-        const user = getUserByEmail(email);
+        let user = null;
+        if (user = await Student.findOne({email})) {} 
+        
+        else if (user = await Supervisor.findOne({email})) {} 
+        else if (user = await Coordinator.findOne({email})) {}
+
+        if (!user) { throw new HTTPError("Could not find a user", 404); }
 
         // TODO: update when database implemented
         if (user.password !== password) { throw new HTTPError("Login information does not match", 422); }
