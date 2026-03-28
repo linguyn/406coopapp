@@ -24,7 +24,7 @@ export class UserLoginResponse {
     }
 
     constructor(userData, stats) {
-        const {role, email, firstName, lastName, id, dateCreated } = userData;
+        const {role, email, firstName, lastName, _id, createdAt } = userData;
         const { currentTerm } = stats;
 
         this.#role = role;
@@ -32,8 +32,8 @@ export class UserLoginResponse {
         this.#firstName = firstName;
         this.#lastName = lastName;
         this.#fullName = (firstName && lastName) ? `${firstName} ${lastName}` : null;
-        this.#id = id;
-        this.#dateCreated = dateCreated;
+        this.#id = _id;
+        this.#dateCreated = createdAt;
         this.#currentTerm = currentTerm.charAt(0).toUpperCase() + currentTerm.slice(1);
     }
 
@@ -92,16 +92,21 @@ class StudentLoginResponse extends UserLoginResponse {
 }
 
 class SupervisorLoginResponse extends UserLoginResponse {
+    #status;
 
     constructor(userData, stats) {
         super(userData, stats);
         // TODO: figure out what specific info to return for supervisor login
+        const { status } = userData;
+        const {} = stats;
+
+        this.#status = status;
     }
 
     toJSON() {
         return {
             ...super.toJSON(),
-            
+            status : this.#status
         }
     }
 }

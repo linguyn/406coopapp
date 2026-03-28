@@ -130,17 +130,16 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/StudentResponse' 
- *                 - $ref: '#/components/schemas/SupervisorResponse' 
- *                 - $ref: '#/components/schemas/CoordinatorResponse' 
- *                 - $ref: '#/components/schemas/UserResponse'
+ *                 - $ref: '#/components/schemas/StudentRes' 
+ *                 - $ref: '#/components/schemas/SupervisorRes' 
+ *                 - $ref: '#/components/schemas/CoordinatorRes' 
  *             examples:
  *               student:
- *                 $ref: '#/components/examples/StudentResponseEx'
+ *                 $ref: '#/components/examples/StudentResEx'
  *               supervisor:
- *                 $ref: '#/components/examples/SupervisorResponseEx'
+ *                 $ref: '#/components/examples/SupervisorResEx'
  *               coordinator:
- *                 $ref: '#/components/examples/CoordinatorResponseEx'
+ *                 $ref: '#/components/examples/CoordinatorResEx'
  *       401:
  *         description: Missing the authorization header. Please include a valid access token
  *       404:

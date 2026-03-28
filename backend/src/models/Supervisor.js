@@ -2,36 +2,62 @@
  * @swagger
  * components:
  *   schemas:
- *     SupervisorRegister:
+ *     SupervisorRes:
+ *       required: [company, jobTitle, location, interns, status, support]
+ *       allOf:
+ *         - $ref: '#/components/schemas/UserRes'
+ *         - type: object
+ *           properties:
+ *             company: { type: string, example: NBA }
+ *             jobTitle: { type: string, example: Bench Warmer }
+ *             location: { type: string, example: Utah }
+ *             status: { type: string, example: active }
+ *             interns:
+ *               type: array
+ *               items:
+ *                 type: string
+ *               example: [David, Michaela, Rachael]
+ *             support:
+ *               $ref: '#/components/schemas/Support'
+ *     SupervisorRegisterReq:
  *       required: [company]
  *       allOf:
  *       - $ref: '#/components/schemas/UserBase'
- *       - $ref: '#/components/schemas/UserProcessedBase'
  *       - $ref: '#/components/schemas/UserRegister'
  *       - type: object
  *         properties:
  *           company: { type: string, example: Palantir }
  *           jobTitle: { type: string, example: Ballistic Missiles Engineer }
  *           location: { type: string, example: New York }
- *     SupervisorSanitized:
+ *     SupervisorLoginRes:
  *       type: object
- *       required: [interns, status]
+ *       required: [accessToken, user]
  *       properties:
  *         accessToken: { type: string, example: "aDASDadDS2e23423ADASD" }
  *         user:
  *           type: object
- *           required: [interns, status]
+ *           required: [status, support]
  *           allOf:
- *             - $ref: '#/components/schemas/UserBase'
+ *             - $ref: '#/components/schemas/UserRes'
  *             - type: object
  *               properties:
- *                 interns: { type: DNE, example: DNE }
- *                 status: { type: string, example: active}
+ *                 status: { type: string, example: active }
+ *                 support:
+ *                   $ref: '#/components/schemas/Support'
+ *     SupervisorRegisterRes:
+ *       type: object
+ *       required: [message]
+ *       properties:
+ *         message: { type: string, example: Supervisor successfully registered }
  *   examples:
- *     SupervisorRegister:
+ *     SupervisorResEx:
+ *       value: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, fullName: Jin-Woo Sung, id : "238945789237457817", dateCreated : "DNE", company: NBA, jobTitle: The Goat, location: Toronto, status : "active", interns : [David, Michaela, Rachael] }
+ *     SupervisorRegisterReqEx:
  *       value: { role: supervisor, email: jinwoo@thegreatest.com, password: password123, passwordAgain: password123, firstName: Jin-Woo, lastName: Sung, company: Palantir, jobTitle: poopy, location: Idaho }
- *     SupervisorSanitized:
- *       value: { role: supervisor, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, company: Palantir, jobTitle: ploopy, location: Idaho, status: active, interns : DNE, id : "238945789237457817" }
+ *     SupervisorRegisterResEx:
+ *       value: { message: Supervisor successfully registered }
+ *     SupervisorLoginResEx:
+ *       value: { accessToken: AKDJSNAKSJFBkjbskdjBFK, user: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, fullName: Jin-Woo Sung, id : "238945789237457817", dateCreated : "DNE", status : "active" } }
  */
 
 import mongoose from 'mongoose';
