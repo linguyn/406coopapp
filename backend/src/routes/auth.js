@@ -7,6 +7,10 @@ import { TOKEN_OPTIONS, USER_DETAILS } from '../constants.js';
 import jwt from 'jsonwebtoken';
 import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
 import { UserLoginResponse } from '../classes/UserLoginResponse.js';
+import Student from '../models/Student.js';
+import Coor from '../models/Coordinator.js';
+import Supervisor from '../models/Supervisor.js';
+
 
 export const authRouter = express.Router();
 
@@ -50,16 +54,16 @@ export const authRouter = express.Router();
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/StudentSanitized'
- *                 - $ref: '#/components/schemas/SupervisorSanitized'
- *                 - $ref: '#/components/schemas/CoordinatorSanitized'
+ *                 - $ref: '#/components/schemas/StudentLoginRes'
+ *                 - $ref: '#/components/schemas/SupervisorLoginRes'
+ *                 - $ref: '#/components/schemas/CoordinatorLoginRes'
  *             examples:
  *               student:
- *                 $ref: '#/components/examples/StudentSanitized'
+ *                 $ref: '#/components/examples/StudentLoginResEx'
  *               supervisor:
- *                 $ref: '#/components/examples/SupervisorSanitized'
+ *                 $ref: '#/components/examples/SupervisorLoginResEx'
  *               coordinator:
- *                 $ref: '#/components/examples/CoordinatorSanitized'
+ *                 $ref: '#/components/examples/CoordinatorLoginResEx'
  *       422:
  *         description: Missing login fields or invalid format
  *       404:
@@ -125,16 +129,16 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *         application/json:
  *           schema:
  *             oneOf:
- *             - $ref: '#/components/schemas/StudentRegister'
- *             - $ref: '#/components/schemas/SupervisorRegister'
- *             - $ref: '#/components/schemas/CoordinatorRegister'
+ *             - $ref: '#/components/schemas/StudentRegisterReq'
+ *             - $ref: '#/components/schemas/SupervisorRegisterReq'
+ *             - $ref: '#/components/schemas/CoordinatorRegisterReq'
  *           examples:
  *             student:
- *               $ref: '#/components/examples/StudentRegister'
+ *               $ref: '#/components/examples/StudentRegisterReqEx'
  *             supervisor:
- *               $ref: '#/components/examples/SupervisorRegister'
+ *               $ref: '#/components/examples/SupervisorRegisterReqEx'
  *             coordinator:
- *               $ref: '#/components/examples/CoordinatorRegister'
+ *               $ref: '#/components/examples/CoordinatorRegisterReqEx'
  *     responses:
  *       201:
  *         description: Registration successful
@@ -142,16 +146,16 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/StudentSanitized'
- *                 - $ref: '#/components/schemas/SupervisorSanitized'
- *                 - $ref: '#/components/schemas/CoordinatorSanitized'
- *           examples:
- *             student:
- *               $ref: '#/components/examples/StudentSanitized'
- *             supervisor:
- *               $ref: '#/components/examples/SupervisorSanitized'
- *             coordinator:
- *               $ref: '#/components/examples/CoordinatorSanitized'
+ *                 - $ref: '#/components/schemas/StudentRegisterRes'
+ *                 - $ref: '#/components/schemas/SupervisorRegisterRes'
+ *                 - $ref: '#/components/schemas/CoordinatorRegisterRes'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentRegisterResEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorRegisterResEx'
+ *               coordinator:
+ *                 $ref: '#/components/examples/CoordinatorRegisterResEx'
  *       422:
  *         description: Missing registration fields or invalid format
  *       409:
@@ -160,17 +164,34 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *         description: Internal server error
  */
 
-authRouter.post('/register', sanitizeRegister, validateRegister, (req, res, next) => {
+authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res, next) => {
     const { role } = req.body;
 
     try {
-        const user = ROLE_OPERATIONS[role].add(req.body); // replace this line of code with the server.js 
-        const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[role]);
+        if (role === 'student'){
+            const newStudent = new Student(req.body);
+            const savedStudent = await newStudent.save();
+            return res.status(201).json({message: "Student saved!", data: savedStudent}); //message and data can be removed at a later time if not being used.
+        }
+
+        if (role === 'coordinator'){
+            const newCoordinator = new Coor(req.body);
+            const savedCoordinator = await newCoordinator.save();
+            return res.status(201).json({message: "Coordinator saved!", data: savedCoordinator}); //message and data can be removed at a later time.
+        }
+        if(role === 'supervisor'){
+            const newSupervisor = new Supervisor(req.body);
+            const savedSupervisor = await newSupervisor.save();
+            return res.status(201).json({message: "Supervisor saved!", data: savedSupervisor}); //message and data can be removed at a later time.
+        }
+
+
+        return res.status(400).json({message: "Invalid role specified."});
+
+       // const user = ROLE_OPERATIONS[role].add(req.body); // replace this line of code with the server.js 
+       // const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[role]);
 
         // send back a "safe" version of user's details
-        return res.status(201).json({
-            user : safeUser
-        });
     } catch(error) { 
         next(error);
     }    

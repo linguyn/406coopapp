@@ -64,7 +64,7 @@ FRONTEND_PORT=5173
 ACCESS_TOKEN_SECRET=<paste-your-access-token-key-here>
 REFRESH_TOKEN_SECRET=<paste-your-refresh-token-key-here>
 
-MONGO_URI= # Ignore this for now
+MONGO_URI=mongodb://localhost:27017/406_Project
 ```
 ```bash
 cd <project-directory>/frontend
@@ -88,7 +88,7 @@ npm install <dependency> --prefix <directory-name>   # Installs a dependency in 
 npm uninstall <dependency> --prefix <directory-name> # Uninstalls a dependency in the specified directory
 ```
 
-## 5. Accessing API documentation
+## 5. Accessing Swagger API documentation
 
 After starting the backend server, find a deatiled view of the API by navigating to:
 
@@ -97,3 +97,8 @@ http://localhost:<BACKEND_PORT>/api-docs/   # replace <BACKEND_PORT> with the po
 ```
 
 This documentation allows you to see request/response requirements for the api endpoints and test them with sample input.
+
+Note: most of the endpoints (except: /api/auth/login and /api/auth/register) require authentication tokens. When you are testing them, obtain an access token from the login or refresh endpoints, click the "Authorize" button, and paste your key there
+
+## 6. Database and Postman
+
