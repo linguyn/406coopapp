@@ -66,8 +66,9 @@ h2{
     font-weight: 100;
 }
 
-.list-select h2{
+.list-select h2:hover{
     cursor: pointer;
+    color:#0C49A6;
 }
 
 hr{
@@ -154,7 +155,7 @@ table{
     text-align: center;
     color: #444E5E;
     font-size: 1.15rem;
-    padding: 25px;
+    padding: 2.5vh;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
