@@ -37,6 +37,8 @@ body {
     padding: 60px 40px;
     gap: 24px;
     background-color: #0C49A6;
+    border: 1px solid black;
+    border-right: none;
     color: #ffffff;
 }
 

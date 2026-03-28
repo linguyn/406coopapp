@@ -5,22 +5,60 @@ import AuthLayout from '../../components/AuthLayout';
 import { signIn } from '../../services/authService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { applicationSubmit } from '../../services/applicationService';
 
 function Application() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [studentId, setStudentId] = useState('');
-    const [password, setPassword] = useState('');
-    const [temp, setTemp] = useState('');
+    const [permission, setPermission] = useState('');
+    const [paragraph, setParagraph] = useState('');
+    const [github, setGithub] = useState('');
+    const [file, setFile] = useState(null);
     const [pageError, setPageError] = useState('');
     const [visible, setVisible] = useState(false); 
     const [visibleTemp, setVisibleTemp] = useState(false); 
     const navigate = useNavigate(); 
 
-    const handleSubmit = (e) => { 
-        null; 
+
+    const handleSubmit = async (e) => { 
+        e.preventDefault(); 
+        if (!file) {
+            setPageError("Please upload your resume");
+            return;
+        }
+
+        try { 
+            const response = await applicationSubmit({
+                firstName: firstName,
+                lastName: lastName,
+                schoolEmail: email,
+                studentId: studentId,
+                eligibility: permission,
+                reasonToApply: paragraph,
+                portfolioLink: github
+            });
+
+            if (response.status == 201 || response){
+                console.log("Application submitted successfully: ", response.data);
+                navigate('/applicant/thank-you-page'); 
+            }
+        } catch (error) {
+            const msg = error.response?.data.message;
+            console.error(msg);
+            setPageError(msg);
+        }
     }
+
+
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setFile(e.target.files[0]);
+            console.log('Selected file:', e.target.files[0]);
+        }
+    };
+
 
     return (
         <AuthLayout title='CO-OP APPLICATION'
@@ -74,33 +112,48 @@ function Application() {
 
 
                             <div id='apply-field-3'>
-                                <div className='input-field-1'>
-                                    <label>Password</label>
-                                    <div className='register-icon-field'>
-                                        <input type={visible ? 'text' : 'password'}
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                        placeholder='Enter your password'></input>
-                                        <FontAwesomeIcon icon={visible ? faEyeSlash : faEye} 
-                                                     className='register-icon'
-                                                     onClick={() => visible ? setVisible(false) : setVisible(true)}/>
-                                    </div>
+                                <div className='apply-input-field-1'>
+                                    <label>Are you eligible to work in Canada/have your work permit?</label>
+                                    <input type='text' 
+                                           value={permission}
+                                           onChange={(e) => setPermission(e.target.value)}
+                                           placeholder='Your eligibility status...'
+                                           required
+                                    />
+                                </div>
+                            </div>
+
+                            <div id='apply-field-4'>
+                                <div className='apply-input-field-1'>
+                                    <label>Why do you want to join the co-op program? (150 words max)</label>
+                                    <input type='text' 
+                                           value={paragraph}
+                                           onChange={(e) => setParagraph(e.target.value)}
+                                           placeholder='Your response...'
+                                           required
+                                    />
+                                </div>
+                            </div>
+
+                            <div id='apply-field-5'>
+
+                                <div className='apply-input-field-1'>
+                                    <label>Github/Portfolio Link (optional)</label>
+                                    <input type='text' 
+                                           value={github}
+                                           onChange={(e) => setGithub(e.target.value)}
+                                           placeholder='Your response...'
+                                    />
                                 </div>
 
-                                <div className='input-field-2'>
-                                    <label>Re-enter password</label>
-
-                                    <div className='register-icon-field'>
-                                        <input type={visibleTemp ? 'text' : 'password'}
-                                        value={temp}
-                                        onChange={(e) => setTemp(e.target.value)}
-                                        required
-                                        placeholder='Re-enter your password'></input>
-                                        <FontAwesomeIcon icon={visibleTemp ? faEyeSlash : faEye} 
-                                                     className='register-icon'
-                                                     onClick={() => visibleTemp ? setVisibleTemp(false) : setVisibleTemp(true)}/>
+                                <div className='apply-input-field-2'>
+                                    <label>Resume</label>
+                                    <div className='file-button-container'>
+                                        <input className='custom-file-button' type='file' accept='.pdf,.doc,.docx'
+                                            onChange={handleFileChange}
+                                            required/>
                                     </div>
+                                    
                                 </div>
                             </div>
 
@@ -109,7 +162,7 @@ function Application() {
                             <div id='student-field-4'>
                                 {pageError && (
                                         <div className='register-error'>
-                                        <p className='student-error'>{pageError}</p>
+                                        <p className='apply-error'>{pageError}</p>
                                         </div>
                                     )}
                                 <button className='blue-button'>Register</button>
@@ -124,5 +177,6 @@ function Application() {
 
     ); 
 } 
+
 
 export default Application; 

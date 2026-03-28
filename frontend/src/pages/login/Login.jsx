@@ -28,6 +28,7 @@ function Login() {
                 });
 
             if (response.status == 200 || response) {
+                console.log(response);
                 console.log("Login successful: " , response.status);
                 navigate("/homepage");
             }
