@@ -3,6 +3,7 @@ import AuthLayout from '../../components/AuthLayout';
 import { signIn } from '../../services/authService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { applicationSubmit } from '../../services/applicationService';
 
 function Application() {
     const [firstName, setFirstName] = useState('');
@@ -11,14 +12,49 @@ function Application() {
     const [studentId, setStudentId] = useState('');
     const [permission, setPermission] = useState('');
     const [paragraph, setParagraph] = useState('');
-    const [file, setFile] = useState<File | null>(null);
-
+    const [github, setGithub] = useState('');
+    const [file, setFile] = useState(null);
     const [pageError, setPageError] = useState('');
     const navigate = useNavigate(); 
 
-    const handleSubmit = (e) => { 
-        null; 
+
+    const handleSubmit = async (e) => { 
+        e.preventDefault(); 
+        if (!file) {
+            setPageError("Please upload your resume");
+            return;
+        }
+
+        try { 
+            const response = await applicationSubmit({
+                firstName: firstName,
+                lastName: lastName,
+                schoolEmail: email,
+                studentId: studentId,
+                eligibility: permission,
+                reasonToApply: paragraph,
+                portfolioLink: github
+            });
+
+            if (response.status == 201 || response){
+                console.log("Application submitted successfully: ", response.data);
+                navigate('/applicant/thank-you-page'); 
+            }
+        } catch (error) {
+            const msg = error.response?.data.message;
+            console.error(msg);
+            setPageError(msg);
+        }
     }
+
+
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setFile(e.target.files[0]);
+            console.log('Selected file:', e.target.files[0]);
+        }
+    };
+
 
     return (
         <AuthLayout title='CO-OP APPLICATION'
@@ -100,17 +136,20 @@ function Application() {
                                 <div className='apply-input-field-1'>
                                     <label>Github/Portfolio Link (optional)</label>
                                     <input type='text' 
-                                           value={paragraph}
-                                           onChange={(e) => setParagraph(e.target.value)}
+                                           value={github}
+                                           onChange={(e) => setGithub(e.target.value)}
                                            placeholder='Your response...'
                                     />
                                 </div>
 
                                 <div className='apply-input-field-2'>
                                     <label>Resume</label>
-                                    <input id='file-input' type='file' accept='.pdf,.doc,.docx'
-                                            onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
-                                           required/>
+                                    <div className='file-button-container'>
+                                        <input className='custom-file-button' type='file' accept='.pdf,.doc,.docx'
+                                            onChange={handleFileChange}
+                                            required/>
+                                    </div>
+                                    
                                 </div>
                             </div>
 
@@ -118,7 +157,7 @@ function Application() {
                             <div id='apply-field-6'>
                                 {pageError && (
                                         <div className='register-error'>
-                                        <p className='student-error'>{pageError}</p>
+                                        <p className='apply-error'>{pageError}</p>
                                         </div>
                                     )}
                                 <button className='blue-button'>Register</button>
@@ -134,5 +173,6 @@ function Application() {
 
     ); 
 } 
+
 
 export default Application; 

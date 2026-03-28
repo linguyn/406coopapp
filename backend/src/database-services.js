@@ -28,13 +28,13 @@ export let tempUsers = [
                 startTerm:null
             },
             studentId: '123456789',
-            firstName : "alex",
-            lastName : "something",
-            email: 'jinwoo@example.ca',
+            firstName : "Michael",
+            lastName : "Scott",
+            email: 'michael.scott@example.com',
             password: 'password123',
             role: 'student',
             status : "applied",
-            id: '1741766400000',
+            id: '1741766400010',
             dateCreated:null,
             isApplicant: true
         },

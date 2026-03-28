@@ -33,7 +33,7 @@ function StudentRegister()
             });
 
 
-            if (response.status == 200 || response){
+            if (response.status == 201 || response){
                 console.log("Register successful: ", response.data);
                 navigate('/login'); 
             }
