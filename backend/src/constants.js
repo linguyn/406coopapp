@@ -70,7 +70,8 @@ export const API = {
     prefixes : {
         user : "/api/user",
         auth : "/api/auth",
-        applications : "/api/applications"
+        applications : "/api/applications",
+        reflections : "/api/reflections"
     }
 };
 
