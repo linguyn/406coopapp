@@ -3,6 +3,7 @@ import StudentHomepage from './pages/homepage/StudentHomepage';
 import StudentRegister from './pages/signup/StudentRegister';
 import SupervisorHomepage from './pages/homepage/SupervisorHomepage';
 import SupervisorRegister from './pages/signup/SupervisorRegister';
+import CoordinatorHomepage from './pages/homepage/CoordinatorHomepage';
 import Roles from './pages/roles/Roles';
 import Application from './pages/forms/CoopApplication';
 import UserList from './pages/userList/UserList';
@@ -11,6 +12,13 @@ import ApplicantStatusPage from './pages/applicantStatusPage/ApplicantStatusPage
 import CoopReflection from './pages/forms/CoopReflection';   
 import StudentProgress from './pages/forms/StudentProgress';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import {setAccessToken} from './services/api';
+
+
+const API_URL = import.meta.env.VITE_API_URL; 
+
 
 //fake data (ignore this)
 const fakeApplicantData =[
@@ -123,6 +131,25 @@ const fakeSupervisorData = [
 ];
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    /*try to restore the previous authentication state*/
+    const initAuth = async () => {
+      try {
+        const response = await axios.post(`${API_URL}/auth/refresh-token`, {}, { withCredentials: true });
+        setAccessToken(response.data.accessToken);
+
+      } catch (error) {
+        console.error("No valid refresh token found: ", error);
+      } finally{
+        setLoading(false);
+      }
+    }; 
+
+    initAuth();
+  }, []);
+
 
   return (
           
@@ -135,6 +162,7 @@ function App() {
           {/*homepages*/}
           <Route path='/student' element={<StudentHomepage />}/>
           <Route path='/supervisor' element={<SupervisorHomepage />}/>
+          <Route path='/coordinator' element={<CoordinatorHomepage />}/>
 
           {/*register pages*/}
           <Route path='/student/register' element={<StudentRegister />}/>

@@ -1,9 +1,17 @@
-function Homepage() {
+import './StudentHomepage.css';
+import Navbar from '../../components/Navbar';
+function StudentHomepage() {
 
     return (
-        <h1>Hello</h1>
+        <div>
+            <Navbar f1='Homepage'
+                    f2='Apply to Co-op'
+                    f3='Job Postings'
+                    f4='Co-op Reflection'/>
+            <h1></h1>
+        </div>
     )
 }
 
 
-export default Homepage; 
+export default StudentHomepage; 

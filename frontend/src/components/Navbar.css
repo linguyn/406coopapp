@@ -1,0 +1,57 @@
+.navbar-layout {
+    width: 100vw;
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0C49A6;
+    gap: 15px;
+    position: relative;
+}
+
+.navbar-layout button { 
+    background-color: #0C49A6;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border: none;
+
+    color: white;
+    font-size: clamp(0.1rem, 1.3vw, 4rem);
+    font-family: "Roboto", "Inter", sans-serif;
+    letter-spacing: -0.05em;
+}
+
+
+.navbar-layout button:not([name="burger"]):hover {
+    background-color: #0a3776;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-layout button[name="burger"] {
+    position: absolute;
+    left: 15px;
+    
+    color: white;
+    font-size: clamp(0.1rem, 1.3vw, 4rem);
+    font-family: "Roboto", "Inter", sans-serif;
+}
+
+
+.sidebar {
+    box-sizing: border-box;
+    margin-top: 0%;
+    position: absolute;
+    width: 20vw;
+    height: 100vh;
+    background-color: #0C49A6;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}

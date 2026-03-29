@@ -1,3 +1,4 @@
+import './SupervisorHomepage.css';
 function SupervisorHomepage() {
 
 

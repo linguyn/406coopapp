@@ -12,7 +12,7 @@ body {
 
 .auth-layout {
     margin-top: 10vh;
-    padding: 20px; /* Thêm chút padding để không dính sát mép màn hình khi thu nhỏ */
+    padding: 20px; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,17 +22,17 @@ body {
 .auth-box {
     display: flex;
     width: 80vw;
-    min-width: 700px; /* Không cho cái box co lại quá mức gây nát layout */
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1); /* Thêm tí bóng cho chuyên nghiệp */
+    min-width: 700px; 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     background-color: #ffffff;
-    overflow: hidden; /* Đảm bảo các phần tử con không tràn ra ngoài bo góc nếu có */
+    overflow: hidden;
 }
 
 .auth-left {
     display: flex;
     flex-direction: column;
-    flex: 3; /* Chiếm 3 phần chiều rộng */
-    min-width: 280px; /* Đảm bảo phần xanh đủ rộng để chứa chữ "SUPERVISOR" */
+    flex: 3; 
+    min-width: 280px; 
     height: 80vh;
     padding: 60px 40px;
     gap: 24px;
@@ -43,13 +43,15 @@ body {
 }
 
 .auth-left h1 {
+    display: block; 
+    max-width: min-content; 
     margin: 0;
-    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-size: clamp(2.5rem, 4vw, 4rem);
     line-height: 1.2;
     letter-spacing: -0.05rem;
     width: 100%;
     
-    /* FIX LỖI ĐÈ CHỮ: Ép từ dài xuống dòng */
+    
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
@@ -64,7 +66,7 @@ body {
 }
 
 .auth-right {
-    flex: 5; /* Chiếm 5 phần chiều rộng (rộng hơn bên trái) */
+    flex: 5; 
     height: 80vh;
     background-color: #ffffff;
     display: flex;
