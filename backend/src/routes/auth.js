@@ -208,16 +208,72 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
  * @error {500} {Object} - Internal server error
  */
 
-authRouter.post('/refresh-token', (req, res, next) => {
+/**
+ * @swagger
+ * /api/auth/refresh-token:
+ *   post:
+ *     security:
+ *       - []
+ *     summary: Get a new access token
+ *     description: Given that a valid refresh token is provided in the cookie "refreshToken", this returns a new valid access token and the sanitized user in the response.
+ *     tags:
+ *       - Auth
+ *     parameters:
+ *       - in: cookie
+ *         name: refreshToken
+ *         description: The refresh token stored in an HTTP-only cookie
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       201:
+ *         description: Successfully created and returned a new access token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/StudentLoginRes'
+ *                 - $ref: '#/components/schemas/SupervisorLoginRes'
+ *                 - $ref: '#/components/schemas/CoordinatorLoginRes'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentLoginResEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorLoginResEx'
+ *               coordinator:
+ *                 $ref: '#/components/examples/CoordinatorLoginResEx'
+ *       401:
+ *         description: Session expired, please obtain a valid refresh token
+ *       404:
+ *         description: User doesn't exist
+ *       500:
+ *         description: Internal server error
+ */
+
+authRouter.post('/refresh-token', async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
     try {
+
         if (!refreshToken) { throw new HTTPError("Session expired", 401); }
         const decodedPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-        const role = getUserById(decodedPayload.sub).role;
-        const accessToken = generateAccessToken(decodedPayload.sub, role);
-        
-        return res.status(200).json({
-            accessToken : accessToken
+
+        const _id = decodedPayload.sub;
+        let user = null;
+
+        if (user = await Student.findOne({_id})) {} 
+        else if (user = await Supervisor.findOne({_id})) {} 
+        else if (user = await Coordinator.findOne({_id})) {}
+
+        if (!user) { throw new HTTPError("Could not find a user", 404); }
+
+        const accessToken = generateAccessToken(_id, user.role);
+
+        const stats = getGlobalStats();
+        const safeUser = UserLoginResponse.createUserLoginResponse(user, stats);
+
+        return res.status(201).json({
+            accessToken : accessToken,
+            user : safeUser
         })
     } catch(error) { 
         next(error); 
