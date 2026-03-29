@@ -121,6 +121,7 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  *         name: userId
  *         schema:
  *           type: string
+ *           example: 69c8b64485f072ea7f76da74
  *         required: true
  *         description: The user's unique identifier
  *     responses:

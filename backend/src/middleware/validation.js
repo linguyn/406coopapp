@@ -9,7 +9,6 @@ import Supervisor from '../models/Supervisor.js';
 
 export async function validateLogin(req, res, next) {
     const {email, password} = req.body;
-            console.log("HELLO", req.body);
 
     try {
         if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 422); }
