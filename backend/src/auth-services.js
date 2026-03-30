@@ -1,17 +1,13 @@
 import { isValidCoordinator, isValidStudent, isValidSupervisor } from "./validate.js"
-import { addCoordinatorToDatabase, addStudentToDatabase, addSupervisorToDatabase } from "./database-services.js"
 
-export const ROLE_OPERATIONS = {
-    student : {
-        validate : isValidStudent,
-        add : addStudentToDatabase
+export const VALIDATE_OPERATIONS = {
+    student: {
+        validate: isValidStudent
     },
-    supervisor : {
-        validate : isValidSupervisor,
-        add : addSupervisorToDatabase
+    supervisor: {
+        validate: isValidSupervisor,
     },
-    coordinator : {
-        validate : isValidCoordinator,
-        add : addCoordinatorToDatabase
+    coordinator: {
+        validate: isValidCoordinator,
     }
 }
