@@ -175,7 +175,7 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
         }
 
         if (role === 'coordinator'){
-            const newCoordinator = new Coor(req.body);
+            const newCoordinator = new Coordinator(req.body);
             await newCoordinator.save();
             return res.status(201).json({message: "Coordinator saved!"}); //message and data can be removed at a later time.
         }

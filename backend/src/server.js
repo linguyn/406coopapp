@@ -9,7 +9,7 @@ import { API, TOKEN_OPTIONS } from './constants.js';
 import jwt from 'jsonwebtoken';
 import { HTTPError } from './errors.js';
 import cookieParser from 'cookie-parser';
-import Coor from './models/Coordinator.js';
+import Coordinator from './models/Coordinator.js';
 import Student from './models/Student.js';
 import connectDB from './database.js';
 import swaggerUi from 'swagger-ui-express';
@@ -105,7 +105,7 @@ app.use('/api-docs', swaggerUi.setup(swaggerDoc));
  */
 
 export function generateAccessToken(id, role) {
-    const payload = { sub : id, role : role };
+    const payload = { role : role };
     const secret = process.env.ACCESS_TOKEN_SECRET;
     const token = jwt.sign(payload, secret, TOKEN_OPTIONS.access);
     return token;
