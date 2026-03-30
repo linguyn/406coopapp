@@ -147,7 +147,7 @@ export function isValidLogin(email, password) {
  * @returns {boolean} True if all parameters are valid
  */
 
-export function isValidStatusUpdate(status) {
+export function isValidStatusUpdate(status) { //ALEX REMEMEBER TO UPDATE THIS SO THAT IT CHECKS FOR ALL STATUSES, NOT JUST STUDENT STATUSES.
     return USER_DETAILS.studentStatuses.includes(status);
 }
 

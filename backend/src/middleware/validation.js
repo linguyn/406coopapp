@@ -55,14 +55,7 @@ export function validateStatusUpdate(req, res, next) {
 
     if (caller.role !== USER_DETAILS.roles.coordinator && caller.role !== USER_DETAILS.roles.admin) { throw new HTTPError("Missing permissions", 403); }
     if (!isValidStatusUpdate(status)) { throw new HTTPError("Missing fields or invalid update", 400); }
-    try {
-        // the user we are modifying
-        const user = getUserById(req.params.id);
-        req.targetUser = user;
-        next();
-    } catch(error) {
-        next(error);
-    }
+    next();
 }
 
 export function validateLogout(req, res, next) {
