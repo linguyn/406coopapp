@@ -5,6 +5,9 @@ import { validateStatusUpdate, validateListRequest } from '../middleware/validat
 import { authenticateToken } from '../server.js';
 import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
 import { UserResponse } from '../classes/UserResponse.js';
+import Student from '../models/Student.js';
+import Coordinator from '../models/Coordinator.js';
+import Supervisor from '../models/Supervisor.js';
 
 export const userRouter = express.Router();
 
@@ -121,6 +124,7 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  *         name: userId
  *         schema:
  *           type: string
+ *           example: 69c8b64485f072ea7f76da74
  *         required: true
  *         description: The user's unique identifier
  *     responses:
@@ -130,17 +134,16 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/StudentResponse' 
- *                 - $ref: '#/components/schemas/SupervisorResponse' 
- *                 - $ref: '#/components/schemas/CoordinatorResponse' 
- *                 - $ref: '#/components/schemas/UserResponse'
+ *                 - $ref: '#/components/schemas/StudentRes' 
+ *                 - $ref: '#/components/schemas/SupervisorRes' 
+ *                 - $ref: '#/components/schemas/CoordinatorRes' 
  *             examples:
  *               student:
- *                 $ref: '#/components/examples/StudentResponseEx'
+ *                 $ref: '#/components/examples/StudentResEx'
  *               supervisor:
- *                 $ref: '#/components/examples/SupervisorResponseEx'
+ *                 $ref: '#/components/examples/SupervisorResEx'
  *               coordinator:
- *                 $ref: '#/components/examples/CoordinatorResponseEx'
+ *                 $ref: '#/components/examples/CoordinatorResEx'
  *       401:
  *         description: Missing the authorization header. Please include a valid access token
  *       404:
@@ -169,12 +172,12 @@ userRouter.get('/:role/:userId', authenticateToken, async(req, res) =>{
         const {role, userId} = req.params;
         let Model;
 
-        switch(role){
-            case 'student' || 'Student':
-                Model = 'Student';
+        switch(role.toLowerCase()){
+            case 'student':
+                Model = Student;
                 break;
             case 'coordinator':
-                Model = Coor;
+                Model = Coordinator;
                 break;
             case 'supervisor':
                 Model = Supervisor;
@@ -189,6 +192,8 @@ userRouter.get('/:role/:userId', authenticateToken, async(req, res) =>{
         if (!document) return res.status(404).json({message: "User not found"});
         res.status(200).json(document);
     } catch(error){
-        return res.status(500).json({error: "something went wrong in userRouter.get"});
+        return res.status(500).json({error: "something went wrong in userRouter.get",
+            details: error.message
+        });
     }
 }); 

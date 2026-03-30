@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
 import { UserLoginResponse } from '../classes/UserLoginResponse.js';
 import Student from '../models/Student.js';
-import Coor from '../models/Coordinator.js';
+import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
 
 
@@ -54,16 +54,16 @@ export const authRouter = express.Router();
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/StudentSanitized'
- *                 - $ref: '#/components/schemas/SupervisorSanitized'
- *                 - $ref: '#/components/schemas/CoordinatorSanitized'
+ *                 - $ref: '#/components/schemas/StudentLoginRes'
+ *                 - $ref: '#/components/schemas/SupervisorLoginRes'
+ *                 - $ref: '#/components/schemas/CoordinatorLoginRes'
  *             examples:
  *               student:
- *                 $ref: '#/components/examples/StudentSanitized'
+ *                 $ref: '#/components/examples/StudentLoginResEx'
  *               supervisor:
- *                 $ref: '#/components/examples/SupervisorSanitized'
+ *                 $ref: '#/components/examples/SupervisorLoginResEx'
  *               coordinator:
- *                 $ref: '#/components/examples/CoordinatorSanitized'
+ *                 $ref: '#/components/examples/CoordinatorLoginResEx'
  *       422:
  *         description: Missing login fields or invalid format
  *       404:
@@ -74,9 +74,9 @@ export const authRouter = express.Router();
 
 authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
     const user = req.user;
+
     const rememberMe = req.body.rememberMe;
     const stats = getGlobalStats();
-
     const safeUser = UserLoginResponse.createUserLoginResponse(user, stats);
 
     const accessToken = generateAccessToken(user.id, user.role);
@@ -129,16 +129,16 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *         application/json:
  *           schema:
  *             oneOf:
- *             - $ref: '#/components/schemas/StudentRegister'
- *             - $ref: '#/components/schemas/SupervisorRegister'
- *             - $ref: '#/components/schemas/CoordinatorRegister'
+ *             - $ref: '#/components/schemas/StudentRegisterReq'
+ *             - $ref: '#/components/schemas/SupervisorRegisterReq'
+ *             - $ref: '#/components/schemas/CoordinatorRegisterReq'
  *           examples:
  *             student:
- *               $ref: '#/components/examples/StudentRegister'
+ *               $ref: '#/components/examples/StudentRegisterReqEx'
  *             supervisor:
- *               $ref: '#/components/examples/SupervisorRegister'
+ *               $ref: '#/components/examples/SupervisorRegisterReqEx'
  *             coordinator:
- *               $ref: '#/components/examples/CoordinatorRegister'
+ *               $ref: '#/components/examples/CoordinatorRegisterReqEx'
  *     responses:
  *       201:
  *         description: Registration successful
@@ -146,16 +146,16 @@ authRouter.post('/logout', validateLogout, (req, res, next) => {
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/StudentSanitized'
- *                 - $ref: '#/components/schemas/SupervisorSanitized'
- *                 - $ref: '#/components/schemas/CoordinatorSanitized'
- *           examples:
- *             student:
- *               $ref: '#/components/examples/StudentSanitized'
- *             supervisor:
- *               $ref: '#/components/examples/SupervisorSanitized'
- *             coordinator:
- *               $ref: '#/components/examples/CoordinatorSanitized'
+ *                 - $ref: '#/components/schemas/StudentRegisterRes'
+ *                 - $ref: '#/components/schemas/SupervisorRegisterRes'
+ *                 - $ref: '#/components/schemas/CoordinatorRegisterRes'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentRegisterResEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorRegisterResEx'
+ *               coordinator:
+ *                 $ref: '#/components/examples/CoordinatorRegisterResEx'
  *       422:
  *         description: Missing registration fields or invalid format
  *       409:
@@ -170,19 +170,19 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
     try {
         if (role === 'student'){
             const newStudent = new Student(req.body);
-            const savedStudent = await newStudent.save();
-            return res.status(201).json({message: "Student saved!", data: savedStudent}); //message and data can be removed at a later time if not being used.
+            await newStudent.save();
+            return res.status(201).json({message: "Student saved!"}); //message and data can be removed at a later time if not being used.
         }
 
         if (role === 'coordinator'){
             const newCoordinator = new Coor(req.body);
-            const savedCoordinator = await newCoordinator.save();
-            return res.status(201).json({message: "Coordinator saved!", data: savedCoordinator}); //message and data can be removed at a later time.
+            await newCoordinator.save();
+            return res.status(201).json({message: "Coordinator saved!"}); //message and data can be removed at a later time.
         }
         if(role === 'supervisor'){
             const newSupervisor = new Supervisor(req.body);
-            const savedSupervisor = await newSupervisor.save();
-            return res.status(201).json({message: "Supervisor saved!", data: savedSupervisor}); //message and data can be removed at a later time.
+            await newSupervisor.save();
+            return res.status(201).json({message: "Supervisor saved!"}); //message and data can be removed at a later time.
         }
 
 
@@ -208,16 +208,72 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
  * @error {500} {Object} - Internal server error
  */
 
-authRouter.post('/refresh-token', (req, res, next) => {
+/**
+ * @swagger
+ * /api/auth/refresh-token:
+ *   post:
+ *     security:
+ *       - []
+ *     summary: Get a new access token
+ *     description: Given that a valid refresh token is provided in the cookie "refreshToken", this returns a new valid access token and the sanitized user in the response.
+ *     tags:
+ *       - Auth
+ *     parameters:
+ *       - in: cookie
+ *         name: refreshToken
+ *         description: The refresh token stored in an HTTP-only cookie
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       201:
+ *         description: Successfully created and returned a new access token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/StudentLoginRes'
+ *                 - $ref: '#/components/schemas/SupervisorLoginRes'
+ *                 - $ref: '#/components/schemas/CoordinatorLoginRes'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentLoginResEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorLoginResEx'
+ *               coordinator:
+ *                 $ref: '#/components/examples/CoordinatorLoginResEx'
+ *       401:
+ *         description: Session expired, please obtain a valid refresh token
+ *       404:
+ *         description: User doesn't exist
+ *       500:
+ *         description: Internal server error
+ */
+
+authRouter.post('/refresh-token', async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
     try {
+
         if (!refreshToken) { throw new HTTPError("Session expired", 401); }
         const decodedPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-        const role = getUserById(decodedPayload.sub).role;
-        const accessToken = generateAccessToken(decodedPayload.sub, role);
-        
-        return res.status(200).json({
-            accessToken : accessToken
+
+        const _id = decodedPayload.sub;
+        let user = null;
+
+        if (user = await Student.findOne({_id})) {} 
+        else if (user = await Supervisor.findOne({_id})) {} 
+        else if (user = await Coordinator.findOne({_id})) {}
+
+        if (!user) { throw new HTTPError("Could not find a user", 404); }
+
+        const accessToken = generateAccessToken(_id, user.role);
+
+        const stats = getGlobalStats();
+        const safeUser = UserLoginResponse.createUserLoginResponse(user, stats);
+
+        return res.status(201).json({
+            accessToken : accessToken,
+            user : safeUser
         })
     } catch(error) { 
         next(error); 
