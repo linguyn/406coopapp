@@ -5,6 +5,9 @@ import { validateStatusUpdate, validateListRequest } from '../middleware/validat
 import { authenticateToken } from '../server.js';
 import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
 import { UserResponse } from '../classes/UserResponse.js';
+import Student from '../models/Student.js';
+import Coordinator from '../models/Coordinator.js';
+import Supervisor from '../models/Supervisor.js';
 
 export const userRouter = express.Router();
 
@@ -169,12 +172,12 @@ userRouter.get('/:role/:userId', authenticateToken, async(req, res) =>{
         const {role, userId} = req.params;
         let Model;
 
-        switch(role){
-            case 'student' || 'Student':
-                Model = 'Student';
+        switch(role.toLowerCase()){
+            case 'student':
+                Model = Student;
                 break;
             case 'coordinator':
-                Model = Coor;
+                Model = Coordinator;
                 break;
             case 'supervisor':
                 Model = Supervisor;
@@ -189,6 +192,8 @@ userRouter.get('/:role/:userId', authenticateToken, async(req, res) =>{
         if (!document) return res.status(404).json({message: "User not found"});
         res.status(200).json(document);
     } catch(error){
-        return res.status(500).json({error: "something went wrong in userRouter.get"});
+        return res.status(500).json({error: "something went wrong in userRouter.get",
+            details: error.message
+        });
     }
 }); 

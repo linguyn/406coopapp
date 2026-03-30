@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
 import { UserLoginResponse } from '../classes/UserLoginResponse.js';
 import Student from '../models/Student.js';
-import Coor from '../models/Coordinator.js';
+import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
 
 

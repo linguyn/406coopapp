@@ -37,11 +37,11 @@ const coorSchema = new mongoose.Schema ({
 { tiemstamps: true});
 
 //Create model for the coordinator.
-const Coor = mongoose.model('Coordinator', coorSchema);
+const Coordinator = mongoose.model('Coordinator', coorSchema);
 
 
 
-export default Coor;
+export default Coordinator;
 
 /**
  * @swagger
