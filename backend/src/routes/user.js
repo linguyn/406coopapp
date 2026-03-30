@@ -80,19 +80,61 @@ function extractExactFilters(role, query) {
  * @error {500} {Object} - Internal server error
  */
 
-userRouter.patch('/student/:id/status', authenticateToken, validateStatusUpdate, (req, res, next) => {
-    const { status } = req.body;
+userRouter.patch('/:role/:userId', authenticateToken, validateStatusUpdate, async(req, res, next) => {
+   try{
+   
+        const { status, role, userId } = req.params;
 
-    try {
-        const user = req.targetUser;
-        updateUserStatus(user, status);
+        let Model;
 
-        const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[user.role]);
-        return res.status(200).json(safeUser);
-    } catch(error) {
-        next(error);
+
+        switch(role.toLowerCase()){
+            case 'student':
+                Model = Student;
+                break;
+            case 'coordinator':
+                Model = Coordinator;
+                break;
+            case 'supervisor':
+                Model = Supervisor;
+                break;
+            default:
+                return res.status(400).json({message: "Invalid type"});
+
+        }
+        const updatedInfo = await Model.findByIdAndUpdate(
+            userId,
+            req.body,
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+
+        if (!updatedInfo){
+            return res.status(404).json({message: "User not found"});
+        }
+        res.status(200).json(updatedInfo);
+    } catch(error){
+        console.error("PATCH Route Error:", error);
+        return res.status(500).json({error: "something went wrong in userRouter.patch",
+            details: error.message
+        });
     }
 });
+
+//Code below left commented to come back to if we want to use it. 
+//     try {
+//         const user = req.targetUser;
+//         updateUserStatus(user, status);
+
+//         const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[user.role]);
+//         return res.status(200).json(safeUser);
+//     } catch(error) {
+//         next(error);
+//     }
+// });
 
 userRouter.patch('/security', authenticateToken, (req, res) => {
     // TODO: update user email/password/other sensitive info
