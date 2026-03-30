@@ -151,14 +151,44 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  *         description: Internal server error
  */
 
-userRouter.get('/:userId', authenticateToken, (req, res, next) => {
-    try {
-        const id = req.params.userId;
-        if (!id) { throw new HTTPError("Missing userId parameter or invalid format", 422); }
-        const user = getUserById(id);
-        const safeUser = UserResponse.createUserResponse(user);
-        return res.status(200).json(safeUser);
-    } catch(error) { 
-        next(error); 
+// userRouter.get('/:userId', authenticateToken, (req, res, next) => {
+//     try {
+//         const id = req.params.userId;
+//         if (!id) { throw new HTTPError("Missing userId parameter or invalid format", 422); }
+//         const user = getUserById(id);
+//         const safeUser = UserResponse.createUserResponse(user);
+//         return res.status(200).json(safeUser);
+//     } catch(error) { 
+//         next(error); 
+//     }
+// });
+
+userRouter.get('/:role/:userId', authenticateToken, async(req, res) =>{
+    try{
+
+        const {role, userId} = req.params;
+        let Model;
+
+        switch(role){
+            case 'student' || 'Student':
+                Model = 'Student';
+                break;
+            case 'coordinator':
+                Model = Coor;
+                break;
+            case 'supervisor':
+                Model = Supervisor;
+                break;
+            default:
+                return res.status(400).json({message: "Invalid type"});
+        }
+        
+
+        const document = await Model.findById(req.params.userId);
+
+        if (!document) return res.status(404).json({message: "User not found"});
+        res.status(200).json(document);
+    } catch(error){
+        return res.status(500).json({error: "something went wrong in userRouter.get"});
     }
-});
+}); 
