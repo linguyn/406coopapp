@@ -1,23 +1,20 @@
 import { HTTPError } from "../errors.js";
 import { USER_DETAILS } from "../constants.js";
-import { getSanitizedUser, getUserByEmail, isEmailTaken, getUserById } from "../database-services.js";
+import { getSanitizedUser, isEmailTaken, getUserById } from "../database-services.js";
 import { isValidStatusUpdate, isValidLogin } from "../validate.js";
 import { ROLE_OPERATIONS } from "../auth-services.js";
 import Student from '../models/Student.js';
 import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
+import { getUserByEmail } from "../routes/user.js";
 
 export async function validateLogin(req, res, next) {
-    const {email, password} = req.body;
+    const {email, password } = req.body;
 
     try {
         if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 422); }
 
-        let user = null;
-        if (user = await Student.findOne({email})) {} 
-        
-        else if (user = await Supervisor.findOne({email})) {} 
-        else if (user = await Coordinator.findOne({email})) {}
+        const user = getUserByEmail(email);
 
         if (!user) { throw new HTTPError("Could not find a user", 404); }
 

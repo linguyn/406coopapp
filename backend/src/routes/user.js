@@ -208,31 +208,35 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
 //     }
 // });
 
-userRouter.get('/:role/:userId', authenticateToken, async(req, res) =>{
+export async function getUserByEmail(role, email) { //Can be moved to database services at a later time. Make sure to update all imports if moved. 
+    let Model;
+
+    switch(role.toLowerCase()){
+        case 'student':
+            Model = Student;
+            break;
+        case 'coordinator':
+            Model = Coordinator;
+            break;
+        case 'supervisor':
+            Model = Supervisor;
+            break;
+        default:
+            throw new HTTPError("Invalid role type");
+    }
+    const user = await Model.findOne({email: email});
+    return user;
+}
+
+userRouter.get('/:role', authenticateToken, async(req, res) =>{
     try{
+        const { role } = req.params;
+        const { email } = req.body;
 
-        const {role, userId} = req.params;
-        let Model;
+        const user = await getUserByEmail(role, email);
 
-        switch(role.toLowerCase()){
-            case 'student':
-                Model = Student;
-                break;
-            case 'coordinator':
-                Model = Coordinator;
-                break;
-            case 'supervisor':
-                Model = Supervisor;
-                break;
-            default:
-                return res.status(400).json({message: "Invalid type"});
-        }
-        
-
-        const document = await Model.findById(req.params.userId);
-
-        if (!document) return res.status(404).json({message: "User not found"});
-        res.status(200).json(document);
+        if (!user) return res.status(404).json({message: "User not found"});
+        res.status(200).json(user);
     } catch(error){
         return res.status(500).json({error: "something went wrong in userRouter.get",
             details: error.message
