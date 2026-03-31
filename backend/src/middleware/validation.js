@@ -7,7 +7,7 @@ import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
 
 async function getUserByEmail(email) {
-    const user = null;
+    let user = null;
 
     if (user = await Student.findOne({ email })) {}
     else if (user = await Supervisor.findOne({ email })) {}
