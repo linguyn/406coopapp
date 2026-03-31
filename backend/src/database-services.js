@@ -207,37 +207,6 @@ export let tempProgressForms = [
     }
 ]
 
-export function addCoordinatorToDatabase({email, password, firstName, lastName}) {
-    const newCoordinator = {
-        email: email,
-        password: password,
-        firstName: firstName,
-        lastName : lastName,
-        role: "coordinator",
-        id: Date.now()
-    };
-    tempUsers.push(newCoordinator);
-    return newCoordinator;
-}
-
-export function addSupervisorToDatabase({email, password, status, company, location, firstName, lastName, jobTitle, interns}) {
-    const newSupervisor = {
-        email: email,
-        password: password,
-        role: "supervisor",
-        company : company,
-        firstName : firstName,
-        lastName : lastName,
-        location : location,
-        jobTitle : jobTitle,
-        id: Date.now(),
-        interns : interns,
-        status : status || "active"
-    };
-    tempUsers.push(newSupervisor);
-    return newSupervisor;
-}
-
 export function addApplicationToDatabase({firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink}) {
     const newApp = {
         id : tempApplications.length + 1,
@@ -361,28 +330,6 @@ export function addStudentToDatabase({email, password, studentId, firstName, las
     }
     tempUsers.push(newStudent);
     return newStudent;
-}
-
-export function isEmailTaken(email) {
-    const userExists = tempUsers.some(user => user.email === email);
-    return userExists;
-}
-
-// should eventually be asynchronous when using database
-export function getUserByEmail(email) {
-    const user = tempUsers.find(user => user.email === email);
-    if (!user) {
-        throw new HTTPError("User doesn't exist", 401);
-    }
-    return user;
-}
-
-export function getUserById(id) {
-    const user = tempUsers.find(user => user.id === id);
-    if (!user) {
-        throw new HTTPError("User doesn't exist", 404);
-    }
-    return user;
 }
 
 
