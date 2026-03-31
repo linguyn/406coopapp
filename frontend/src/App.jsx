@@ -83,7 +83,10 @@ const fakeStudentData = [
     program: "Computer Science",
     applications: 12,
     report: "Pending",
-    status: "Interviewing"
+    status: "Interviewing",
+    interviews: 2,
+    workTerms: 1,
+    supervisor: "Dr. Sarah Chen"
   },
   {
     id: "stu-102",
@@ -93,7 +96,10 @@ const fakeStudentData = [
     program: "Software Engineering",
     applications: 8,
     report: "Completed",
-    status: "Placed"
+    status: "Placed",
+    interviews: 0,
+    workTerms: 0,
+    supervisor: "N/A"
   }
 ];
 
@@ -145,7 +151,9 @@ function App() {
           <Route path='/coordinator/supervisor-list' element={<UserList starterData={fakeSupervisorData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"supervisor"}/>}></Route>
 
           {/*detailed user info*/}
-          <Route path='/coordinator/detailed-user-info' element={<DetailedUserInfo></DetailedUserInfo>}></Route>
+          <Route path='/coordinator/detailed-user-info/applicant/:id' element={<DetailedUserInfo userData = {fakeApplicantData} listType = "applicant"></DetailedUserInfo>}></Route>
+          <Route path='/coordinator/detailed-user-info/coop-student/:id' element={<DetailedUserInfo userData = {fakeStudentData} listType = "coop-student"></DetailedUserInfo>}></Route>
+          <Route path='/coordinator/detailed-user-info/supervisor/:id' element={<DetailedUserInfo userData = {fakeSupervisorData} listType = "supervisor"></DetailedUserInfo>}></Route>
 
           {/*thank-you pages*/}
           <Route path='supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submittion!"} secondaryText={"An email has been sent to your inbox with details of your submittion"} type="supervisor"></ThankYouPage>}></Route>
