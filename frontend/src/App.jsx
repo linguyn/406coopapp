@@ -11,6 +11,7 @@ import ApplicantStatusPage from './pages/applicantStatusPage/ApplicantStatusPage
 import CoopReflection from './pages/forms/CoopReflection';   
 import StudentProgress from './pages/forms/StudentProgress';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
+import DetailedUserInfo from './pages/detailedUserInfo/DetailedUserInfo';
 
 //fake data (ignore this)
 const fakeApplicantData =[
@@ -155,7 +156,9 @@ function App() {
           <Route path='/coordinator/applicant-list' element={<UserList starterData={fakeApplicantData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"applicant"}/>}></Route>
           <Route path='/coordinator/student-list' element={<UserList starterData={fakeStudentData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"coop-student"}/>}></Route>
           <Route path='/coordinator/supervisor-list' element={<UserList starterData={fakeSupervisorData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"supervisor"}/>}></Route>
-          
+
+          {/*detailed user info*/}
+          <Route path='/coordinator/detailed-user-info' element={<DetailedUserInfo></DetailedUserInfo>}></Route>
 
           {/*thank-you pages*/}
           <Route path='/supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submittion!"} secondaryText={"An email has been sent to your inbox with details of your submittion"} type="supervisor"></ThankYouPage>}></Route>

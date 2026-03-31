@@ -30,11 +30,6 @@ export const USER_DETAILS = {
         minPasswordLength : 8,
         maxPasswordLength : 32
     },
-    afterLogin : {
-        student : [...BASE_SAFE, "applications", "interviews", "totalWorkTerms", "date", "startTerm", "program", "department", "coordinators", "facultyAdvisor"],
-        supervisor : [],
-        coordinator : []
-    }
 };
 
 export const REGISTRATION_FIELDS = {

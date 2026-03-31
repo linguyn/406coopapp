@@ -24,12 +24,12 @@ const student = new studentSchema({
         reflection:{ type: String, required: false, default:null}
     },
     termActivity: {
-        applications:{ type: Number, required: false, default: 67},
-        interviewed:{ type: Number, required: false, default: 67},
-        applied:{ type: Number, required: false, default: 67},
-        interviews:{ type: Number, required: false, default: 67},
-        shortlisted:{ type: Number, required: false, default: 67},
-        workTerms:{ type: Number, required: false, default: 67},
+        applications:{ type: Number, required: false, default: 0},
+        interviewed:{ type: Number, required: false, default: 0},
+        applied:{ type: Number, required: false, default: 0},
+        interviews:{ type: Number, required: false, default: 0},
+        shortlisted:{ type: Number, required: false, default: 0},
+        workTerms:{ type: Number, required: false, default: 0},
         startTerm:{ type: String, required: false, default: null}
     },
     support : {

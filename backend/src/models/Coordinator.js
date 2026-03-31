@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-//Coop Coordinator Schema
+// Coop Coordinator Schema
 const coorSchema = new mongoose.Schema ({
     firstName:{
         type: String,
@@ -34,14 +34,14 @@ const coorSchema = new mongoose.Schema ({
         lowercase: true,
     }
 },
-{ tiemstamps: true});
+{ timestamps: true});
 
 //Create model for the coordinator.
-const Coor = mongoose.model('Coordinator', coorSchema);
+const Coordinator = mongoose.model('Coordinator', coorSchema);
 
 
 
-export default Coor;
+export default Coordinator;
 
 /**
  * @swagger

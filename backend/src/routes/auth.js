@@ -1,16 +1,15 @@
 import { validateLogin, validateLogout, validateRegister } from '../middleware/validation.js';
-import { ROLE_OPERATIONS } from '../auth-services.js';
 import express from 'express';
 import { generateAccessToken, generateRefreshToken } from '../server.js';
-import { getSanitizedUser, getUserById, getGlobalStats, addStudentToDatabase, addCoordinatorToDatabase, addSupervisorToDatabase } from '../database-services.js';
-import { TOKEN_OPTIONS, USER_DETAILS } from '../constants.js';
+import { getGlobalStats } from '../database-services.js';
+import { TOKEN_OPTIONS } from '../constants.js';
 import jwt from 'jsonwebtoken';
 import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
 import { UserLoginResponse } from '../classes/UserLoginResponse.js';
 import Student from '../models/Student.js';
-import Coor from '../models/Coordinator.js';
+import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
-
+import { getUserById } from './user.js';
 
 export const authRouter = express.Router();
 
@@ -177,7 +176,7 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
         }
 
         if (role === 'coordinator'){
-            const newCoordinator = new Coor(req.body);
+            const newCoordinator = new Coordinator(req.body);
             await newCoordinator.save();
             // Also add to tempUsers for authentication
             addCoordinatorToDatabase(req.body);
@@ -214,16 +213,68 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
  * @error {500} {Object} - Internal server error
  */
 
-authRouter.post('/refresh-token', (req, res, next) => {
+/**
+ * @swagger
+ * /api/auth/refresh-token:
+ *   post:
+ *     security:
+ *       - []
+ *     summary: Get a new access token
+ *     description: Given that a valid refresh token is provided in the cookie "refreshToken", this returns a new valid access token and the sanitized user in the response.
+ *     tags:
+ *       - Auth
+ *     parameters:
+ *       - in: cookie
+ *         name: refreshToken
+ *         description: The refresh token stored in an HTTP-only cookie
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       201:
+ *         description: Successfully created and returned a new access token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/StudentLoginRes'
+ *                 - $ref: '#/components/schemas/SupervisorLoginRes'
+ *                 - $ref: '#/components/schemas/CoordinatorLoginRes'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentLoginResEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorLoginResEx'
+ *               coordinator:
+ *                 $ref: '#/components/examples/CoordinatorLoginResEx'
+ *       401:
+ *         description: Session expired, please obtain a valid refresh token
+ *       404:
+ *         description: User doesn't exist
+ *       500:
+ *         description: Internal server error
+ */
+
+authRouter.post('/refresh-token', async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
     try {
+
         if (!refreshToken) { throw new HTTPError("Session expired", 401); }
-        const decodedPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-        const role = getUserById(decodedPayload.sub).role;
-        const accessToken = generateAccessToken(decodedPayload.sub, role);
-        
-        return res.status(200).json({
-            accessToken : accessToken
+
+        const { userId, role } = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+        const user = getUserById(role, userId);
+
+        if (!user) { throw new HTTPError("Could not find a user", 404); }
+
+        const accessToken = generateAccessToken(userId, user.role);
+
+        const stats = getGlobalStats();
+        const safeUser = UserLoginResponse.createUserLoginResponse(user, stats);
+
+        return res.status(201).json({
+            accessToken : accessToken,
+            user : safeUser
         })
     } catch(error) { 
         next(error); 
