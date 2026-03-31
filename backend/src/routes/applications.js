@@ -2,7 +2,7 @@ import express from 'express';
 export const applicationsRouter = express.Router();
 
 import { tempApplications } from '../database-services.js';
-import { isValidEmail, hasValidReason } from '../validate.js';
+import { isValidEmail, hasValidReason } from '../validate-services.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
 
@@ -26,7 +26,7 @@ applicationsRouter.post('/submit', authenticateToken, (req, res, next) => {
     try {
         if (!firstName.trim() || !lastName.trim()) { throw new HTTPError(400, "First and last name is required"); }
         if (!studentId || !studentId.trim()) { throw new HTTPError(400, "Student ID is required"); }
-        if (!schoolEmail ||!isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
+        if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
         if (typeof eligibility !== "boolean") { throw new HTTPError(400, "Eligibility must be a boolean value"); }
         if (!reasonToApply || !hasValidReason(reasonToApply)) { throw new HTTPError(400, "Reason to apply must be 150 words or less"); }
 
@@ -43,9 +43,10 @@ applicationsRouter.post('/submit', authenticateToken, (req, res, next) => {
         };
 
         tempApplications.push(newApp);
-        return res.status(201).json({ 
-            message: "Application submitted successfully", 
-            applicationId: newApp.id });
+        return res.status(201).json({
+            message: "Application submitted successfully",
+            applicationId: newApp.id
+        });
     } catch (error) {
         next(error);
     }

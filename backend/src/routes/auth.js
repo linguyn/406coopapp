@@ -5,11 +5,11 @@ import { getGlobalStats } from '../database-services.js';
 import { TOKEN_OPTIONS } from '../constants.js';
 import jwt from 'jsonwebtoken';
 import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
-import { UserLoginResponse } from '../classes/UserLoginResponse.js';
+import { UserLoginResponse } from '../response classes/UserLoginResponse.js';
 import Student from '../models/Student.js';
 import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
-import { getUserById } from './user.js';
+import { getModelByRole } from './user.js';
 
 export const authRouter = express.Router();
 
@@ -257,7 +257,8 @@ authRouter.post('/refresh-token', async (req, res, next) => {
 
         const { userId, role } = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-        const user = getUserById(role, userId);
+        const Model = getModelByRole(role);
+        const user = await Model.findById(userId);
 
         if (!user) { throw new HTTPError("Could not find a user", 404); }
 

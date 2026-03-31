@@ -1,4 +1,5 @@
 import { HTTPError } from "./errors.js";
+import { getModelByRole } from "./routes/user.js";
 
 // TEMP REPRESENTATION OF USERS AND APPLICATIONS
 
@@ -217,13 +218,20 @@ export function updateUserStatus(user, newStatus) {
  * @returns a filtered list of users
  */
 
-export function getFilteredUsers(role, searchStr, exactFilters, fuzzyFilterKeys) {
+export async function getFilteredUsers(role, searchStr, exactFilters, fuzzyFilterKeys) {
+    const query = {...exactFilters};
+    const Model = getModelByRole(role);
+
     const searchKey = searchStr.toLowerCase();
     let hasSearch = false;
-    if (searchKey.trim().length > 0) { hasSearch = true; }
+    if (!(searchStr && searchKey.trim().length > 0)) { return Model.find(query); }
+    
+    const searchRegex = new RegExp(searchStr, "i");
+    for (const key in fuzzyFilterKeys) {
+        
+    }
 
-    const filteredUsers = tempUsers.filter((user) => {
-        if (user.role !== role) { return false; }
+    const filteredUsers = users.filter((user) => {
         for (const key in exactFilters) {
             if (user[key] !== exactFilters[key]) { return false; }
         }

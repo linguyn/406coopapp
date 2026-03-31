@@ -1,6 +1,6 @@
 import { getSanitizedUsers, getFilteredUsers } from '../database-services.js';
 import express from 'express';
-import { validateStatusUpdate, validateListRequest } from '../middleware/validation.js';
+import { validateUserUpdate, validateListRequest } from '../middleware/validation.js';
 import { authenticateToken } from '../server.js';
 import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
 import Student from '../models/Student.js';
@@ -35,19 +35,19 @@ userRouter.get('/list', authenticateToken, validateListRequest, (req, res, next)
         const filteredUsers = getFilteredUsers(role, searchStr, exactFilters, fuzzyFilters);
 
         const sanitizedUsers = getSanitizedUsers(filteredUsers, USER_DETAILS.safeFields[role]);
-        
+
         let reverse;
         if (order === "desc") { reverse = -1; }
         else { reverse = 1; }
 
         const sortedUsers = sanitizedUsers.toSorted((user1, user2) => {
-            if (user1[sortBy] < user2[sortBy]) { return -1*reverse }
-            if (user1[sortBy] > user2[sortBy]) { return 1*reverse }
+            if (user1[sortBy] < user2[sortBy]) { return -1 * reverse }
+            if (user1[sortBy] > user2[sortBy]) { return 1 * reverse }
             return 0;
         });
 
         return res.status(200).json(sortedUsers);
-    } catch (error) { 
+    } catch (error) {
         next(error);
     }
 });
@@ -66,8 +66,8 @@ function extractExactFilters(role, query) {
 }
 
 /**
- * @api {PATCH} - /api/user/student/:id/status
- * @description - Updates a student's status
+ * @api {PATCH} - /api/user/:role/:id
+ * @description - Updates a user's information
  * @param id - Student id
  * @body {String} status - New student status. Options: "applying", "applied", "waitlisted", "rejected", etc.
  * @success {200} {Object} - Returns the updated student information
@@ -77,14 +77,13 @@ function extractExactFilters(role, query) {
  * @error {500} {Object} - Internal server error
  */
 
-userRouter.patch('/:role/:userId', authenticateToken, validateStatusUpdate, async(req, res, next) => {
-   try{
-   
+userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => {
+    try {
         const { role, userId } = req.params;
 
         let Model;
 
-        switch(role.toLowerCase()){
+        switch (role.toLowerCase()) {
             case 'student':
                 Model = Student;
                 break;
@@ -95,9 +94,9 @@ userRouter.patch('/:role/:userId', authenticateToken, validateStatusUpdate, asyn
                 Model = Supervisor;
                 break;
             default:
-                return res.status(400).json({message: "Invalid type"});
-
+                return res.status(400).json({ message: "Invalid type" });
         }
+
         const updatedInfo = await Model.findByIdAndUpdate(
             userId,
             req.body,
@@ -107,14 +106,14 @@ userRouter.patch('/:role/:userId', authenticateToken, validateStatusUpdate, asyn
             }
         );
 
-
-        if (!updatedInfo){
-            return res.status(404).json({message: "User not found"});
+        if (!updatedInfo) {
+            return res.status(404).json({ message: "User not found" });
         }
         res.status(200).json(updatedInfo);
-    } catch(error){
+    } catch (error) {
         console.error("PATCH Route Error:", error);
-        return res.status(500).json({error: "something went wrong in userRouter.patch",
+        return res.status(500).json({
+            error: "something went wrong in userRouter.patch",
             details: error.message
         });
     }
@@ -180,36 +179,38 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  *         description: Internal server error
  */
 
-export async function getUserById(role, userId) {
+export function getModelByRole(role) {
     let Model;
 
-        switch(role.toLowerCase()){
-            case 'student':
-                Model = Student;
-                break;
-            case 'coordinator':
-                Model = Coordinator;
-                break;
-            case 'supervisor':
-                Model = Supervisor;
-                break;
-            default:
-                return res.status(400).json({message: "Invalid type"});
-        }
-        
-        return await Model.findById(userId);
+    switch (role.toLowerCase()) {
+        case 'student':
+            Model = Student;
+            break;
+        case 'coordinator':
+            Model = Coordinator;
+            break;
+        case 'supervisor':
+            Model = Supervisor;
+            break;
+        default:
+            return res.status(400).json({ message: "Invalid type" });
+    }
+
+    return Model;
 }
 
-userRouter.get('/:role/:userId', authenticateToken, async(req, res) =>{
-    try{
-        const {role, userId} = req.params;
+userRouter.get('/:role/:userId', authenticateToken, async (req, res) => {
+    try {
+        const { role, userId } = req.params;
 
-        const user = getUserById(role, userId);
+        const Model = getModelByRole(role);
+        const user = await Model.findById(userId);
 
-        if (!user) return res.status(404).json({message: "User not found"});
+        if (!user) return res.status(404).json({ message: "User not found" });
         res.status(200).json(user);
-    } catch(error){
-        return res.status(500).json({error: "something went wrong in userRouter.get",
+    } catch (error) {
+        return res.status(500).json({
+            error: "something went wrong in userRouter.get",
             details: error.message
         });
     }
