@@ -170,23 +170,17 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
         if (role === 'student'){
             const newStudent = new Student(req.body);
             await newStudent.save();
-            // Also add to tempUsers for authentication
-            addStudentToDatabase(req.body);
             return res.status(201).json({message: "Student saved!"}); //message and data can be removed at a later time if not being used.
         }
 
         if (role === 'coordinator'){
             const newCoordinator = new Coordinator(req.body);
             await newCoordinator.save();
-            // Also add to tempUsers for authentication
-            addCoordinatorToDatabase(req.body);
             return res.status(201).json({message: "Coordinator saved!"}); //message and data can be removed at a later time.
         }
         if(role === 'supervisor'){
             const newSupervisor = new Supervisor(req.body);
             await newSupervisor.save();
-            // Also add to tempUsers for authentication
-            addSupervisorToDatabase(req.body);
             return res.status(201).json({message: "Supervisor saved!"}); //message and data can be removed at a later time.
         }
 
