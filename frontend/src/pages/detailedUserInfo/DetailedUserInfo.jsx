@@ -13,9 +13,6 @@ function DetailedUserInfo({userData, listType}){
     const { listTypeStr } = useParams();
     const user = userData.find((u) => String(u.id) === id);
 
-    console.log(listType);
-    console.log(user.supervisor);
-
     if (!user) {
         return <h1>User with ID {id} not found.</h1>
     }
@@ -56,9 +53,15 @@ function DetailedUserInfo({userData, listType}){
     listTypeMap2.set("applicant", "APPLICANT INFO");
     listTypeMap2.set("coop-student", "CO-OP STUDENT INFO");
     listTypeMap2.set("supervisor", "SUPERVISOR INFO");
+
+    const listTypeMap3 = new Map()
+    listTypeMap3.set("applicant", "applicant");
+    listTypeMap3.set("coop-student", "student");
+    listTypeMap3.set("supervisor", "supervisor");
     
     const listTitle = listTypeMap.get(listType);
     const listTitle2 = listTypeMap2.get(listType);
+    const listTitle3 = listTypeMap3.get(listType);
     return (
 
         <div className='detailed-user-info-main-background'>
@@ -67,7 +70,7 @@ function DetailedUserInfo({userData, listType}){
                 
                 <header>
                     
-                    <div className='detailed-user-info-return' onClick={() => navigate(`/coordinator/${listType}-list`)}>
+                    <div className='detailed-user-info-return' onClick={() => navigate(`/coordinator/${listTitle3}-list`)}>
                         <img src={ReturnButtonIcon}></img>
                         <h2>{listTitle}</h2>
                     </div>
