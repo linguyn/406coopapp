@@ -192,6 +192,21 @@ export let tempStats = {
     totalPlaced: 6 
 }
 
+export let tempProgressForms = [
+    {
+        studentName : "xdd",
+        studentId : "123456789",
+        supervisorName : "rat",
+        company : "ratland",
+        jobTitle : "Software Developer Intern",
+        termDuration : "4 months",
+        skills : "cheese",
+        challenges : "being a rat",
+        supported : "rat supervisor was very supportive",
+        employable : "no"
+    }
+]
+
 export function addCoordinatorToDatabase({email, password, firstName, lastName}) {
     const newCoordinator = {
         email: email,
@@ -283,6 +298,43 @@ export function updateReflection(reflectionId, newReflectionData) {
     if (newReflectionData.challenges) { reflection.challenges = newReflectionData.challenges.trim(); }
     if (newReflectionData.supported) { reflection.supported = newReflectionData.supported.trim(); }
     return reflection;
+}
+
+export function addProgressFormToDatabase({studentName, studentId, supervisorName, company, jobTitle, termDuration, skills, challenges, supported, employable}) {
+    const newProgressForm = {
+        id : tempProgressForms.length + 1,
+        studentName : studentName.trim(),
+        studentId : studentId.trim(),
+        supervisorName : supervisorName.trim(),
+        company : company.trim(),
+        jobTitle : jobTitle.trim(),
+        termDuration : termDuration.trim(),
+        skills : skills.trim(),
+        challenges : challenges.trim(),
+        supported : supported.trim(),
+        employable : employable.trim(),
+        submittedAt : new Date()
+    }
+    tempProgressForms.push(newProgressForm);
+    return newProgressForm;
+}
+
+export function updateProgressForm(progressFormId, newProgressFormData) {
+    const progressForm = tempProgressForms.find(form => form.id === progressFormId);
+    if (!progressForm) {
+        throw new HTTPError("Progress form not found", 404);
+    }
+    if (newProgressFormData.studentName) { progressForm.studentName = newProgressFormData.studentName.trim(); }
+    if (newProgressFormData.studentId) { progressForm.studentId = newProgressFormData.studentId.trim(); }
+    if (newProgressFormData.supervisorName) { progressForm.supervisorName = newProgressFormData.supervisorName.trim(); }
+    if (newProgressFormData.company) { progressForm.company = newProgressFormData.company.trim(); }
+    if (newProgressFormData.jobTitle) { progressForm.jobTitle = newProgressFormData.jobTitle.trim(); }
+    if (newProgressFormData.termDuration) { progressForm.termDuration = newProgressFormData.termDuration.trim(); }
+    if (newProgressFormData.skills) { progressForm.skills = newProgressFormData.skills.trim(); }
+    if (newProgressFormData.challenges) { progressForm.challenges = newProgressFormData.challenges.trim(); }
+    if (newProgressFormData.supported) { progressForm.supported = newProgressFormData.supported.trim(); }
+    if (newProgressFormData.employable) { progressForm.employable = newProgressFormData.employable.trim();}
+    return progressForm;
 }
 
 export function addStudentToDatabase({email, password, studentId, firstName, lastName, program, applications, status, report, reflection, gpa, year, date, coverLetter, resume, transcript, location}) {

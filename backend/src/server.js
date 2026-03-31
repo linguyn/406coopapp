@@ -49,7 +49,7 @@ app.use(API.prefixes.auth, authRouter);
 app.use(API.prefixes.user, userRouter);
 app.use(API.prefixes.applications, applicationsRouter);
 app.use(API.prefixes.reflections, reflectionsRouter);
-
+app.use(API.prefixes.progressForms, progressFormsRouter);
 
 const swaggerOptions = {
     definition: {
