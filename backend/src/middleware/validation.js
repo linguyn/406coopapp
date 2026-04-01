@@ -1,46 +1,62 @@
 import { HTTPError } from "../errors.js";
 import { USER_DETAILS } from "../constants.js";
-import { getSanitizedUser, getUserByEmail, isEmailTaken, getUserById } from "../database-services.js";
+import { getSanitizedUser, isEmailTaken, getUserById } from "../database-services.js";
 import { isValidStatusUpdate, isValidLogin } from "../validate.js";
-import { ROLE_OPERATIONS } from "../auth-services.js";
+import { VALIDATE_OPERATIONS } from "../auth-services.js";
 import Student from '../models/Student.js';
 import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
+import { getUserByEmail } from "../routes/user.js";
+
+async function getUserByEmail(email) {
+    const user = null;
+
+    if (user = await Student.findOne({ email })) {}
+    else if (user = await Supervisor.findOne({ email })) {}
+    else if (user = await Coordinator.findOne({ email })) {}
+
+    return user;
+}
 
 export async function validateLogin(req, res, next) {
+<<<<<<< HEAD
     const {email, password} = req.body;
             console.log("HELLO", req.body);
+=======
+    const {email, password, role } = req.body;
+>>>>>>> 33d94019a52d2de09a4f0b5d5faad426f50fa9a7
 
     try {
         if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 422); }
 
-        let user = null;
-        if (user = await Student.findOne({email})) {} 
-        
-        else if (user = await Supervisor.findOne({email})) {} 
-        else if (user = await Coordinator.findOne({email})) {}
+        const user = await getUserByEmail(role, email);
 
         if (!user) { throw new HTTPError("Could not find a user", 404); }
 
-        // TODO: update when database implemented
         if (user.password !== password) { throw new HTTPError("Login information does not match", 422); }
 
         // user is valid, can safely update the user field in req for further use
         req.user = user;
         next();
-    } catch(error) {
+    } catch (error) {
         next(error);
     }
 };
 
+export async function  validatePermissions(req, res, next) {
+    const user = req.user;
+    if (user.role === USER_DETAILS.roles.coordinator || user.role === USER_DETAILS.roles.admin) { next(); }
+    else { throw new HTTPError("Invalid user permissions.", 403); }
+}
+
 export function validateRegister(req, res, next) {
-    const {email, role, password, passwordAgain} = req.body;
+    const { email, role, password, passwordAgain } = req.body;
     try {
-        const roleOperations = ROLE_OPERATIONS[role];
+        const roleOperations = VALIDATE_OPERATIONS[role];
 
         if (password != passwordAgain) { throw new HTTPError("Passwords do not match", 422); }
         if (!roleOperations.validate(req.body)) { throw new HTTPError("Missing fields or invalid format", 422); }
-        if (isEmailTaken(email)) { throw new HTTPError("Email taken by another user", 409); }
+        if (!getUserByEmail(email)) { throw new HTTPError("Email taken by another user", 409); }
 
         next();
     } catch (error) {
@@ -52,17 +68,11 @@ export function validateStatusUpdate(req, res, next) {
     // the user that made this request
     const caller = req.user;
     const { status } = req.body;
+    const { role } = req.params;
 
     if (caller.role !== USER_DETAILS.roles.coordinator && caller.role !== USER_DETAILS.roles.admin) { throw new HTTPError("Missing permissions", 403); }
-    if (!isValidStatusUpdate(status)) { throw new HTTPError("Missing fields or invalid update", 400); }
-    try {
-        // the user we are modifying
-        const user = getUserById(req.params.id);
-        req.targetUser = user;
-        next();
-    } catch(error) {
-        next(error);
-    }
+    if (!isValidStatusUpdate(role, status)) { throw new HTTPError("Missing fields or invalid update", 400); }
+    next();
 }
 
 export function validateLogout(req, res, next) {
@@ -80,7 +90,7 @@ export function validateListRequest(req, res, next) {
         if (!(role in USER_DETAILS.roles)) { throw new HTTPError("Invalid parameters", 400); }
 
         next();
-    } catch(error) {
+    } catch (error) {
         next(error);
     }
 }

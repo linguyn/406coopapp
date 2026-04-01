@@ -11,6 +11,7 @@ import ThankYouPage from './pages/thankYouPage/ThankYouPage';
 import ApplicantStatusPage from './pages/applicantStatusPage/ApplicantStatusPage'; 
 import CoopReflection from './pages/forms/CoopReflection';   
 import StudentProgress from './pages/forms/StudentProgress';
+import DetailedUserInfo from './pages/detailedUserInfo/DetailedUserInfo';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -18,7 +19,6 @@ import {setAccessToken} from './services/api';
 
 
 const API_URL = import.meta.env.VITE_API_URL; 
-
 
 //fake data (ignore this)
 const fakeApplicantData =[
@@ -184,6 +184,9 @@ function App() {
           <Route path='/coordinator/student-list' element={<UserList starterData={fakeStudentData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"coop-student"}/>}></Route>
           <Route path='/coordinator/supervisor-list' element={<UserList starterData={fakeSupervisorData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"supervisor"}/>}></Route>
           
+
+          {/*detailed user info*/}
+          <Route path='/coordinator/detailed-user-info' element={<DetailedUserInfo></DetailedUserInfo>}></Route>
 
           {/*thank-you pages*/}
           <Route path='/supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submittion!"} secondaryText={"An email has been sent to your inbox with details of your submittion"} type="supervisor"></ThankYouPage>}></Route>

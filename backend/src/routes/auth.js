@@ -1,16 +1,15 @@
 import { validateLogin, validateLogout, validateRegister } from '../middleware/validation.js';
-import { ROLE_OPERATIONS } from '../auth-services.js';
 import express from 'express';
 import { generateAccessToken, generateRefreshToken } from '../server.js';
-import { getSanitizedUser, getUserById, getGlobalStats, addStudentToDatabase, addCoordinatorToDatabase, addSupervisorToDatabase } from '../database-services.js';
-import { TOKEN_OPTIONS, USER_DETAILS } from '../constants.js';
+import { getGlobalStats } from '../database-services.js';
+import { TOKEN_OPTIONS } from '../constants.js';
 import jwt from 'jsonwebtoken';
 import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
 import { UserLoginResponse } from '../classes/UserLoginResponse.js';
 import Student from '../models/Student.js';
-import Coor from '../models/Coordinator.js';
+import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
-
+import { getUserById } from './user.js';
 
 export const authRouter = express.Router();
 
@@ -177,7 +176,7 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
         }
 
         if (role === 'coordinator'){
-            const newCoordinator = new Coor(req.body);
+            const newCoordinator = new Coordinator(req.body);
             await newCoordinator.save();
             // Also add to tempUsers for authentication
             addCoordinatorToDatabase(req.body);
@@ -261,18 +260,14 @@ authRouter.post('/refresh-token', async (req, res, next) => {
     try {
 
         if (!refreshToken) { throw new HTTPError("Session expired", 401); }
-        const decodedPayload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-        const _id = decodedPayload.sub;
-        let user = null;
+        const { userId, role } = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-        if (user = await Student.findOne({_id})) {} 
-        else if (user = await Supervisor.findOne({_id})) {} 
-        else if (user = await Coordinator.findOne({_id})) {}
+        const user = getUserById(role, userId);
 
         if (!user) { throw new HTTPError("Could not find a user", 404); }
 
-        const accessToken = generateAccessToken(_id, user.role);
+        const accessToken = generateAccessToken(userId, user.role);
 
         const stats = getGlobalStats();
         const safeUser = UserLoginResponse.createUserLoginResponse(user, stats);

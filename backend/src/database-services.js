@@ -192,6 +192,7 @@ export let tempStats = {
     totalPlaced: 6 
 }
 
+<<<<<<< HEAD
 export function addCoordinatorToDatabase({email, password, firstName, lastName}) {
     const newCoordinator = {
         email: email,
@@ -334,6 +335,8 @@ export function getUserById(id) {
 }
 
 
+=======
+>>>>>>> 33d94019a52d2de09a4f0b5d5faad426f50fa9a7
 // deprecated, use a class such as UserResponse or UserLoginResponse to get a response-ready user
 /**
  * @function getSanitizedUser

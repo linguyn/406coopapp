@@ -1,10 +1,12 @@
-import { getUserById, updateUserStatus, getSanitizedUser, getSanitizedUsers, getFilteredUsers } from '../database-services.js';
+import { getSanitizedUsers, getFilteredUsers } from '../database-services.js';
 import express from 'express';
 import { HTTPError } from '../errors.js'
-import { validateStatusUpdate, validateListRequest } from '../middleware/validation.js';
+import { validateStatusUpdate, validateListRequest, validatePermissions } from '../middleware/validation.js';
 import { authenticateToken } from '../server.js';
 import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
-import { UserResponse } from '../classes/UserResponse.js';
+import Student from '../models/Student.js';
+import Coordinator from '../models/Coordinator.js';
+import Supervisor from '../models/Supervisor.js';
 
 export const userRouter = express.Router();
 
@@ -29,7 +31,6 @@ userRouter.get('/list', authenticateToken, validateListRequest, (req, res, next)
     if (!LIST_CRITERIA.order.includes(order)) { order = "asc"; }
 
     try {
-        // TODO: should validate the filters
         const exactFilters = extractExactFilters(role, req.query);
         const fuzzyFilters = USER_DETAILS.fuzzyFilters[role];
         const filteredUsers = getFilteredUsers(role, searchStr, exactFilters, fuzzyFilters);
@@ -77,17 +78,46 @@ function extractExactFilters(role, query) {
  * @error {500} {Object} - Internal server error
  */
 
-userRouter.patch('/student/:id/status', authenticateToken, validateStatusUpdate, (req, res, next) => {
-    const { status } = req.body;
+userRouter.patch('/:role/:userId', authenticateToken, validateStatusUpdate, async(req, res, next) => {
+   try{
+   
+        const { role, userId } = req.params;
 
-    try {
-        const user = req.targetUser;
-        updateUserStatus(user, status);
+        let Model;
 
-        const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[user.role]);
-        return res.status(200).json(safeUser);
-    } catch(error) {
-        next(error);
+        switch(role.toLowerCase()){
+            case 'student':
+                Model = Student;
+                break;
+            case 'coordinator':
+                Model = Coordinator;
+                break;
+            case 'supervisor':
+                Model = Supervisor;
+                break;
+            default:
+                return res.status(400).json({message: "Invalid type"});
+
+        }
+        const updatedInfo = await Model.findByIdAndUpdate(
+            userId,
+            req.body,
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+
+        if (!updatedInfo){
+            return res.status(404).json({message: "User not found"});
+        }
+        res.status(200).json(updatedInfo);
+    } catch(error){
+        console.error("PATCH Route Error:", error);
+        return res.status(500).json({error: "something went wrong in userRouter.patch",
+            details: error.message
+        });
     }
 });
 
@@ -151,14 +181,84 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  *         description: Internal server error
  */
 
-userRouter.get('/:userId', authenticateToken, (req, res, next) => {
-    try {
-        const id = req.params.userId;
-        if (!id) { throw new HTTPError("Missing userId parameter or invalid format", 422); }
-        const user = getUserById(id);
-        const safeUser = UserResponse.createUserResponse(user);
-        return res.status(200).json(safeUser);
-    } catch(error) { 
-        next(error); 
+// userRouter.get('/:userId', authenticateToken, (req, res, next) => {
+//     try {
+//         const id = req.params.userId;
+//         if (!id) { throw new HTTPError("Missing userId parameter or invalid format", 422); }
+//         const user = getUserById(id);
+//         const safeUser = UserResponse.createUserResponse(user);
+//         return res.status(200).json(safeUser);
+//     } catch(error) { 
+//         next(error); 
+//     }
+// });
+
+export async function getUserByEmail(role, email) { //Can be moved to database services at a later time. Make sure to update all imports if moved. 
+    let Model;
+
+    switch(role.toLowerCase()){
+        case 'student':
+            Model = Student;
+            break;
+        case 'coordinator':
+            Model = Coordinator;
+            break;
+        case 'supervisor':
+            Model = Supervisor;
+            break;
+        default:
+            throw new HTTPError("Invalid role type");
+    }
+    const user = await Model.findOne({email: email});
+    return user;
+}
+
+userRouter.get('/:role', authenticateToken, async(req, res) =>{
+    try{
+        const { role } = req.params;
+        const { email } = req.body;
+
+        const user = await getUserByEmail(role, email);
+
+        if (!user) return res.status(404).json({message: "User not found"});
+        res.status(200).json(user);
+    } catch(error){
+        return res.status(500).json({error: "something went wrong in userRouter.get",
+            details: error.message
+        });
+    }
+}); 
+
+userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res) => {
+    try{
+        const { role } = req.params;
+        const { email } = req.body;
+
+        let Model;
+        switch(role.toLowerCase()){
+            case 'student':
+                Model = Student;
+                break;
+            case 'coordinator':
+                Model = Coordinator;
+                break;
+            case 'supervisor':
+                Model = Supervisor;
+                break;
+            default:
+                return res.status(400).json({message: "Invalid type"});
+        }
+        const user = await Model.findOneAndDelete({email: email});
+
+        if (!user) 
+            return res.status(404).json({message: "User has already been deleted or does not exist."});
+
+        res.status(200).json({message: "User deleted successfully!", deletedUser: user});
+    
+    } catch(error){
+        console.error("DELETE Route Error:", error);
+        return res.status(500).json({error: "something went wrong in userRouter.delete",
+            details: error.message
+        });
     }
 });
