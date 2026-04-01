@@ -1,7 +1,7 @@
 import { getUserById, updateUserStatus, getSanitizedUser, getSanitizedUsers, getFilteredUsers } from '../database-services.js';
 import express from 'express';
 import { HTTPError } from '../errors.js'
-import { validateStatusUpdate, validateListRequest } from '../middleware/validation.js';
+import { validateStatusUpdate, validateListRequest, validatePermissions } from '../middleware/validation.js';
 import { authenticateToken } from '../server.js';
 import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
 import { UserResponse } from '../classes/UserResponse.js';
@@ -243,3 +243,37 @@ userRouter.get('/:role', authenticateToken, async(req, res) =>{
         });
     }
 }); 
+
+userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res) => {
+    try{
+        const { role } = req.params;
+        const { email } = req.body;
+
+        let Model;
+        switch(role.toLowerCase()){
+            case 'student':
+                Model = Student;
+                break;
+            case 'coordinator':
+                Model = Coordinator;
+                break;
+            case 'supervisor':
+                Model = Supervisor;
+                break;
+            default:
+                return res.status(400).json({message: "Invalid type"});
+        }
+        const user = await Model.findOneAndDelete({email: email});
+
+        if (!user) 
+            return res.status(404).json({message: "User has already been deleted or does not exist."});
+
+        res.status(200).json({message: "User deleted successfully!", deletedUser: user});
+    
+    } catch(error){
+        console.error("DELETE Route Error:", error);
+        return res.status(500).json({error: "something went wrong in userRouter.delete",
+            details: error.message
+        });
+    }
+});

@@ -242,14 +242,7 @@ export function isEmailTaken(email) {
     return userExists;
 }
 
-// should eventually be asynchronous when using database
-export function getUserByEmail(email) {
-    const user = tempUsers.find(user => user.email === email);
-    if (!user) {
-        throw new HTTPError("User doesn't exist", 401);
-    }
-    return user;
-}
+
 
 export function getUserById(id) {
     const user = tempUsers.find(user => user.id === id);
