@@ -22,7 +22,7 @@ export async function validateLogin(req, res, next) {
     try {
         if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 422); }
 
-        const user = getUserByEmail(email);
+        const user = await getUserByEmail(email);
 
         if (!user) { throw new HTTPError("Could not find a user", 404); }
 
