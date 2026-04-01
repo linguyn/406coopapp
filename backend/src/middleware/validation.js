@@ -1,6 +1,5 @@
 import { HTTPError } from "../errors.js";
 import { USER_DETAILS } from "../constants.js";
-import { getSanitizedUser, isEmailTaken, getUserById } from "../database-services.js";
 import { isValidStatusUpdate, isValidLogin } from "../validate.js";
 import { VALIDATE_OPERATIONS } from "../auth-services.js";
 import Student from '../models/Student.js';
