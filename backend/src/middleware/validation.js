@@ -8,15 +8,6 @@ import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
 import { getUserByEmail } from "../routes/user.js";
 
-async function getUserByEmail(email) {
-    const user = null;
-
-    if (user = await Student.findOne({ email })) {}
-    else if (user = await Supervisor.findOne({ email })) {}
-    else if (user = await Coordinator.findOne({ email })) {}
-
-    return user;
-}
 
 export async function validateLogin(req, res, next) {
     const {email, password, role } = req.body;
