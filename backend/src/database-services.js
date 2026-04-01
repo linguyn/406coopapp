@@ -1,4 +1,8 @@
 import { HTTPError } from "./errors.js";
+import mongoose from "mongoose";
+import Student from "./models/Student.js";
+import Supervisor from "./models/Supervisor.js";
+import Coordinator from "./models/Coordinator.js";
 
 // TEMP REPRESENTATION OF USERS AND APPLICATIONS
 
@@ -260,4 +264,44 @@ export function getSanitizedUsers(users, options) {
     });
 
     return sanitizedUsers;
+}
+
+
+
+// WE ARE KEEPING ALL CODE FROM BELOW THIS LINE. ANY ADDED CODE THAT USES THE DATABASE SHOULD BE BELOW THIS LINE.
+
+export async function getStudentStats(req, res, next){
+    try {
+
+        const stats = await Student.aggregate([
+            {
+                $facet: {
+                    stats: [
+                        {
+                            $group: {
+                                _id: "$status",
+                                count: { $sum: 1},
+
+                            }
+                        }
+                    ],
+                    overallStats: [
+                        {
+                            $group: {
+                                _id: null,
+                                totalStudents: { $sum: 1},
+                            }
+                        }
+                    ]
+                }
+            },
+        ]);
+
+        res.status(200).json(stats);
+    } catch (error) {
+        console.error("Aggregation Error:", error);
+        res.status(500).json({ error: "Failed to calculate statistics.",
+            details: error.message
+         });
+    }
 }

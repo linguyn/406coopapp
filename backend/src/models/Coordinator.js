@@ -10,6 +10,8 @@ const coorSchema = new mongoose.Schema ({
     role:{type: String, required: true, lowercase: true,},
     dateCreated: { type: Date, default: Date.now },
 
+    students: { type: [String], default: [] }
+
 },
 { timestamps: true});
 
