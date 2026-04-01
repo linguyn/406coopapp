@@ -1,32 +1,24 @@
 import { HTTPError } from "../errors.js";
 import { USER_DETAILS } from "../constants.js";
+import { getSanitizedUser, isEmailTaken, getUserById } from "../database-services.js";
 import { isValidStatusUpdate, isValidLogin } from "../validate.js";
 import { VALIDATE_OPERATIONS } from "../auth-services.js";
 import Student from '../models/Student.js';
 import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
+import { getUserByEmail } from "../routes/user.js";
 
-async function getUserByEmail(email) {
-    let user = null;
-
-    if (user = await Student.findOne({ email })) {}
-    else if (user = await Supervisor.findOne({ email })) {}
-    else if (user = await Coordinator.findOne({ email })) {}
-
-    return user;
-}
 
 export async function validateLogin(req, res, next) {
-    const { email, password } = req.body;
+    const {email, password, role } = req.body;
 
     try {
         if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 422); }
 
-        const user = await getUserByEmail(email);
+        const user = await getUserByEmail(role, email);
 
         if (!user) { throw new HTTPError("Could not find a user", 404); }
 
-        // TODO: update when database implemented
         if (user.password !== password) { throw new HTTPError("Login information does not match", 422); }
 
         // user is valid, can safely update the user field in req for further use
@@ -36,6 +28,12 @@ export async function validateLogin(req, res, next) {
         next(error);
     }
 };
+
+export async function  validatePermissions(req, res, next) {
+    const user = req.user;
+    if (user.role === USER_DETAILS.roles.coordinator || user.role === USER_DETAILS.roles.admin) { next(); }
+    else { throw new HTTPError("Invalid user permissions.", 403); }
+}
 
 export function validateRegister(req, res, next) {
     const { email, role, password, passwordAgain } = req.body;
