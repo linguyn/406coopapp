@@ -26,6 +26,8 @@ applicationsRouter.post('/submit', authenticateToken, (req, res, next) => {
     try {
         if (!firstName || !firstName.trim() || !lastName || !lastName.trim()) { throw new HTTPError(400, "First and last name is required"); }        if (!studentId || !studentId.trim()) { throw new HTTPError(400, "Student ID is required"); }
         if (!schoolEmail ||!isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
+        if (!studentId || !studentId.trim()) { throw new HTTPError(400, "Student ID is required"); }
+        if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
         if (typeof eligibility !== "boolean") { throw new HTTPError(400, "Eligibility must be a boolean value"); }
         if (!reasonToApply || !hasValidReason(reasonToApply)) { throw new HTTPError(400, "Reason to apply must be 150 words or less"); }
 
