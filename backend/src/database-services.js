@@ -1,3 +1,5 @@
+import { HTTPError } from "./errors.js";
+
 // TEMP REPRESENTATION OF USERS AND APPLICATIONS
 
 export let tempUsers = [
@@ -166,6 +168,18 @@ export let tempApplications = [
     },
 ]
 
+export let tempReflections = [
+    {
+        company : "Aperture Science",
+        supervisor : "GLaDOS",
+        jobTitle : "Test Subject",
+        termDuration : "8 months",
+        skills : "How to survive being tested on by a sadistic AI",
+        challenges : "Not being killed by GLaDOS",
+        supported : "GLaDOS was very supportive and provided me with cake"
+    },
+]
+
 export let tempStats = {
     currentTerm : "winter 2026",
     newPostings : 12,
@@ -177,6 +191,140 @@ export let tempStats = {
     totalInterviewing: 7,
     totalPlaced: 6 
 }
+
+export let tempProgressForms = [
+    {
+        studentName : "xdd",
+        studentId : "123456789",
+        supervisorName : "rat",
+        company : "ratland",
+        jobTitle : "Software Developer Intern",
+        skills : "cheese",
+        challenges : "being a rat",
+        supported : "rat supervisor was very supportive",
+        employable : "no"
+    }
+]
+
+export function addApplicationToDatabase({firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink}) {
+    const newApp = {
+        id : tempApplications.length + 1,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        studentId: studentId.trim(),
+        schoolEmail: schoolEmail.trim(),
+        eligibility,
+        reasonToApply: reasonToApply.trim(),
+        portfolioLink: portfolioLink ? portfolioLink.trim() : null,
+        submittedAt: new Date()
+    };
+    tempApplications.push(newApp);
+    return newApp;
+}
+
+export function updateApplication(applicationId, newAppData) {
+    const application = tempApplications.find(app => app.id === applicationId);
+    if (!application) {
+        throw new HTTPError("Application not found", 404);
+    }
+    if (newAppData.firstName) { application.firstName = newAppData.firstName.trim(); }
+    if (newAppData.lastName) { application.lastName = newAppData.lastName.trim(); }
+    if (newAppData.studentId) { application.studentId = newAppData.studentId.trim(); }
+    if (newAppData.schoolEmail) { application.schoolEmail = newAppData.schoolEmail.trim(); }
+    if (typeof newAppData.eligibility === "boolean") { application.eligibility = newAppData.eligibility; }
+    if (newAppData.reasonToApply) { application.reasonToApply = newAppData.reasonToApply.trim(); }
+    if (newAppData.portfolioLink) { application.portfolioLink = newAppData.portfolioLink.trim(); }
+    return application;
+}
+
+export function addReflectionToDatabase({company, supervisor, jobTitle, termDuration, skills, challenges, supported}) {
+    const newReflection = {
+        id : tempReflections.length + 1,
+        company : company.trim(),
+        supervisor : supervisor.trim(),
+        jobTitle : jobTitle.trim(),
+        termDuration : termDuration.trim(),
+        skills : skills.trim(),
+        challenges : challenges.trim(),
+        supported : supported.trim(),
+        submittedAt : new Date()
+    }
+    tempReflections.push(newReflection);
+    return newReflection;
+}
+
+export function updateReflection(reflectionId, newReflectionData) {
+    const reflection = tempReflections.find(ref => ref.id === reflectionId);
+    if (!reflection) {
+        throw new HTTPError("Reflection not found", 404);
+    }
+    if (newReflectionData.company) { reflection.company = newReflectionData.company.trim(); }
+    if (newReflectionData.supervisor) { reflection.supervisor = newReflectionData.supervisor.trim(); }
+    if (newReflectionData.jobTitle) { reflection.jobTitle = newReflectionData.jobTitle.trim(); }
+    if (newReflectionData.termDuration) { reflection.termDuration = newReflectionData.termDuration.trim(); }
+    if (newReflectionData.skills) { reflection.skills = newReflectionData.skills.trim(); }
+    if (newReflectionData.challenges) { reflection.challenges = newReflectionData.challenges.trim(); }
+    if (newReflectionData.supported) { reflection.supported = newReflectionData.supported.trim(); }
+    return reflection;
+}
+
+export function addProgressFormToDatabase({studentName, supervisorName, company, jobTitle, stars, stairs, employable}) {
+    const newProgressForm = {
+        id : tempProgressForms.length + 1,
+        studentName : studentName.trim(),
+        supervisorName : supervisorName.trim(),
+        company : company.trim(),
+        jobTitle : jobTitle.trim(),
+        stars : stars.trim(),
+        stairs : stairs.trim(),
+        employable : employable.trim(),
+        submittedAt : new Date()
+    }
+    tempProgressForms.push(newProgressForm);
+    return newProgressForm;
+}
+
+export function updateProgressForm(progressFormId, newProgressFormData) {
+    const progressForm = tempProgressForms.find(form => form.id === progressFormId);
+    if (!progressForm) {
+        throw new HTTPError("Progress form not found", 404);
+    }
+    if (newProgressFormData.studentName) { progressForm.studentName = newProgressFormData.studentName.trim(); }
+    if (newProgressFormData.supervisorName) { progressForm.supervisorName = newProgressFormData.supervisorName.trim(); }
+    if (newProgressFormData.company) { progressForm.company = newProgressFormData.company.trim(); }
+    if (newProgressFormData.jobTitle) { progressForm.jobTitle = newProgressFormData.jobTitle.trim(); }
+    if (newProgressFormData.stars) { progressForm.stars = newProgressFormData.stars.trim(); }
+    if (newProgressFormData.stairs) { progressForm.stairs = newProgressFormData.stairs.trim(); }
+    if (newProgressFormData.employable) { progressForm.employable = newProgressFormData.employable.trim();}
+    return progressForm;
+}
+
+export function addStudentToDatabase({email, password, studentId, firstName, lastName, program, applications, status, report, reflection, gpa, year, date, coverLetter, resume, transcript, location}) {
+    const newStudent = {
+        studentId : studentId,
+        email: email,
+        password: password,
+        role: "student",
+        firstName : firstName,
+        lastName : lastName,
+        id: Date.now(),
+        program : program,
+        applications : applications,
+        status : status || "applying",
+        report : report,
+        reflection :  reflection,
+        gpa : gpa,
+        date : date,
+        year : year,
+        coverLetter : coverLetter,
+        resume : resume,
+        transcript : transcript,
+        location : location
+    }
+    tempUsers.push(newStudent);
+    return newStudent;
+}
+
 
 // deprecated, use a class such as UserResponse or UserLoginResponse to get a response-ready user
 /**

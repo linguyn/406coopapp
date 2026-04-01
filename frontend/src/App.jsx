@@ -4,10 +4,13 @@ import StudentRegister from './pages/signup/StudentRegister';
 import SupervisorHomepage from './pages/homepage/SupervisorHomepage';
 import SupervisorRegister from './pages/signup/SupervisorRegister';
 import Roles from './pages/roles/Roles';
+import Application from './pages/forms/CoopApplication';
 import UserList from './pages/userList/UserList';
-import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
 import ThankYouPage from './pages/thankYouPage/ThankYouPage';
-import ApplicantStatusPage from './pages/applicantStatusPage/ApplicantStatusPage';
+import ApplicantStatusPage from './pages/applicantStatusPage/ApplicantStatusPage'; 
+import CoopReflection from './pages/forms/CoopReflection';   
+import StudentProgress from './pages/forms/StudentProgress';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
 import DetailedUserInfo from './pages/detailedUserInfo/DetailedUserInfo';
 
 //fake data (ignore this)
@@ -139,6 +142,16 @@ function App() {
           <Route path='/supervisor/register' element={<SupervisorRegister />}/>
           <Route path='/roles' element={<Roles />}/>
 
+
+          {/*application page*/}
+          <Route path='/student/apply' element={<Application/>}/>
+
+          {/*coop reflection page*/}
+          <Route path='/student/reflection' element={<CoopReflection/>}/>
+
+          {/*student progress page*/}
+          <Route path='/supervisor/student-progress' element={<StudentProgress/>}/>
+
           {/*coordinator list*/}
           <Route path='/coordinator/applicant-list' element={<UserList starterData={fakeApplicantData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"applicant"}/>}></Route>
           <Route path='/coordinator/student-list' element={<UserList starterData={fakeStudentData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"coop-student"}/>}></Route>
@@ -148,16 +161,15 @@ function App() {
           <Route path='/coordinator/detailed-user-info' element={<DetailedUserInfo></DetailedUserInfo>}></Route>
 
           {/*thank-you pages*/}
-          <Route path='supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submittion!"} secondaryText={"An email has been sent to your inbox with details of your submittion"} type="supervisor"></ThankYouPage>}></Route>
+          <Route path='/supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submittion!"} secondaryText={"An email has been sent to your inbox with details of your submittion"} type="supervisor"></ThankYouPage>}></Route>
           <Route path='applicant/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n applying!"} secondaryText={"An email has been sent to your inbox with details of your application"} type="applicant"></ThankYouPage>}></Route>
 
           {/*applicant status page */}
-          <Route path= 'applicant/application-status/under-review' element={<ApplicantStatusPage status={"underReview"}></ApplicantStatusPage>}></Route>
-          <Route path= 'applicant/application-status/accepted' element={<ApplicantStatusPage status={"accepted"}></ApplicantStatusPage>}></Route>
-          <Route path= 'applicant/application-status/rejected' element={<ApplicantStatusPage status={"rejected"}></ApplicantStatusPage>}></Route>
+          <Route path= '/applicant/application-status/under-review' element={<ApplicantStatusPage status={"underReview"}></ApplicantStatusPage>}></Route>
+          <Route path= '/applicant/application-status/accepted' element={<ApplicantStatusPage status={"accepted"}></ApplicantStatusPage>}></Route>
+          <Route path= '/applicant/application-status/rejected' element={<ApplicantStatusPage status={"rejected"}></ApplicantStatusPage>}></Route>
       </Routes>
     </BrowserRouter>   
-
   );
 }
 

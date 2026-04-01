@@ -36,7 +36,7 @@ export function validateRegister(req, res, next) {
         const roleOperations = VALIDATE_OPERATIONS[role];
 
         if (password != passwordAgain) { throw new HTTPError("Passwords do not match", 422); }
-        if (!roleOperations.validate(req.body)) { throw new HTTPError("Missing fields or invalid format", 422); }
+        if (!roleOperations.validate(req.body)) { throw new HTTPError("Missing fields or invalid format 1", 422); }
         if (!getUserByEmail(email)) { throw new HTTPError("Email taken by another user", 409); }
 
         next();

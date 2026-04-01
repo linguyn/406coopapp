@@ -69,7 +69,9 @@ export const API = {
     prefixes : {
         user : "/api/user",
         auth : "/api/auth",
-        applications : "/api/applications"
+        applications : "/api/applications",
+        reflections : "/api/reflections",
+        progressForms : "/api/progress-forms"
     }
 };
 
@@ -80,7 +82,7 @@ export const TOKEN_OPTIONS = {
         path : '/',                 // cookie is visible to all routes
         sameSite : "lax"            // allows cookie to be sent across websites
     },
-    access : { expiresIn : '15m' },
+    access : { expiresIn : '1d' },
     refreshShort : { expiresIn : '1d' },
     refreshLong : { expiresIn : '7d' },
     sev_day_milli : 7*24*60*60*1000,
