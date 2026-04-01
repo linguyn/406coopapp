@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Roles () {
-    const [role, setRole] = useState('');    
     const navigate = useNavigate();
 
     return (

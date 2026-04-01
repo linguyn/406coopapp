@@ -5,7 +5,7 @@ export class UserResponse {
     #fullName;
     #id;
     #role;
-    #dateCreated;
+    #createdAt;
 
     static createUserResponse(userData) {
         const role = userData.role;
@@ -22,14 +22,14 @@ export class UserResponse {
     }
 
     constructor(userData) {
-        const { role, email, firstName, lastName, id, dateCreated } = userData;
+        const { role, email, firstName, lastName, id, createdAt } = userData;
         this.#email = email;
         this.#firstName = firstName;
         this.#lastName = lastName;
         this.#id = id;
         this.#fullName = (firstName && lastName) ? `${firstName} ${lastName}` : null; 
         this.#role = role;
-        this.#dateCreated = dateCreated;
+        this.#createdAt = createdAt;
     }
 
     toJSON() {
@@ -40,7 +40,7 @@ export class UserResponse {
             fullName: this.#fullName,
             id: this.#id,
             role: this.#role,
-            dateCreated : this.#dateCreated
+            createdAt : this.#createdAt
         }
     }
 }
@@ -90,7 +90,7 @@ class StudentResponse extends UserResponse {
     constructor(userData) {
         super(userData);
 
-        const { academics, documents, termActivity, studentId, location, status, date, isApplicant } = userData;
+        const { academics, documents, termActivity, studentId, location, status, isApplicant } = userData;
 
         this.#academics = academics;
         this.#documents = documents;

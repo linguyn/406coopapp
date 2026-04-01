@@ -1,4 +1,4 @@
-const BASE_FUZZY = [ "name", "email"];
+const BASE_FUZZY = [ "firstName", "lastName", "email"];
 const BASE_SAFE = [ "firstName", "lastName", "email", "role", "id"];
 
 export const USER_DETAILS = {
@@ -16,8 +16,8 @@ export const USER_DETAILS = {
         coordinator : [...BASE_FUZZY]
     },
     exactFilters : {
-        student : ["status", "program", "date", "gpa", "year"],
-        supervisor : ["status"],
+        student : ["status", "program", "date", "gpa", "year", "location", "isApplicant"],
+        supervisor : ["status", "location", "jobTitle"],
         coordinator : []
     },
     safeFields : {
@@ -57,7 +57,11 @@ export const CLEANING = {
 }
 
 export const LIST_CRITERIA = {
-    sorting : ["name", "email", "applications", "status", "studentId"],
+    sorting : {
+        general : ["firstName", "lastName", "email", "createdAt"],
+        student : ["applications", "status", "studentId", "program", "year", "gpa"],
+        supervisor : ["company", "status", "jobTitle"],
+    },
     order : ["asc", "desc"]
 };
 
@@ -65,7 +69,9 @@ export const API = {
     prefixes : {
         user : "/api/user",
         auth : "/api/auth",
-        applications : "/api/applications"
+        applications : "/api/applications",
+        reflections : "/api/reflections",
+        progressForms : "/api/progress-forms"
     }
 };
 
@@ -76,7 +82,7 @@ export const TOKEN_OPTIONS = {
         path : '/',                 // cookie is visible to all routes
         sameSite : "lax"            // allows cookie to be sent across websites
     },
-    access : { expiresIn : '15m' },
+    access : { expiresIn : '1d' },
     refreshShort : { expiresIn : '1d' },
     refreshLong : { expiresIn : '7d' },
     sev_day_milli : 7*24*60*60*1000,

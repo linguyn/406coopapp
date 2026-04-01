@@ -5,7 +5,6 @@ import AuthLayout from '../../components/AuthLayout';
 import { signIn } from '../../services/authService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isSamePassword, isValidEmail, isValidPassword, isValidStudentId } from '../../services/validate-frontend';
 
 function StudentRegister()
 {
@@ -34,7 +33,7 @@ function StudentRegister()
             });
 
 
-            if (response.status == 200 || response){
+            if (response.status == 201 || response){
                 console.log("Register successful: ", response.data);
                 navigate('/login'); 
             }

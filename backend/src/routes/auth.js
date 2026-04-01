@@ -5,11 +5,11 @@ import { getGlobalStats } from '../database-services.js';
 import { TOKEN_OPTIONS } from '../constants.js';
 import jwt from 'jsonwebtoken';
 import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
-import { UserLoginResponse } from '../classes/UserLoginResponse.js';
+import { UserLoginResponse } from '../response-classes/UserLoginResponse.js';
 import Student from '../models/Student.js';
 import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
-import { getUserById } from './user.js';
+import { getModelByRole } from './user.js';
 
 export const authRouter = express.Router();
 
@@ -81,15 +81,15 @@ authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
     const accessToken = generateAccessToken(user.id, user.role);
     const refreshToken = generateRefreshToken(user.id, user.role, rememberMe);
 
-    const cookieOptions = {...TOKEN_OPTIONS.refreshCookie};
+    const cookieOptions = { ...TOKEN_OPTIONS.refreshCookie };
     if (rememberMe) { cookieOptions.maxAge = TOKEN_OPTIONS.sev_day_milli; }
 
     res.cookie("refreshToken", refreshToken, cookieOptions)
 
     // send back a valid access token and a "safe" version of user's details
     return res.status(200).json({
-        accessToken : accessToken,
-        user : safeUser
+        accessToken: accessToken,
+        user: safeUser
     });
 });
 
@@ -100,7 +100,7 @@ authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
 
 authRouter.post('/logout', validateLogout, (req, res, next) => {
     res.clearCookie("refreshToken", TOKEN_OPTIONS.refreshCookie);
-    return res.status(200).json({message : "Successfully logged out"})
+    return res.status(200).json({ message: "Successfully logged out" })
 });
 
 /**
@@ -167,33 +167,33 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
     const { role } = req.body;
 
     try {
-        if (role === 'student'){
+        if (role === 'student') {
             const newStudent = new Student(req.body);
             await newStudent.save();
-            return res.status(201).json({message: "Student saved!"}); //message and data can be removed at a later time if not being used.
+            return res.status(201).json({ message: "Student saved!" }); //message and data can be removed at a later time if not being used.
         }
 
-        if (role === 'coordinator'){
+        if (role === 'coordinator') {
             const newCoordinator = new Coordinator(req.body);
             await newCoordinator.save();
-            return res.status(201).json({message: "Coordinator saved!"}); //message and data can be removed at a later time.
+            return res.status(201).json({ message: "Coordinator saved!" }); //message and data can be removed at a later time.
         }
-        if(role === 'supervisor'){
+        if (role === 'supervisor') {
             const newSupervisor = new Supervisor(req.body);
             await newSupervisor.save();
-            return res.status(201).json({message: "Supervisor saved!"}); //message and data can be removed at a later time.
+            return res.status(201).json({ message: "Supervisor saved!" }); //message and data can be removed at a later time.
         }
 
 
-        return res.status(400).json({message: "Invalid role specified."});
+        return res.status(400).json({ message: "Invalid role specified." });
 
-       // const user = ROLE_OPERATIONS[role].add(req.body); // replace this line of code with the server.js 
-       // const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[role]);
+        // const user = ROLE_OPERATIONS[role].add(req.body); // replace this line of code with the server.js 
+        // const safeUser = getSanitizedUser(user, USER_DETAILS.safeFields[role]);
 
         // send back a "safe" version of user's details
-    } catch(error) { 
+    } catch (error) {
         next(error);
-    }    
+    }
 });
 
 /**
@@ -257,7 +257,8 @@ authRouter.post('/refresh-token', async (req, res, next) => {
 
         const { userId, role } = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-        const user = getUserById(role, userId);
+        const Model = getModelByRole(role);
+        const user = await Model.findById(userId);
 
         if (!user) { throw new HTTPError("Could not find a user", 404); }
 
@@ -267,10 +268,10 @@ authRouter.post('/refresh-token', async (req, res, next) => {
         const safeUser = UserLoginResponse.createUserLoginResponse(user, stats);
 
         return res.status(201).json({
-            accessToken : accessToken,
-            user : safeUser
+            accessToken: accessToken,
+            user: safeUser
         })
-    } catch(error) { 
-        next(error); 
+    } catch (error) {
+        next(error);
     }
 });

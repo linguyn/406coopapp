@@ -1,0 +1,40 @@
+import express from 'express';
+export const reflectionsRouter = express.Router();
+
+import { addReflectionToDatabase, updateReflection } from '../database-services.js';
+import { HTTPError } from '../errors.js';
+import { authenticateToken } from '../server.js';
+
+reflectionsRouter.post('/submit', authenticateToken, (req, res, next) => {
+    const { company, supervisor, jobTitle, termDuration, skills, challenges, supported } = req.body;
+    try {
+        if (!company || !company.trim()) { throw new HTTPError(400, "Company name is required"); }
+        if (!supervisor || !supervisor.trim()) { throw new HTTPError(400, "Supervisor name is required"); }
+        if (!jobTitle || !jobTitle.trim()) { throw new HTTPError(400, "Job title is required"); }
+        if (!termDuration || !termDuration.trim()) { throw new HTTPError(400, "Term duration is required"); }
+        if (!skills || !skills.trim()) { throw new HTTPError(400, "Skills description is required"); }
+        if (!challenges || !challenges.trim()) { throw new HTTPError(400, "Challenges description is required"); }
+        if (!supported || !supported.trim()) { throw new HTTPError(400, "Support description is required"); }
+
+        const newReflection = addReflectionToDatabase({company, supervisor, jobTitle, termDuration, skills, challenges, supported});
+        return res.status(201).json({ 
+            message: "Reflection submitted successfully", 
+            reflectionId: newReflection.id
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+
+reflectionsRouter.patch('/update/:id', authenticateToken, (req, res, next) => {
+    try {
+        const updatedReflection = updateReflection(parseInt(req.params.id), req.body);
+        return res.status(200).json({
+            message: "Reflection updated successfully",
+            reflection: updatedReflection
+        });
+    } catch (error) {
+        next(error);
+    }
+});
