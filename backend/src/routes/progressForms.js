@@ -6,16 +6,17 @@ import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
 
 progressFormsRouter.post('/submit', authenticateToken, (req, res, next) => {
-    const { company, termDuration, tasks, skills, challenges, supported } = req.body;
+    const { studentName, supervisorName, company, jobTitle, stars, stairs, employable } = req.body;
     try {
+        if (!studentName || !studentName.trim()) { throw new HTTPError(400, "Student name is required"); }
+        if (!supervisorName || !supervisorName.trim()) { throw new HTTPError(400, "Supervisor name is required"); }
         if (!company || !company.trim()) { throw new HTTPError(400, "Company name is required"); }
-        if (!termDuration || !termDuration.trim()) { throw new HTTPError(400, "Term duration is required"); }
-        if (!tasks || !tasks.trim()) { throw new HTTPError(400, "Tasks description is required"); }
-        if (!skills || !skills.trim()) { throw new HTTPError(400, "Skills description is required"); }
-        if (!challenges || !challenges.trim()) { throw new HTTPError(400, "Challenges description is required"); }
-        if (!supported || !supported.trim()) { throw new HTTPError(400, "Support description is required"); }
+        if (!jobTitle || !jobTitle.trim()) { throw new HTTPError(400, "Job title is required"); }
+        if (!stars || !stars.trim()) { throw new HTTPError(400, "Stars are required"); }
+        if (!stairs || !stairs.trim()) { throw new HTTPError(400, "Stairs are required"); }
+        if (!employable || !employable.trim()) { throw new HTTPError(400, "Employable status is required"); }
 
-        const newProgressForm = addProgressFormToDatabase({company, termDuration, tasks, skills, challenges, supported});
+        const newProgressForm = addProgressFormToDatabase({studentName, supervisorName, company, jobTitle, stars, stairs, employable});
         return res.status(201).json({ 
             message: "Progress form submitted successfully", 
             progressFormId: newProgressForm.id

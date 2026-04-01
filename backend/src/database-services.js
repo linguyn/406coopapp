@@ -1,3 +1,5 @@
+import { HTTPError } from "./errors.js";
+
 // TEMP REPRESENTATION OF USERS AND APPLICATIONS
 
 export let tempUsers = [
@@ -197,7 +199,6 @@ export let tempProgressForms = [
         supervisorName : "rat",
         company : "ratland",
         jobTitle : "Software Developer Intern",
-        termDuration : "4 months",
         skills : "cheese",
         challenges : "being a rat",
         supported : "rat supervisor was very supportive",
@@ -267,18 +268,15 @@ export function updateReflection(reflectionId, newReflectionData) {
     return reflection;
 }
 
-export function addProgressFormToDatabase({studentName, studentId, supervisorName, company, jobTitle, termDuration, skills, challenges, supported, employable}) {
+export function addProgressFormToDatabase({studentName, supervisorName, company, jobTitle, stars, stairs, employable}) {
     const newProgressForm = {
         id : tempProgressForms.length + 1,
         studentName : studentName.trim(),
-        studentId : studentId.trim(),
         supervisorName : supervisorName.trim(),
         company : company.trim(),
         jobTitle : jobTitle.trim(),
-        termDuration : termDuration.trim(),
-        skills : skills.trim(),
-        challenges : challenges.trim(),
-        supported : supported.trim(),
+        stars : stars.trim(),
+        stairs : stairs.trim(),
         employable : employable.trim(),
         submittedAt : new Date()
     }
@@ -292,14 +290,11 @@ export function updateProgressForm(progressFormId, newProgressFormData) {
         throw new HTTPError("Progress form not found", 404);
     }
     if (newProgressFormData.studentName) { progressForm.studentName = newProgressFormData.studentName.trim(); }
-    if (newProgressFormData.studentId) { progressForm.studentId = newProgressFormData.studentId.trim(); }
     if (newProgressFormData.supervisorName) { progressForm.supervisorName = newProgressFormData.supervisorName.trim(); }
     if (newProgressFormData.company) { progressForm.company = newProgressFormData.company.trim(); }
     if (newProgressFormData.jobTitle) { progressForm.jobTitle = newProgressFormData.jobTitle.trim(); }
-    if (newProgressFormData.termDuration) { progressForm.termDuration = newProgressFormData.termDuration.trim(); }
-    if (newProgressFormData.skills) { progressForm.skills = newProgressFormData.skills.trim(); }
-    if (newProgressFormData.challenges) { progressForm.challenges = newProgressFormData.challenges.trim(); }
-    if (newProgressFormData.supported) { progressForm.supported = newProgressFormData.supported.trim(); }
+    if (newProgressFormData.stars) { progressForm.stars = newProgressFormData.stars.trim(); }
+    if (newProgressFormData.stairs) { progressForm.stairs = newProgressFormData.stairs.trim(); }
     if (newProgressFormData.employable) { progressForm.employable = newProgressFormData.employable.trim();}
     return progressForm;
 }

@@ -2,7 +2,7 @@ import express from 'express';
 export const applicationsRouter = express.Router();
 
 import { updateApplication, addApplicationToDatabase } from '../database-services.js';
-import { isValidEmail, hasValidReason } from '../validate.js';
+import { isValidEmail, hasValidReason } from '../validate-services.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
 
