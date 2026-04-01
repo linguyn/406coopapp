@@ -28,7 +28,6 @@ export async function validateLogin(req, res, next) {
 
         if (!user) { throw new HTTPError("Could not find a user", 404); }
 
-        // TODO: update when database implemented
         if (user.password !== password) { throw new HTTPError("Login information does not match", 422); }
 
         // user is valid, can safely update the user field in req for further use
@@ -38,6 +37,12 @@ export async function validateLogin(req, res, next) {
         next(error);
     }
 };
+
+export async function  validatePermissions(req, res, next) {
+    const user = req.user;
+    if (user.role === USER_DETAILS.roles.coordinator || user.role === USER_DETAILS.roles.admin) { next(); }
+    else { throw new HTTPError("Invalid user permissions.", 403); }
+}
 
 export function validateRegister(req, res, next) {
     const { email, role, password, passwordAgain } = req.body;
