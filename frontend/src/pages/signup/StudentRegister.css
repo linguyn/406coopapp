@@ -30,7 +30,6 @@ body {
     width: 80%;
     height: 15%;
     gap: 5%;
-    
 }   
    
 
@@ -89,6 +88,13 @@ body {
     border-radius: 4px; 
     transition: background 0.3s;
 }
+
+#student-container label {
+    font-size: 0.95em;
+    font-family: "Inter", "Roboto", "Helvetica";
+    color: #333333;
+}
+
 
 #student-container input:hover {
     background-color: rgb(196, 196, 196);

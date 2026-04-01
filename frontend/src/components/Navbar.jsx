@@ -10,6 +10,7 @@ function Navbar({ f1, f2, f3, f4 }) {
     const navigate = useNavigate();
 
     const isSidebarVisible = isHovered || isPinned;
+    const isNavbarVisible = !isSidebarVisible;
 
     const handleClick = (e) => {
         const option = e.currentTarget.name;
@@ -47,32 +48,29 @@ function Navbar({ f1, f2, f3, f4 }) {
     };
 
     return (
-        <div
-            className='navbar-container'
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-        >
+        <div className='navbar-container'>   
+
+        {isNavbarVisible && (
             <div className='navbar-layout'>
-                <button name='burger' onClick={handleClick}>
-                    <FontAwesomeIcon icon={faBars} />
+                <button name='burger' 
+                    onClick={handleClick}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}>
+                    <FontAwesomeIcon icon={faBars}/>
                 </button>
 
                 <button name='homepage' onClick={handleClick}>{f1}</button>
                 <button name='apply' onClick={handleClick}>{f2}</button>
                 <button name='jobs' onClick={handleClick}>{f3}</button>
                 <button name='reflection' onClick={handleClick}>{f4}</button>
-            </div>
+            </div> )}
 
             {isSidebarVisible && (
                 <div className='sidebar'>
                     <button name='burger-sidebar' onClick={handleClick}>
                         <FontAwesomeIcon icon={faBars} />
                     </button>
-
-                    <div className='sidebar-1'>
-                        <button name='homepage-sidebar' onClick={handleClick}>{f1}</button>
-                        <hr/>
-                    </div>
+                    <button name='homepage-sidebar' onClick={handleClick}>{f1}</button>
                     <button name='apply-sidebar' onClick={handleClick}>{f2}</button>
                     <button name='jobs-sidebar' onClick={handleClick}>{f3}</button>
                     <button name='reflection-sidebar' onClick={handleClick}>{f4}</button>
