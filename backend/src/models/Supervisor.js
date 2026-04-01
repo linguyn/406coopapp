@@ -69,7 +69,13 @@ const supervisor = new supervisorSchema({
     email: { type: String, required: true, },
     password: { type: String, required: true },
     role: { type: String, required: true},
+    dateCreated: { type: Date, default: Date.now },
+   
     company: {type: String, required: true},
+    jobTitle: {type: String,},
+    location: {type: String,},
+    status: { type: String, default: "inactive"},
+    interns: { type: [String], default: [] },
 }, { timestamps: true });
 
 const Supervisor = mongoose.model('Supervisor', supervisor);

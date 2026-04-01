@@ -2,37 +2,14 @@ import mongoose from 'mongoose';
 
 // Coop Coordinator Schema
 const coorSchema = new mongoose.Schema ({
-    firstName:{
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-    },
-    lastName:{
-        type: String, 
-        required: true, 
-        unique: true, 
-        trim: true,
-    },
-    email:{
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-    },
-    password:{
-        type: String,
-        required: true,
-    },
-    isAdmin:{
-        type: Boolean,
-        default: true,
-    },
-    role:{
-        type: String,
-        required: true,
-        lowercase: true,
-    }
+    firstName:{type: String, required: true, trim: true,},
+    lastName:{type: String, required: true, trim: true,},
+    email:{type: String, required: true, unique: true, lowercase: true, },
+    password:{type: String, required: true,},
+    isAdmin:{type: Boolean, default: true, },
+    role:{type: String, required: true, lowercase: true,},
+    dateCreated: { type: Date, default: Date.now },
+
 },
 { timestamps: true});
 
