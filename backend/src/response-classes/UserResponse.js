@@ -118,9 +118,16 @@ class StudentResponse extends UserResponse {
 }
 
 class CoordinatorResponse extends UserResponse {
+    #students;
+
 
     constructor(userData) {
         super(userData);
+
+        const { students } = userData;
+        
+        this.#students = students;
+
     }
 
     toJSON() {
