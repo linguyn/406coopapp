@@ -59,7 +59,7 @@ const allowedUpdates = {
     coordinator: []
 }
 
-function isValidCaller(callerRole, userRole, userId) {
+function isValidCaller(callerRole, userRole) {
     if (callerRole === USER_DETAILS.roles.coordinator || callingUser.role === USER_DETAILS.roles.admin) { return true; }
     return callerRole === userRole;
 }
@@ -70,9 +70,10 @@ export function validateUserUpdate(req, res, next) {
     const { role, userId } = req.params;
     const reqFields = req.body;
 
-    if (!isValidCaller(callingUserRole, userRole, userId)) { throw new HTTPError("Missing permissions", 403); }
+    if (!isValidCaller(callingUserRole, userRole)) { throw new HTTPError("Missing permissions", 403); }
 
     let fieldsToUpdate = {};
+    // todo: come back to this
     // todo: change so not all fields corresponding to a role in allowedUpdates are modifiable by that role (e.g. isApplicant)
     switch (callingUserRole) {
         case "coordinator":

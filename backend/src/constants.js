@@ -1,4 +1,4 @@
-const BASE_FUZZY = [ "name", "email"];
+const BASE_FUZZY = [ "firstName", "lastName", "email"];
 const BASE_SAFE = [ "firstName", "lastName", "email", "role", "id"];
 
 export const USER_DETAILS = {
@@ -16,8 +16,8 @@ export const USER_DETAILS = {
         coordinator : [...BASE_FUZZY]
     },
     exactFilters : {
-        student : ["status", "program", "date", "gpa", "year"],
-        supervisor : ["status"],
+        student : ["status", "program", "date", "gpa", "year", "location"],
+        supervisor : ["status", "location", "jobTitle"],
         coordinator : []
     },
     safeFields : {

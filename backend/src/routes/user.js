@@ -1,4 +1,3 @@
-import { getSanitizedUsers, getFilteredUsers } from '../database-services.js';
 import express from 'express';
 import { validateUserUpdate, validateListRequest } from '../middleware/validation.js';
 import { authenticateToken } from '../server.js';
@@ -6,6 +5,7 @@ import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
 import Student from '../models/Student.js';
 import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
+import { UserListItemResponse } from '../response-classes/UserListItemResponse.js';
 
 export const userRouter = express.Router();
 
@@ -22,31 +22,28 @@ export const userRouter = express.Router();
  *      GET /api/user/list?role=student&sortBy=studentId&order=desc&searchStr=.com
  */
 
-userRouter.get('/list', authenticateToken, validateListRequest, (req, res, next) => {
-    const { role, searchStr = "", sortBy = "name", order = "asc" } = req.query;
+userRouter.get('/list', authenticateToken, validateListRequest, async (req, res, next) => {
+    let { role, searchStr = "", sortBy = "firstName", order = "asc" } = req.query;
 
     // don't fail if optional params are malformed, just assign them to default values
-    if (!LIST_CRITERIA.sorting.includes(sortBy)) { sortBy = "name"; }
+    if (!LIST_CRITERIA.sorting.includes(sortBy)) { sortBy = "firstName"; }
     if (!LIST_CRITERIA.order.includes(order)) { order = "asc"; }
 
     try {
         const exactFilters = extractExactFilters(role, req.query);
         const fuzzyFilters = USER_DETAILS.fuzzyFilters[role];
-        const filteredUsers = getFilteredUsers(role, searchStr, exactFilters, fuzzyFilters);
 
-        const sanitizedUsers = getSanitizedUsers(filteredUsers, USER_DETAILS.safeFields[role]);
+        // todo: separate filtering from database interaction so we can include filtered queries and sorting together
+        const filterQuery = getFilterQuery(searchStr, exactFilters, fuzzyFilters);
 
-        let reverse;
-        if (order === "desc") { reverse = -1; }
-        else { reverse = 1; }
+        const Model = getModelByRole(role);
+        const filteredSortedUsers = await Model.find(filterQuery).sort({ [sortBy] : order });
 
-        const sortedUsers = sanitizedUsers.toSorted((user1, user2) => {
-            if (user1[sortBy] < user2[sortBy]) { return -1 * reverse }
-            if (user1[sortBy] > user2[sortBy]) { return 1 * reverse }
-            return 0;
+        const sanitizedUsers = filteredSortedUsers.map((user) => {
+            return UserListItemResponse.createUserListItemResponse(user);
         });
-
-        return res.status(200).json(sortedUsers);
+        
+        return res.status(200).json(sanitizedUsers);
     } catch (error) {
         next(error);
     }
@@ -63,6 +60,34 @@ function extractExactFilters(role, query) {
         }
     });
     return exactFilters;
+}
+
+/**
+ * @function getFilteredUsers
+ * @description Retrieves a filtered list of users from the database. The filters are given by exactFilters, which
+ *  contains the user fields (key/value) to exactly match and fuzzyFilterKeys, which is a list of user fields to try to fuzzy match with searchStr
+ * @param {String} role - the user role type, which group of users to retrieve
+ * @param {String} searchStr - the search query to match with certain user fields
+ * @param {Object} exactFilters - user fields with specific values that have to exactly match a user
+ * @param {Array} fuzzyFilterKeys - the list of user fields that are allowed to be matched with the searchStr
+ * @returns a filtered list of users
+ */
+
+function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
+    const query = { ...exactFilters };
+
+    const hasSearch = searchStr && searchStr.trim().length > 0;
+
+    if (hasSearch && fuzzyFilterKeys.length > 0) {
+        // create a regex for the search string set to ignore case
+        const searchRegex = new RegExp(searchStr, "i");
+
+        query.$or = fuzzyFilterKeys.map((key) => {
+            return { [key]: searchRegex }
+        });
+    }
+
+    return query;
 }
 
 /**
