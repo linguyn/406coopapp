@@ -49,8 +49,8 @@ class SupervisorResponse extends UserResponse {
     #company;
     #jobTitle;
     #location;
-    #status
-    #interns
+    #status;
+    #interns;
 
     constructor(userData) {
         super(userData);

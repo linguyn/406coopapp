@@ -176,15 +176,6 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
     }
 });
 
-userRouter.patch('/security', authenticateToken, (req, res) => {
-    // TODO: update user email/password/other sensitive info
-
-});
-
-userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
-    // TODO: update user profile info
-
-});
 
 /**
  * @api {GET} - /api/user/:id
