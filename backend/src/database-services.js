@@ -1,5 +1,3 @@
-import { HTTPError } from "./errors.js";
-
 // TEMP REPRESENTATION OF USERS AND APPLICATIONS
 
 export let tempUsers = [
@@ -204,44 +202,6 @@ export function getGlobalStats() {
 export function updateUserStatus(user, newStatus) {
     user.status = newStatus;
     return user;
-}
-
-/**
- * @function getFilteredUsers
- * @description Retrieves a filtered list of users from the database. The filters are given by exactFilters, which
- *  contains the user fields (key/value) to exactly match and fuzzyFilterKeys, which is a list of user fields to try to fuzzy match with searchStr
- * @param {String} role - the user role type, which group of users to retrieve
- * @param {String} searchStr - the search query to match with certain user fields
- * @param {Object} exactFilters - user fields with specific values that have to exactly match a user
- * @param {Array} fuzzyFilterKeys - the list of user fields that are allowed to be matched with the searchStr
- * @returns a filtered list of users
- */
-
-export function getFilteredUsers(role, searchStr, exactFilters, fuzzyFilterKeys) {
-    const searchKey = searchStr.toLowerCase();
-    let hasSearch = false;
-    if (searchKey.trim().length > 0) { hasSearch = true; }
-
-    const filteredUsers = tempUsers.filter((user) => {
-        if (user.role !== role) { return false; }
-        for (const key in exactFilters) {
-            if (user[key] !== exactFilters[key]) { return false; }
-        }
-    
-        if (hasSearch) {
-            // tries to find a match among the fuzzy filters i.e. name, studentId, company, etc.
-            const match = fuzzyFilterKeys.some((key) => {
-                if (user[key].includes(searchKey)) { 
-                    return true;
-                }
-                return false;
-            }); 
-            if (!match) { return false; }
-        }
-        return true;
-    });
-    
-    return filteredUsers;
 }
 
 /**

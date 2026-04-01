@@ -1,13 +1,8 @@
 import { HTTPError } from "../errors.js";
 import { USER_DETAILS } from "../constants.js";
-import { getSanitizedUser, isEmailTaken, getUserById } from "../database-services.js";
-import { isValidStatusUpdate, isValidLogin } from "../validate.js";
+import { isValidStatusUpdate, isValidLogin } from "../validate-services.js";
 import { VALIDATE_OPERATIONS } from "../auth-services.js";
-import Student from '../models/Student.js';
-import Coordinator from '../models/Coordinator.js';
-import Supervisor from '../models/Supervisor.js';
 import { getUserByEmail } from "../routes/user.js";
-
 
 export async function validateLogin(req, res, next) {
     const {email, password, role } = req.body;
@@ -50,13 +45,51 @@ export function validateRegister(req, res, next) {
     }
 }
 
-export function validateStatusUpdate(req, res, next) {
-    // the user that made this request
-    const caller = req.user;
-    const { status } = req.body;
-    const { role } = req.params;
+const allowedUpdates = {
+    user: ["firstName", "lastName", "email", "password"],
+    student: ["isApplicant", "location", "status", "year", "gpa", "resume", "coverLetter", "transcript", "reflection"],
+    supervisor: ["location", "status", "interns", "company"],
+    coordinator: []
+}
 
-    if (caller.role !== USER_DETAILS.roles.coordinator && caller.role !== USER_DETAILS.roles.admin) { throw new HTTPError("Missing permissions", 403); }
+function isValidCaller(callerRole, userRole) {
+    if (callerRole === USER_DETAILS.roles.coordinator || callingUser.role === USER_DETAILS.roles.admin) { return true; }
+    return callerRole === userRole;
+}
+
+export function validateUserUpdate(req, res, next) {
+    const callingUser = req.user;
+    const callingUserRole = callingUser.role;
+    const { role, userId } = req.params;
+    const reqFields = req.body;
+
+    if (!isValidCaller(callingUserRole, userRole)) { throw new HTTPError("Missing permissions", 403); }
+
+    let fieldsToUpdate = {};
+    // todo: come back to this
+    // todo: change so not all fields corresponding to a role in allowedUpdates are modifiable by that role (e.g. isApplicant)
+    switch (callingUserRole) {
+        case "coordinator":
+        case "admin":
+            for (const key in allowedUpdates) {
+                allowedUpdates[key].forEach((field) => {
+                    const reqFieldsVal = reqFields[field];
+                    if (reqFieldsVal !== null) { fieldsToUpdate[field] = reqFieldsVal }
+                })
+            }
+            break;
+        case "supervisor":
+            allowedUpdates[callingUserRole].forEach((field) => {
+                
+            })
+            break;
+        case "student":
+            break;
+        default:
+
+    }
+
+
     if (!isValidStatusUpdate(role, status)) { throw new HTTPError("Missing fields or invalid update", 400); }
     next();
 }

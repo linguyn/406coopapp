@@ -1,4 +1,4 @@
-import { isValidCoordinator, isValidStudent, isValidSupervisor } from "./validate.js"
+import { isValidCoordinator, isValidStudent, isValidSupervisor } from "./validate-services.js"
 
 export const VALIDATE_OPERATIONS = {
     student: {
