@@ -1,5 +1,6 @@
 import express from 'express';
-import { validateUserUpdate, validateListRequest } from '../middleware/validation.js';
+import { HTTPError } from '../errors.js'
+import { validateStatusUpdate, validateListRequest, validatePermissions } from '../middleware/validation.js';
 import { authenticateToken } from '../server.js';
 import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
 import Student from '../models/Student.js';
@@ -204,10 +205,22 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  *         description: Internal server error
  */
 
-export function getModelByRole(role) {
+// userRouter.get('/:userId', authenticateToken, (req, res, next) => {
+//     try {
+//         const id = req.params.userId;
+//         if (!id) { throw new HTTPError("Missing userId parameter or invalid format", 422); }
+//         const user = getUserById(id);
+//         const safeUser = UserResponse.createUserResponse(user);
+//         return res.status(200).json(safeUser);
+//     } catch(error) { 
+//         next(error); 
+//     }
+// });
+
+export async function getUserByEmail(role, email) { //Can be moved to database services at a later time. Make sure to update all imports if moved. 
     let Model;
 
-    switch (role.toLowerCase()) {
+    switch(role.toLowerCase()){
         case 'student':
             Model = Student;
             break;
@@ -218,25 +231,58 @@ export function getModelByRole(role) {
             Model = Supervisor;
             break;
         default:
-            return res.status(400).json({ message: "Invalid type" });
+            throw new HTTPError("Invalid role type");
     }
-
-    return Model;
+    const user = await Model.findOne({email: email});
+    return user;
 }
 
-userRouter.get('/:role/:userId', authenticateToken, async (req, res) => {
-    try {
-        const { role, userId } = req.params;
+userRouter.get('/:role', authenticateToken, async(req, res) =>{
+    try{
+        const { role } = req.params;
+        const { email } = req.body;
 
-        const Model = getModelByRole(role);
-        const user = await Model.findById(userId);
+        const user = await getUserByEmail(role, email);
 
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) return res.status(404).json({message: "User not found"});
         res.status(200).json(user);
-    } catch (error) {
-        return res.status(500).json({
-            error: "something went wrong in userRouter.get",
+    } catch(error){
+        return res.status(500).json({error: "something went wrong in userRouter.get",
             details: error.message
         });
     }
 }); 
+
+userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res) => {
+    try{
+        const { role } = req.params;
+        const { email } = req.body;
+
+        let Model;
+        switch(role.toLowerCase()){
+            case 'student':
+                Model = Student;
+                break;
+            case 'coordinator':
+                Model = Coordinator;
+                break;
+            case 'supervisor':
+                Model = Supervisor;
+                break;
+            default:
+                return res.status(400).json({message: "Invalid type"});
+        }
+        const user = await Model.findOneAndDelete({email: email});
+
+        if (!user) 
+            return res.status(404).json({message: "User has already been deleted or does not exist."});
+
+        res.status(200).json({message: "User deleted successfully!", deletedUser: user});
+    
+    } catch(error){
+        console.error("DELETE Route Error:", error);
+        return res.status(500).json({error: "something went wrong in userRouter.delete",
+            details: error.message
+        });
+    }
+});
