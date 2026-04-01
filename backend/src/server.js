@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/user.js';
 import { applicationsRouter } from './routes/applications.js';
@@ -9,8 +8,6 @@ import { API, TOKEN_OPTIONS } from './constants.js';
 import jwt from 'jsonwebtoken';
 import { HTTPError } from './errors.js';
 import cookieParser from 'cookie-parser';
-import Coordinator from './models/Coordinator.js';
-import Student from './models/Student.js';
 import connectDB from './database.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
@@ -42,13 +39,6 @@ app.use(cors({
 
 // parses JSON data from requests into a processable object (so that all you have to do is call req.body to get the object)
 app.use(express.json());
-
-
-
-
-
-
-
 
 // parses cookies from requests (so you can call req.cookies.<cookie-name> to get the cookie)
 app.use(cookieParser());
@@ -105,7 +95,7 @@ app.use('/api-docs', swaggerUi.setup(swaggerDoc));
  */
 
 export function generateAccessToken(id, role) {
-    const payload = { role : role };
+    const payload = { userId: id, role : role };
     const secret = process.env.ACCESS_TOKEN_SECRET;
     const token = jwt.sign(payload, secret, TOKEN_OPTIONS.access);
     return token;
@@ -125,7 +115,7 @@ export function generateRefreshToken(id, role, isLong = false) {
     if (isLong) { refreshOptions = TOKEN_OPTIONS.refreshLong; } 
     else { refreshOptions = TOKEN_OPTIONS.refreshShort; }
 
-    const payload = { sub : id, role : role };
+    const payload = { userId : id, role : role };
     const secret = process.env.REFRESH_TOKEN_SECRET;
     const token = jwt.sign(payload, secret, refreshOptions);
     return token;
