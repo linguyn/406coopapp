@@ -9,12 +9,12 @@ import Supervisor from '../models/Supervisor.js';
 import { getUserByEmail } from "../routes/user.js";
 
 export async function validateLogin(req, res, next) {
-    const {email, password } = req.body;
+    const {email, password, role } = req.body;
 
     try {
         if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 422); }
 
-        const user = getUserByEmail(email);
+        const user = await getUserByEmail(role, email);
 
         if (!user) { throw new HTTPError("Could not find a user", 404); }
 
