@@ -1,22 +1,8 @@
 import { HTTPError } from "../errors.js";
 import { USER_DETAILS } from "../constants.js";
-import { getSanitizedUser, isEmailTaken, getUserById } from "../database-services.js";
-import { isValidStatusUpdate, isValidLogin } from "../validate.js";
+import { isValidStatusUpdate, isValidLogin } from "../validate-services.js";
 import { VALIDATE_OPERATIONS } from "../auth-services.js";
-import Student from '../models/Student.js';
-import Coordinator from '../models/Coordinator.js';
-import Supervisor from '../models/Supervisor.js';
 import { getUserByEmail } from "../routes/user.js";
-
-async function getUserByEmail(email) {
-    let user = null;
-
-    if (user = await Student.findOne({ email })) { }
-    else if (user = await Supervisor.findOne({ email })) { }
-    else if (user = await Coordinator.findOne({ email })) { }
-
-    return user;
-}
 
 export async function validateLogin(req, res, next) {
     const {email, password, role } = req.body;

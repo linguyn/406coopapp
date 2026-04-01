@@ -16,7 +16,7 @@ export const USER_DETAILS = {
         coordinator : [...BASE_FUZZY]
     },
     exactFilters : {
-        student : ["status", "program", "date", "gpa", "year", "location"],
+        student : ["status", "program", "date", "gpa", "year", "location", "isApplicant"],
         supervisor : ["status", "location", "jobTitle"],
         coordinator : []
     },
@@ -57,7 +57,11 @@ export const CLEANING = {
 }
 
 export const LIST_CRITERIA = {
-    sorting : ["name", "email", "applications", "status", "studentId"],
+    sorting : {
+        general : ["firstName", "lastName", "email", "createdAt"],
+        student : ["applications", "status", "studentId", "program", "year", "gpa"],
+        supervisor : ["company", "status", "jobTitle"],
+    },
     order : ["asc", "desc"]
 };
 

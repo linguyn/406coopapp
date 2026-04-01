@@ -5,6 +5,8 @@ export class UserListItemResponse {
     #role;
     #email;
     #status
+    #createdAt;
+    #id;
 
     static createUserListItemResponse(userData) {
         const {role, isApplicant } = userData;
@@ -26,7 +28,7 @@ export class UserListItemResponse {
     }
 
     constructor(userData) {
-        const { firstName, lastName, role, email, status } = userData;
+        const { firstName, lastName, role, email, status, createdAt, _id } = userData;
 
         this.#firstName = firstName;
         this.#lastName = lastName;
@@ -34,6 +36,8 @@ export class UserListItemResponse {
         this.#email = email;
         this.#fullName = firstName && lastName ? `${firstName} ${lastName}` : null;
         this.#status = status;
+        this.#createdAt = createdAt;
+        this.#id = _id;
     }
 
     toJSON() {
@@ -43,7 +47,9 @@ export class UserListItemResponse {
             fullName : this.#fullName,
             role : this.#role,
             email : this.#email,
-            status : this.#status
+            status : this.#status,
+            createdAt : this.#createdAt,
+            id : this.#id
         }
     }
 }
@@ -70,7 +76,7 @@ class StudentListItemResponse extends UserListItemResponse {
         };
         this.#documents = {
             reflection : documents.reflection,
-            applications : documents.report
+            report : documents.report
         };
     }
 
@@ -92,6 +98,8 @@ class SupervisorListItemResponse extends UserListItemResponse {
     #report;
 
     constructor(userData) {
+        super(userData);
+
         const { company, jobTitle, interns, report } = userData;
 
         this.#company = company;
@@ -113,15 +121,15 @@ class SupervisorListItemResponse extends UserListItemResponse {
 
 class ApplicantListItemResponse extends UserListItemResponse {
     // TODO: change this to application submission date
-    #dateCreated;
     #studentId;
     #academics;
     #documents;
 
     constructor(userData) {
-        const { createdAt, studentId, academics, documents } = userData;
+        super(userData);
 
-        this.#dateCreated = createdAt;
+        const { studentId, academics, documents } = userData;
+
         this.#studentId = studentId;
         this.#academics = {
             program : academics.program,
@@ -138,7 +146,6 @@ class ApplicantListItemResponse extends UserListItemResponse {
     toJSON() {
         return {
             ...super.toJSON(),
-            dateCreated : this.#dateCreated,
             studentId : this.#studentId,
             academics : this.#academics,
             documents : this.#documents

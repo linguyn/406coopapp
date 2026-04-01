@@ -5,7 +5,7 @@ export class UserResponse {
     #fullName;
     #id;
     #role;
-    #dateCreated;
+    #createdAt;
 
     static createUserResponse(userData) {
         const role = userData.role;
@@ -29,7 +29,7 @@ export class UserResponse {
         this.#id = id;
         this.#fullName = (firstName && lastName) ? `${firstName} ${lastName}` : null; 
         this.#role = role;
-        this.#dateCreated = createdAt;
+        this.#createdAt = createdAt;
     }
 
     toJSON() {
@@ -40,7 +40,7 @@ export class UserResponse {
             fullName: this.#fullName,
             id: this.#id,
             role: this.#role,
-            dateCreated : this.#dateCreated
+            createdAt : this.#createdAt
         }
     }
 }
