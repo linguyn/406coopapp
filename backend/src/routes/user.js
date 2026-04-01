@@ -180,31 +180,44 @@ userRouter.patch('/:id/profile', authenticateToken, (req, res) => {
  *         description: Internal server error
  */
 
-export async function getUserById(role, userId) {
+// userRouter.get('/:userId', authenticateToken, (req, res, next) => {
+//     try {
+//         const id = req.params.userId;
+//         if (!id) { throw new HTTPError("Missing userId parameter or invalid format", 422); }
+//         const user = getUserById(id);
+//         const safeUser = UserResponse.createUserResponse(user);
+//         return res.status(200).json(safeUser);
+//     } catch(error) { 
+//         next(error); 
+//     }
+// });
+
+export async function getUserByEmail(role, email) { //Can be moved to database services at a later time. Make sure to update all imports if moved. 
     let Model;
 
-        switch(role.toLowerCase()){
-            case 'student':
-                Model = Student;
-                break;
-            case 'coordinator':
-                Model = Coordinator;
-                break;
-            case 'supervisor':
-                Model = Supervisor;
-                break;
-            default:
-                return res.status(400).json({message: "Invalid type"});
-        }
-        
-        return await Model.findById(userId);
+    switch(role.toLowerCase()){
+        case 'student':
+            Model = Student;
+            break;
+        case 'coordinator':
+            Model = Coordinator;
+            break;
+        case 'supervisor':
+            Model = Supervisor;
+            break;
+        default:
+            throw new HTTPError("Invalid role type");
+    }
+    const user = await Model.findOne({email: email});
+    return user;
 }
 
-userRouter.get('/:role/:userId', authenticateToken, async(req, res) =>{
+userRouter.get('/:role', authenticateToken, async(req, res) =>{
     try{
-        const {role, userId} = req.params;
+        const { role } = req.params;
+        const { email } = req.body;
 
-        const user = getUserById(role, userId);
+        const user = await getUserByEmail(role, email);
 
         if (!user) return res.status(404).json({message: "User not found"});
         res.status(200).json(user);
