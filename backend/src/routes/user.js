@@ -259,7 +259,7 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
  * @error {500} {Object} - Internal server error
  */
 
-userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => {
+userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => { //change this path to remove :userId as it would not be known to
     try {
         const { role, userId } = req.params;
 
@@ -397,7 +397,11 @@ export async function getUserByEmail(role, email) { //Can be moved to database s
         default:
             return false;
     }
+    
     const user = await Model.findOne({email: email});
+    if (user === "student") { 
+        await Application.find({assignedStudent: user._id}); 
+    }
     return user;
 }
 

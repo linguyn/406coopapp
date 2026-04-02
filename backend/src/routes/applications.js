@@ -5,6 +5,8 @@ import { updateApplication, addApplicationToDatabase } from '../database-service
 import { isValidEmail, hasValidReason } from '../validate-services.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
+import Student from '../models/Student.js';
+import Application from '../models/Application.js';
 
 /**
  * @api {POST} /api/applications/submit
@@ -41,9 +43,10 @@ applicationsRouter.post('/submit', authenticateToken, (req, res, next) => {
     }
 });
 
-applicationsRouter.patch('/update/:id', authenticateToken, (req, res, next) => {
+applicationsRouter.patch('/update/:id', authenticateToken, async(req, res, next) => {
     try {
-        const updatedApplication = updateApplication(parseInt(req.params.id), req.body);
+        const { id } = req.params;
+        const updatedApplication = await Application.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
         return res.status(200).json({
             message: "Application updated successfully",
             application: updatedApplication

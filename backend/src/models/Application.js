@@ -9,6 +9,11 @@ const application = new applicationSchema({
     eligibility: { type: Boolean, required: true },
     reasonToApply: { type: String, required: true },
     portfolioLink: { type: String, required: false },
+
+    assignedStudent: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student",
+    }
 }, { timestamps: true });
 
 const Application = mongoose.model('Application', application);

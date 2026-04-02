@@ -35,6 +35,10 @@ const student = new studentSchema({
     support : {
         facultyAdvisor: {type: String, required: false, default: null},
         coordinators:{ type: String, required: false, default: null}
+    },
+    assignedApplications: { 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Application",
     }
 }, { timestamps: true });
 
