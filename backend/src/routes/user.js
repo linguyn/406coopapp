@@ -370,10 +370,16 @@ userRouter.get('/:role', authenticateToken, async(req, res) =>{
         const user = await getUserByEmail(role, email);
 
         if (!user) return res.status(404).json({message: "User not found"});
+        
 
         const sanitizedUser = UserResponse.createUserResponse(user);
+        
+        if (user === "student") { const apps = await Application.find({assignedStudent: user._id });
+            res.status(200).json({user: sanitizedUser, applications: apps});
+        };
 
-        res.status(200).json(sanitizedUser);
+        res.status(200).json(sanitizedUser, );
+ 
     } catch(error){
         return res.status(500).json({error: "something went wrong in userRouter.get",
             details: error.message
