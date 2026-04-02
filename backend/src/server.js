@@ -51,6 +51,7 @@ app.use(API.prefixes.user, userRouter);
 app.use(API.prefixes.applications, applicationsRouter);
 app.use(API.prefixes.reflections, reflectionsRouter);
 app.use(API.prefixes.progressForms, progressFormsRouter);
+app.use(API.prefixes.statistics, statsRouter);
 
 const swaggerOptions = {
     definition: {
