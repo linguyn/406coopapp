@@ -34,7 +34,7 @@ const student = new studentSchema({
     },
     support : {
         facultyAdvisor: {type: String, required: false, default: null},
-        coordinators:{ type: Array, required: false, default: null}
+        coordinators:{ type: String, required: false, default: null}
     }
 }, { timestamps: true });
 

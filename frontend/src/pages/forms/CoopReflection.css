@@ -7,7 +7,7 @@ body {
   font-weight: normal;
 }
 
-#student-container { 
+#reflection-container { 
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -15,25 +15,55 @@ body {
     justify-content: center;
     width: 100%;
     height: 100%; 
-    gap: 1%;
 
     border: 1px solid black;
 
 }
 
-#student-field-1,
-#student-field-2,
-#student-field-3 {
+#reflection-container label {
+    font-size: 0.95em;
+    font-family: "Inter", "Roboto", "Helvetica";
+    color: #333333;
+}
+
+
+#reflection-container input[type="text"],
+#reflection-container input[type="email"] {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40%;
+    font-size: 0.95em;
+    font-family: "Inter", "Roboto", "Helvetica";
+    padding-left: 10px;
+    background-color: rgb(213, 213, 213);
+    border: none;
+    border-radius: 4px; 
+    transition: background 0.3s;
+}
+
+#reflection-container input[type="text"]:hover,
+#reflection-container input[type="email"]:hover {
+    background-color: rgb(196, 196, 196);
+}
+
+
+
+#reflect-field-1,
+#reflect-field-2,
+#reflect-field-3,
+#reflect-field-4,
+#reflect-field-5 {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     width: 80%;
     height: 15%;
     gap: 5%;
+    
 }   
    
 
-.input-field-1, .input-field-2 { 
+.reflect-input-field-1, .reflect-input-field-2 { 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -45,62 +75,9 @@ body {
 
 }
 
-.register-icon-field {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 40%; 
-}
 
 
-.register-icon-field input {
-    box-sizing: border-box;
-    width: 100%;
-    height: 100% !important; 
-    padding-right: 40px; 
-    background-color: rgb(213, 213, 213);
-    border: none;
-    border-radius: 4px; 
-    transition: background 0.3s;
-
-}
-
-
-.register-icon { 
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%); 
-    color: #555;
-    cursor: pointer;
-    z-index: 2;
-}
-
-#student-container input {
-    box-sizing: border-box;
-    width: 100%;
-    height: 40%;
-    font-size: 0.95em;
-    padding-left: 10px;
-    background-color: rgb(213, 213, 213);
-    border: none;
-    border-radius: 4px; 
-    transition: background 0.3s;
-}
-
-#student-container label {
-    font-size: 0.95em;
-    font-family: "Inter", "Roboto", "Helvetica";
-    color: #333333;
-}
-
-
-#student-container input:hover {
-    background-color: rgb(196, 196, 196);
-}
-
-#student-field-4 {
+#reflect-field-6 {
     display: flex;
     flex-direction: column;
     align-items: flex-start; 
@@ -112,7 +89,7 @@ body {
  
 }
 
-.student-error {
+.reflect-error {
     margin: 0;
     padding: 0;
     color: red;

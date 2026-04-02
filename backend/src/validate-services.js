@@ -163,3 +163,7 @@ export function isValidStatusUpdate(role, status) { //ALEX REMEMEBER TO UPDATE T
 export function hasValidReason(reason) {
     return reason && reason.trim().split(/\s+/).length <= 150;
 }
+
+export function idInUsers(id, users) {
+    return users.some(user => user.id === id);
+}

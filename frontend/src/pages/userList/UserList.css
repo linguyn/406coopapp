@@ -185,4 +185,9 @@ table{
     margin-top: 4%;
 }
 
+.clickable-name{
+    text-decoration: underline;
+    color:#0C49A6;
+    cursor: pointer;
+}
 

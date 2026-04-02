@@ -3,8 +3,8 @@ export const isSamePassword = (p1,p2) => {
     return p1 === p2 ? true : false ; 
 }; 
 
-export const isValidEmail = (e) => {
-    return e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+export const isValidEmail = (email) => {
+    return email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
 

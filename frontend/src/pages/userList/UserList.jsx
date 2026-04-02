@@ -47,15 +47,6 @@ function UserList(props){
         element2.classList.remove("current-list")
     }
 
-    function changeCurrentNumberOfUsers(arg){
-        console.log(arg);
-        if (arg > 5){
-            setcurrentNumberOfUsers(5)
-        } else{
-            setcurrentNumberOfUsers(arg)
-        }
-    }
-
     const updateTitleName = (arg) => {
 
         if (arg == "coop-student"){
@@ -65,7 +56,6 @@ function UserList(props){
             toggleSelected(arg);
             removeSelected("applicant", "supervisor");
             setUserData(props.studentData);
-            changeCurrentNumberOfUsers(props.studentData.length);
         }
         else if (arg == "applicant"){
             setCurrentPage(1);
@@ -74,7 +64,6 @@ function UserList(props){
             toggleSelected(arg);
             removeSelected("coop-student", "supervisor");
             setUserData(props.applicantData);
-            changeCurrentNumberOfUsers(props.applicantData.length);
         }
         else if (arg == "supervisor"){
             setCurrentPage(1);
@@ -83,7 +72,6 @@ function UserList(props){
             toggleSelected(arg);
             removeSelected("applicant", "coop-student");
             setUserData(props.supervisorData);
-            changeCurrentNumberOfUsers(props.supervisorData.length);
         }
     }
 
