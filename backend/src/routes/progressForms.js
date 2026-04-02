@@ -4,6 +4,7 @@ export const progressFormsRouter = express.Router();
 import { addProgressFormToDatabase, updateProgressForm } from '../database-services.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
+import { ProgressForm } from '../models/ProgressForm.js';
 
 progressFormsRouter.post('/submit', authenticateToken, (req, res, next) => {
     const { studentName, supervisorName, company, jobTitle, stars, stairs, employable } = req.body;
@@ -27,9 +28,17 @@ progressFormsRouter.post('/submit', authenticateToken, (req, res, next) => {
     }
 });
 
-progressFormsRouter.patch('/update/:id', authenticateToken, (req, res, next) => {
+progressFormsRouter.patch('/update/:id', authenticateToken, async (req, res, next) => {
     try {
-        const updatedProgressForm = updateProgressForm(parseInt(req.params.id), req.body);
+        const userId = req.params.id;
+        const updatedProgressForm = await ProgressForm.findByIdAndUpdate(
+            userId,
+            req.body,
+            {
+                new: true,
+                runValidators: true
+            }
+        );
         return res.status(200).json({
             message: "Progress form updated successfully",
             progressForm: updatedProgressForm
