@@ -13,7 +13,7 @@ export const userRouter = express.Router();
 /**
  * @api {GET} /api/user/list
  * @description Retrieves a filtered list of all users of a certain role based on queries, with optional sorting
- * @query {String} role - The type of users. Options: "student", "applicant", or "supervisor"
+ * @query {String} role - The type of users. Options: "student" or "supervisor"
  * @query {String} [searchStr] - Matches the search query to some searchable parameters (e.g. firstName, lastName, email, company, etc.)
  * @query {String} [sortBy] - The sorting criteria.
  * @query {String} [order] - The sorting order. Options: "asc", "desc"
@@ -23,17 +23,144 @@ export const userRouter = express.Router();
  *      GET /api/user/list?role=student&sortBy=studentId&order=desc&searchStr=.com
  */
 
-// /**
-//  * @swagger
-//  * /api/user/list
-//  *   get:
-//  *     summary: Gets a list of users
-//  *     description: Takes filters and sorting criteria in the queries
-//  *     tags:
-//  *       - User
-//  *     responses:
-//  *      
-//  */
+// TODO: add the documentation for exact filters
+
+/**
+ * @swagger
+ * /api/user/list:
+ *   get:
+ *     summary: Gets a list of users
+ *     description: Applies filters and sorting criteria from the path queries to the database and returns a list of sanitized users depending on their role. The main queries are role, sortBy, searchStr, and order. The rest of the queries specify fields with values that must exactly match those of the user. E.g. "status=applied" returns users who have the status value set to "applied".
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *           example: student
+ *           enum:
+ *             - student
+ *             - supervisor
+ *         description: Specifies which type of users to get 
+ *         required: true
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           example: email
+ *           default: firstName
+ *           enum:
+ *             - firstName
+ *             - lastName
+ *             - email
+ *             - createdAt
+ *             - applications
+ *             - status
+ *             - studentId
+ *             - program
+ *             - year
+ *             - gpa
+ *             - company
+ *             - status
+ *             - jobTitle
+ *         description: Sort the list of users based on this value
+ *       - in: query
+ *         name: searchStr
+ *         schema:
+ *           type: string
+ *           example: john
+ *           default: ""
+ *         description: Specifies a search string to filter the list of users
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           example: desc
+ *           default: asc
+ *           enum:
+ *             - asc
+ *             - desc
+ *         description: Specifies the list sorting order
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           example: applied
+ *           enum:
+ *             - applying
+ *             - applied
+ *             - offered
+ *             - rejected
+ *             - waitlisted
+ *             - probation
+ *             - searching
+ *             - placed
+ *             - active
+ *             - inactive
+ *         description: Filters for an exact status (active and inactive belong to supervisor)
+ *       - in: query
+ *         name: program
+ *         schema:
+ *           type: string
+ *           example: Computer Science
+ *         description: Filters for an exact program (belongs to student/applicant)
+ *       - in: query
+ *         name: createdAt
+ *         schema:
+ *           type: string
+ *           example: N/A
+ *         description: Filters for an exact date
+ *       - in: query
+ *         name: gpa
+ *         schema:
+ *           type: string
+ *           example: 3.22
+ *         description: Filters for an exact gpa (belongs to student/applicant)
+ *       - in: query
+ *         name: year
+ *         schema:
+ *           type: number
+ *           example: 2
+ *         description: Filters for an exact year (belongs to student/applicant)
+ *       - in: query
+ *         name: location 
+ *         schema:
+ *           type: string
+ *           example: Palo Alto
+ *         description: Filters for an exact location
+ *       - in: query
+ *         name: isApplicant
+ *         schema:
+ *           type: boolean
+ *           example: false
+ *         description: Filters for applicant or student (belongs to student/applicant)
+ *       - in: query
+ *         name: jobTitle
+ *         schema:
+ *           type: string
+ *           example: Consultant
+ *         description: Filters for an exact job (belongs to supervisor)
+ *     responses:
+ *       200:
+ *         description:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/StudentListRes'
+ *                 - $ref: '#/components/schemas/ApplicantListRes'
+ *                 - $ref: '#/components/schemas/SupervisorListRes'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentListResEx'
+ *               applicant:
+ *                 $ref: '#/components/examples/ApplicantListResEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorListResEx'
+ *       500:
+ *         description: Internal server error
+ */
 
 userRouter.get('/list', authenticateToken, validateListRequest, async (req, res, next) => {
     let { role, searchStr = "", sortBy = "firstName", order = "asc" } = req.query;
