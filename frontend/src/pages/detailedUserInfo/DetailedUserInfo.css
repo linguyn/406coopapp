@@ -124,13 +124,15 @@
 }
 
 .single-input input{
-    width: 84%;
-    height: 4.5vh;
+    width: 77%;
+    height: 4.7vh;
     margin-left: 2%;
+    color:black;
+    font-size: 1.5rem;
 }
 
 .double-input input{
-    width: 320px;
+    width: 13vw;
     height: 4.5vh;
 }
 

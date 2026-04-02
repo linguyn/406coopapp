@@ -98,6 +98,55 @@ export default Student;
  *       required: [message]
  *       properties:
  *         message: { type: string, example: Student successfully registered }
+ *     StudentListItemRes:
+ *       type: object
+ *       required: [studentId, academics, termActivity, documents]
+ *       properties:
+ *         studentId: { type: string, example: "123456789" }
+ *         academics:
+ *           type: object
+ *           required: [program]
+ *           properties:
+ *             program: { type: string, example: Computer Science }
+ *         documents:
+ *           type: object
+ *           required: [reflection, report]
+ *           properties:
+ *             reflection: { type: string, example: N/A }
+ *             report: { type: string, example: N/A }
+ *         termActivity:
+ *           type: object
+ *           required: [applications, interviewed]
+ *           properties:
+ *             applications: { type: number, example: 67 }
+ *             interviewed: { type: number, example: 67 }
+ *     StudentListRes:
+ *       type: array
+ *       items:
+ *         $ref: '#/components/schemas/StudentListItemRes'
+ *     ApplicantListItemRes:
+ *       type: object
+ *       required: [studentId, academics, documents]
+ *       properties:
+ *         studentId: { type: string, example: "123456789" }
+ *         academics:
+ *           type: object
+ *           required: [program, year, gpa]
+ *           properties:
+ *             program: { type: string, example: Computer Science }
+ *             year: { type: number, example: 4 }
+ *             gpa: { type: string, example: 2.33 }
+ *         documents:
+ *           type: object
+ *           required: [resume, coverLetter, transcript]
+ *           properties:
+ *             resume: { type: string, example: N/A }
+ *             coverLetter: { type: string, example: N/A }
+ *             transcript: { type: string, example: N/A }
+ *     ApplicantListRes:
+ *       type: array
+ *       items:
+ *         $ref: '#/components/schemas/ApplicantListItemRes'
  *     TermActivity:
  *       type: object
  *       required: [applications, interviews, applied, interviewed, shortlisted, workTerms, startTerm]
@@ -140,4 +189,12 @@ export default Student;
  *       value: { message: Student successfully registered }
  *     StudentLoginResEx:
  *       value: { accessToken: AKDJSNAKSJFBkjbskdjBFK, user: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, fullName: Jin-Woo Sung, studentId: "123456789", id : "238945789237457817", dateCreated : "DNE", isApplicant : false, status: searching, termActivity: {applications: 1234, interviews: 67, applied: 67, interviewed: 67, shortlisted: 76, workTerms: 2, startTerm: Summer 2025}, support: { facultyAdvisor: Mickey Mouse, coordinators: [Michael, Louise, Jin-Woo] }, newPostings: 677, openPostings: 667 } }
+ *     StudentListItemResEx:
+ *       value: { studentId: "123456789", academics: { program: "Computer Science"}, documents: { reflection: "N/A", report: "N/A" }, termActivity: { applications: 67, interviewed: 67 } }
+ *     StudentListResEx:
+ *       value: [ { studentId: "123456789", academics: { program: "Computer Science"}, documents: { reflection: "N/A", report: "N/A" }, termActivity: { applications: 67, interviewed: 67 } }, { studentId: "123456789", academics: { program: "Computer Science"}, documents: { reflection: "N/A", report: "N/A" }, termActivity: { applications: 67, interviewed: 67 } }, { studentId: "123456789", academics: { program: "Computer Science"}, documents: { reflection: "N/A", report: "N/A" }, termActivity: { applications: 67, interviewed: 67 } } ]
+ *     ApplicantListItemResEx:
+ *       value: { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} }
+ *     ApplicantListResEx:
+ *       value: [ { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} }, { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} }, { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} } ]
  */

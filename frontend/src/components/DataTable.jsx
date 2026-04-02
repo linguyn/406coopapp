@@ -1,5 +1,5 @@
-import { faListSquares } from '@fortawesome/free-solid-svg-icons';
-import React, {useState} from 'react'
+
+import { useNavigate } from 'react-router-dom';
 
 const applicantListHeaders = [
     {
@@ -131,6 +131,7 @@ const supervisorListHeaders = [
 ]
 
 function DataTable(props) {
+
     
     const listTypeMap = new Map()
     listTypeMap.set("applicant", applicantListHeaders);
@@ -138,8 +139,14 @@ function DataTable(props) {
     listTypeMap.set("supervisor", supervisorListHeaders);
 
     const listType = (listTypeMap.get(String(props.listType)));
+    const listTypeStr = String(props.listType)
 
     const users = props.userData
+    const navigate = useNavigate();
+
+    const handleRowClick = (id) => {
+        navigate(`/coordinator/detailed-user-info/${listTypeStr}/${id}`)
+    }
     
     return(
         <div className="data-table">
@@ -160,13 +167,19 @@ function DataTable(props) {
                 </thead>
 
                     <tbody>
-                    {users.map((applicant) =>(
+                    {users.map((item) =>(
 
-                        <tr key={applicant.id} className="table-row">
+                        <tr key={item.id} className="table-row">
                     
                             {listType.map((column) =>(
                                 <td key={column.id} className="table-cell">
-                                    {applicant[column.KEY]}
+                                    {column.KEY === "name" ? (
+                                        <span className="clickable-name" onClick={() => handleRowClick(item.id)}>
+                                            {item[column.KEY]}
+                                        </span>
+                                    ) : (item[column.KEY])
+
+                                    }
                                 </td>
 
                             ))}
