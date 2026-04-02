@@ -6,6 +6,7 @@ import { isValidEmail, hasValidReason } from '../validate-services.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
 import Application from '../models/Application.js';
+import { getUserByEmail } from './user.js';
 
 /**
  * @api {POST} /api/applications/submit
@@ -34,6 +35,9 @@ applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
 
         const newApplication = new Application(req.body);
         await newApplication.save();
+        const studentUser = await getUserByEmail("student", schoolEmail);
+        await Student.findByIdAndUpdate(studentUser._id, { assignedApplications: newApplication._id }, {new: true});
+
         return res.status(201).json({ 
             message: "Application submitted successfully", 
             applicationId: newApplication.id
