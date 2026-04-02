@@ -16,7 +16,7 @@ export const USER_DETAILS = {
         coordinator : [...BASE_FUZZY]
     },
     exactFilters : {
-        student : ["status", "program", "date", "gpa", "year", "location", "isApplicant"],
+        student : ["status", "program", "createdAt", "gpa", "year", "location", "isApplicant"],
         supervisor : ["status", "location", "jobTitle"],
         coordinator : []
     },
@@ -80,7 +80,8 @@ export const TOKEN_OPTIONS = {
         path : '/',                 // cookie is visible to all routes
         sameSite : "lax"            // allows cookie to be sent across websites
     },
-    access : { expiresIn : '15m' },
+    // TODO: COMEBACK AND CHANGE TO 15MIN
+    access : { expiresIn : '1d' },
     refreshShort : { expiresIn : '1d' },
     refreshLong : { expiresIn : '7d' },
     sev_day_milli : 7*24*60*60*1000,
