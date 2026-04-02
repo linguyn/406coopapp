@@ -7,6 +7,7 @@ import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
 import Application from '../models/Application.js';
 import { getUserByEmail } from './user.js';
+import Student from '../models/Student.js';
 
 /**
  * @api {POST} /api/applications/submit

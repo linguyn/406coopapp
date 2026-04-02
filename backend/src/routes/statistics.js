@@ -1,9 +1,9 @@
-import express from 'express';
-import { getStats } from '../controllers/statistics.js';
+// import express from 'express';
+// //import { getStats } from '../controllers/statistics.js';
 
 
 
-export const statsRouter = express.Router();
+// export const statsRouter = express.Router();
 
 
-statsRouter.get("", getStats);
+// statsRouter.get("", getStats);
