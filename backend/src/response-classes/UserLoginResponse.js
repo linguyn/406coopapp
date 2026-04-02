@@ -5,7 +5,7 @@ export class UserLoginResponse {
     #lastName;
     #fullName;
     #id;
-    #dateCreated;
+    #createdAt;
 
     #currentTerm;
 
@@ -33,7 +33,7 @@ export class UserLoginResponse {
         this.#lastName = lastName;
         this.#fullName = (firstName && lastName) ? `${firstName} ${lastName}` : null;
         this.#id = _id;
-        this.#dateCreated = createdAt;
+        this.#createdAt = createdAt;
         this.#currentTerm = currentTerm.charAt(0).toUpperCase() + currentTerm.slice(1);
     }
 
@@ -45,7 +45,7 @@ export class UserLoginResponse {
             lastName : this.#lastName,
             fullName : this.#fullName,
             id : this.#id,
-            dateCreated : this.#dateCreated,
+            createdAt : this.#createdAt,
             currentTerm : this.#currentTerm
         }
     }

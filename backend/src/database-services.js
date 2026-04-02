@@ -1,4 +1,8 @@
 import { HTTPError } from "./errors.js";
+import mongoose from "mongoose";
+import Student from "./models/Student.js";
+import Supervisor from "./models/Supervisor.js";
+import Coordinator from "./models/Coordinator.js";
 
 // TEMP REPRESENTATION OF USERS AND APPLICATIONS
 
@@ -192,37 +196,19 @@ export let tempStats = {
     totalPlaced: 6 
 }
 
-<<<<<<< HEAD
-export function addCoordinatorToDatabase({email, password, firstName, lastName}) {
-    const newCoordinator = {
-        email: email,
-        password: password,
-        firstName: firstName,
-        lastName : lastName,
-        role: "coordinator",
-        id: Date.now()
-    };
-    tempUsers.push(newCoordinator);
-    return newCoordinator;
-}
-
-export function addSupervisorToDatabase({email, password, status, company, location, firstName, lastName, jobTitle, interns}) {
-    const newSupervisor = {
-        email: email,
-        password: password,
-        role: "supervisor",
-        company : company,
-        firstName : firstName,
-        lastName : lastName,
-        location : location,
-        jobTitle : jobTitle,
-        id: Date.now(),
-        interns : interns,
-        status : status || "active"
-    };
-    tempUsers.push(newSupervisor);
-    return newSupervisor;
-}
+export let tempProgressForms = [
+    {
+        studentName : "xdd",
+        studentId : "123456789",
+        supervisorName : "rat",
+        company : "ratland",
+        jobTitle : "Software Developer Intern",
+        skills : "cheese",
+        challenges : "being a rat",
+        supported : "rat supervisor was very supportive",
+        employable : "no"
+    }
+]
 
 export function addApplicationToDatabase({firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink}) {
     const newApp = {
@@ -286,6 +272,37 @@ export function updateReflection(reflectionId, newReflectionData) {
     return reflection;
 }
 
+export function addProgressFormToDatabase({studentName, supervisorName, company, jobTitle, stars, stairs, employable}) {
+    const newProgressForm = {
+        id : tempProgressForms.length + 1,
+        studentName : studentName.trim(),
+        supervisorName : supervisorName.trim(),
+        company : company.trim(),
+        jobTitle : jobTitle.trim(),
+        stars : stars.trim(),
+        stairs : stairs.trim(),
+        employable : employable.trim(),
+        submittedAt : new Date()
+    }
+    tempProgressForms.push(newProgressForm);
+    return newProgressForm;
+}
+
+export function updateProgressForm(progressFormId, newProgressFormData) {
+    const progressForm = tempProgressForms.find(form => form.id === progressFormId);
+    if (!progressForm) {
+        throw new HTTPError("Progress form not found", 404);
+    }
+    if (newProgressFormData.studentName) { progressForm.studentName = newProgressFormData.studentName.trim(); }
+    if (newProgressFormData.supervisorName) { progressForm.supervisorName = newProgressFormData.supervisorName.trim(); }
+    if (newProgressFormData.company) { progressForm.company = newProgressFormData.company.trim(); }
+    if (newProgressFormData.jobTitle) { progressForm.jobTitle = newProgressFormData.jobTitle.trim(); }
+    if (newProgressFormData.stars) { progressForm.stars = newProgressFormData.stars.trim(); }
+    if (newProgressFormData.stairs) { progressForm.stairs = newProgressFormData.stairs.trim(); }
+    if (newProgressFormData.employable) { progressForm.employable = newProgressFormData.employable.trim();}
+    return progressForm;
+}
+
 export function addStudentToDatabase({email, password, studentId, firstName, lastName, program, applications, status, report, reflection, gpa, year, date, coverLetter, resume, transcript, location}) {
     const newStudent = {
         studentId : studentId,
@@ -312,31 +329,7 @@ export function addStudentToDatabase({email, password, studentId, firstName, las
     return newStudent;
 }
 
-export function isEmailTaken(email) {
-    const userExists = tempUsers.some(user => user.email === email);
-    return userExists;
-}
 
-// should eventually be asynchronous when using database
-export function getUserByEmail(email) {
-    const user = tempUsers.find(user => user.email === email);
-    if (!user) {
-        throw new HTTPError("User doesn't exist", 401);
-    }
-    return user;
-}
-
-export function getUserById(id) {
-    const user = tempUsers.find(user => user.id === id);
-    if (!user) {
-        throw new HTTPError("User doesn't exist", 404);
-    }
-    return user;
-}
-
-
-=======
->>>>>>> 33d94019a52d2de09a4f0b5d5faad426f50fa9a7
 // deprecated, use a class such as UserResponse or UserLoginResponse to get a response-ready user
 /**
  * @function getSanitizedUser
@@ -364,44 +357,6 @@ export function updateUserStatus(user, newStatus) {
 }
 
 /**
- * @function getFilteredUsers
- * @description Retrieves a filtered list of users from the database. The filters are given by exactFilters, which
- *  contains the user fields (key/value) to exactly match and fuzzyFilterKeys, which is a list of user fields to try to fuzzy match with searchStr
- * @param {String} role - the user role type, which group of users to retrieve
- * @param {String} searchStr - the search query to match with certain user fields
- * @param {Object} exactFilters - user fields with specific values that have to exactly match a user
- * @param {Array} fuzzyFilterKeys - the list of user fields that are allowed to be matched with the searchStr
- * @returns a filtered list of users
- */
-
-export function getFilteredUsers(role, searchStr, exactFilters, fuzzyFilterKeys) {
-    const searchKey = searchStr.toLowerCase();
-    let hasSearch = false;
-    if (searchKey.trim().length > 0) { hasSearch = true; }
-
-    const filteredUsers = tempUsers.filter((user) => {
-        if (user.role !== role) { return false; }
-        for (const key in exactFilters) {
-            if (user[key] !== exactFilters[key]) { return false; }
-        }
-    
-        if (hasSearch) {
-            // tries to find a match among the fuzzy filters i.e. name, studentId, company, etc.
-            const match = fuzzyFilterKeys.some((key) => {
-                if (user[key].includes(searchKey)) { 
-                    return true;
-                }
-                return false;
-            }); 
-            if (!match) { return false; }
-        }
-        return true;
-    });
-    
-    return filteredUsers;
-}
-
-/**
  * @function getSanitizedUsers
  * @description Takes an array of users and runs getSanitizedUser on each to get a list of sanitized users
  * @param {Array} users - a list of user objects
@@ -417,4 +372,44 @@ export function getSanitizedUsers(users, options) {
     });
 
     return sanitizedUsers;
+}
+
+
+
+// WE ARE KEEPING ALL CODE FROM BELOW THIS LINE. ANY ADDED CODE THAT USES THE DATABASE SHOULD BE BELOW THIS LINE.
+
+export async function getStudentStats(req, res, next){
+    try {
+
+        const stats = await Student.aggregate([
+            {
+                $facet: {
+                    stats: [
+                        {
+                            $group: {
+                                _id: "$status",
+                                count: { $sum: 1},
+
+                            }
+                        }
+                    ],
+                    overallStats: [
+                        {
+                            $group: {
+                                _id: null,
+                                totalStudents: { $sum: 1},
+                            }
+                        }
+                    ]
+                }
+            },
+        ]);
+
+        res.status(200).json(stats);
+    } catch (error) {
+        console.error("Aggregation Error:", error);
+        res.status(500).json({ error: "Failed to calculate statistics.",
+            details: error.message
+         });
+    }
 }

@@ -183,7 +183,6 @@ function App() {
           <Route path='/coordinator/applicant-list' element={<UserList starterData={fakeApplicantData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"applicant"}/>}></Route>
           <Route path='/coordinator/student-list' element={<UserList starterData={fakeStudentData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"coop-student"}/>}></Route>
           <Route path='/coordinator/supervisor-list' element={<UserList starterData={fakeSupervisorData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"supervisor"}/>}></Route>
-          
 
           {/*detailed user info*/}
           <Route path='/coordinator/detailed-user-info' element={<DetailedUserInfo></DetailedUserInfo>}></Route>
