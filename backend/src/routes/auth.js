@@ -41,10 +41,11 @@ export const authRouter = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             required: [email, password]
+ *             required: [email, password, role]
  *             properties:
  *               email: { type: string, example: jinwoo@example.ca }
  *               password: { type: string, example: password123 }
+ *               role: { type: string, example: student }
  *               rememberMe: { type: boolean, example: true }
  *     responses:
  *       200:
@@ -96,6 +97,36 @@ authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
 /**
  * @api {POST} /api/auth/logout
  * @description Logs out user by clearing their refresh token cookie (removing their auth)
+ */
+
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary:
+ *     description:
+ *     tags:
+ *       - Auth
+ *     parameters:
+ *       - in: cookie
+ *         name: refreshToken
+ *         description: The refresh token stored in an HTTP-only cookie
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               required: [message]
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: Successfully logged out }
+ *       400:
+ *         description: Missing cookie or user already logged out
+ *       500:
+ *         description: Internal server error
  */
 
 authRouter.post('/logout', validateLogout, (req, res, next) => {

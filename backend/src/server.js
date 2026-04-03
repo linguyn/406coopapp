@@ -6,6 +6,7 @@ import { userRouter } from './routes/user.js';
 import { reflectionsRouter } from './routes/reflections.js';
 import { applicationsRouter } from './routes/applications.js';
 import { progressFormsRouter } from './routes/progressForms.js';
+import { statsRouter } from './routes/statistics.js';
 import { API, TOKEN_OPTIONS } from './constants.js';
 import jwt from 'jsonwebtoken';
 import { HTTPError } from './errors.js';
