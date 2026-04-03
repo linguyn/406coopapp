@@ -4,7 +4,7 @@ html, body {
     overflow: hidden;
 }
 
-.student-outer-container {
+.student-homepage-container {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -75,46 +75,37 @@ html, body {
     gap: 3%;
 }
 
-.student-sidebar button[name="student-burger-sidebar"] {
-    width: 20%;
-    background-color: #0C49A6;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    margin-left: 2%;  
-    border: none;
-    
-    white-space: nowrap;
-    color: white;
-    font-size: clamp(0.1rem, 1vw, 2rem);
-    font-family: "Roboto", "Inter", sans-serif;
-    letter-spacing: -0.05em;
-}
 
-.student-sidebar button:not([name="student-burger-sidebar"]) {
+.student-sidebar button {
     width: 70%;
     height: 5%;
     background-color: #0C49A6;
     padding: 15px 32px;
     text-align: left;
     text-decoration: none;
-    display: inline-block;
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
     margin-left: 2%;
-    border:none;
+    border: none;
+    border-bottom: 1px solid white;
   
-    
     white-space: nowrap;
     color: white;
     font-size: clamp(0.1rem, 1vw, 2rem);
     font-family: "Roboto", "Inter", sans-serif;
     letter-spacing: -0.05em;
+
+
+    display: flex;          
+    justify-content: center; 
+    align-items: center;     
+}
+
+.student-sidebar button:hover {
+    background-color: #0a3776;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
 }
 
 

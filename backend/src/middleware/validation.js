@@ -5,12 +5,7 @@ import { VALIDATE_OPERATIONS } from "../auth-services.js";
 import { getUserByEmail } from "../routes/user.js";
 
 export async function validateLogin(req, res, next) {
-<<<<<<< HEAD
-    const {email, password} = req.body;
-            console.log("HELLO", req.body);
-=======
     const {email, password, role } = req.body;
->>>>>>> 33d94019a52d2de09a4f0b5d5faad426f50fa9a7
 
     try {
         if (!isValidLogin(email, password)) { throw new HTTPError("Invalid login credentials", 422); }
