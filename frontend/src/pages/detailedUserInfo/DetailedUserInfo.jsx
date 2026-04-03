@@ -17,7 +17,7 @@ function DetailedUserInfo({userData, listType}){
         return <h1>User with ID {id} not found.</h1>
     }
 
-    const nameArray = user.name.split(" ");
+    const nameArray = user.fullName.split(" ");
 
     //general fields
     const [firstName, setfirstName] = useState(nameArray[0]);
@@ -25,7 +25,7 @@ function DetailedUserInfo({userData, listType}){
     const [userID, setUserID] = useState(id);
     const [email, setEmail] = useState(user.email);
     const [status, setStatus] = useState(user.status);
-
+    const [date, setDate] = useState(user.createdAt);
     const [program, setProgram] = useState(user.program);
 
     //co-op student fields
@@ -33,10 +33,11 @@ function DetailedUserInfo({userData, listType}){
     const [interviewed, setInterviewed] = useState(user.interviews);
     const [applications, setApplications] = useState(user.applications);
     const [workTerms, setWorkTerms] = useState(user.workTerms);
+    const [studentID, setStudentID] = useState(user.studentId);
 
     //applicant fields
     const [year, setYear] = useState(user.year);
-    const [gpa, setGPAr] = useState(user.gpa);
+    const [gpa, setGPA] = useState(user.gpa);
 
     //supervisor fields
     const [company, setCompany] = useState(user.company);
@@ -104,11 +105,18 @@ function DetailedUserInfo({userData, listType}){
                             </div>
                         </div>
                         
-                        
+                        {listType === "supervisor" && (
                         <div className='single-input'>
                         <label>ID: </label>
                         <input type='text' value={userID}></input>
                         </div>
+                        )}
+                        {listType != "supervisor" && (
+                        <div className='single-input'>
+                        <label> ID: </label>
+                        <input type='text' value={studentID}></input>
+                        </div>
+                        )}
 
                         <div className='single-input'>
                         <label> Email: </label>
@@ -154,12 +162,12 @@ function DetailedUserInfo({userData, listType}){
 
                             <div className='single-input'>
                             <label className='left-label'> Year: </label>
-                            <input type='text' value={2}></input>
+                            <input type='text' value={year}></input>
                             </div>
 
                             <div className='single-input'>
                             <label> GPA: </label>
-                            <input type='text' value={3.8}></input>
+                            <input type='text' value={gpa}></input>
                             </div>
                         </div>
                         )}
@@ -202,7 +210,7 @@ function DetailedUserInfo({userData, listType}){
                     <div className='detailed-user-info-file'>
                         <h2>PROGRESS REPORT</h2>
                         <div className='detailed-user-info-pdf'></div>
-                        <p className='detailed-user-info-date'>Date: 03/12/2026</p>
+                        <p className='detailed-user-info-date'>Date: {date.slice(0, 10)}</p>
                     </div>
 
                 </main>
