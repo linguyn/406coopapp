@@ -12,13 +12,12 @@ import ApplicantStatusPage from './pages/applicantStatusPage/ApplicantStatusPage
 import CoopReflection from './pages/forms/CoopReflection';   
 import StudentProgress from './pages/forms/StudentProgress';
 import DetailedUserInfo from './pages/detailedUserInfo/DetailedUserInfo';
-import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'; 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {setAccessToken} from './services/api';
+import { useAuth } from './context/authContext';
 
-
-const API_URL = import.meta.env.VITE_API_URL; 
 
 //fake data (ignore this)
 const fakeApplicantData =[
@@ -137,7 +136,10 @@ const fakeSupervisorData = [
 ];
 
 function App() {
+  const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL; 
   const [loading, setLoading] = useState(true);
+  const { setUserData } = useAuth();
 
   useEffect(() => {
     /*try to restore the previous authentication state*/
@@ -145,7 +147,23 @@ function App() {
       try {
         const response = await axios.post(`${API_URL}/auth/refresh-token`, {}, { withCredentials: true });
         setAccessToken(response.data.accessToken);
+        setUserData(response.data.user);
 
+        if (response.status == 200 || response) { 
+          console.log("User authenticated, forwarding to homepage");
+
+
+          if (response.data.user.role === "student") 
+              navigate("/student");
+          
+
+          if (response.data.user.role === "supervisor") 
+              navigate("/supervisor");
+
+          if (response.data.user.role === "coordinator") 
+              navigate("/coordinator");
+          
+        }
       } catch (error) {
         console.error("No valid refresh token found: ", error);
       } finally{
@@ -157,9 +175,11 @@ function App() {
   }, []);
 
 
+  if (loading) { 
+    return <div>Loading...</div>;
+  }
+
   return (
-          
-    <BrowserRouter>
       <Routes>
       
           {/*login*/}
@@ -208,7 +228,6 @@ function App() {
           <Route path='/student/apply' element={<Application/>}/>
 
       </Routes>
-    </BrowserRouter>   
   );
 }
 

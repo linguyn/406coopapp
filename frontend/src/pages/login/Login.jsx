@@ -4,6 +4,7 @@ import { faLock, faUser, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-i
 import { useState } from 'react';
 import { loginUser } from '../../services/authService';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 
 function Login() {
@@ -13,6 +14,7 @@ function Login() {
     const [serverError, setServerError] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
+    const { setUserData } = useAuth(); 
 
 
     const handleSubmit = async (event) => {
@@ -24,13 +26,20 @@ function Login() {
                 {
                     email: email, 
                     password: password,
-                    rememberMe: rememberMe
+                    rememberMe: rememberMe,
+                    role: "student"
                 });
 
-            if (response.status == 200 || response) {
+            if (response.status == 200 || response) { 
                 console.log(response);
                 console.log("Login successful: " , response.status);
-                navigate("/homepage");
+                const user = response.data.user; 
+            
+                setUserData(user);
+                
+                if (user.role === 'student') navigate('/student');
+                if (user.role === 'supervisor') navigate('/supervisor');
+                if (user.role === 'coordinator') navigate('/coordinator');
             }
 
         } catch (error) {

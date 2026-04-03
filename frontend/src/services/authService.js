@@ -17,3 +17,7 @@ export const signIn = async (registerData) =>  {
 };
 
 
+export const logOut = async () => { 
+    const res = await api.post(`/auth/logout`); 
+    return res; 
+}
