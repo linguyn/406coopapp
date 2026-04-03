@@ -71,7 +71,8 @@ export const API = {
         auth : "/api/auth",
         applications : "/api/applications",
         reflections : "/api/reflections",
-        progressForms : "/api/progress-forms"
+        progressForms : "/api/progress-forms",
+        statistics : "/api/coordinator/homepage"
     }
 };
 

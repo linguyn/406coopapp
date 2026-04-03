@@ -254,7 +254,7 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
  * @error {500} {Object} - Internal server error
  */
 
-userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => {
+userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => { //change this path to remove :userId as it would not be known to
     try {
         const { role, userId } = req.params;
 
@@ -365,10 +365,16 @@ userRouter.get('/:role', authenticateToken, async(req, res) =>{
         const user = await getUserByEmail(role, email);
 
         if (!user) return res.status(404).json({message: "User not found"});
+        
 
         const sanitizedUser = UserResponse.createUserResponse(user);
+        
+        if (user === "student") { const apps = await Application.find({assignedStudent: user._id });
+            res.status(200).json({user: sanitizedUser, applications: apps});
+        };
 
-        res.status(200).json(sanitizedUser);
+        res.status(200).json(sanitizedUser, );
+ 
     } catch(error){
         return res.status(500).json({error: "something went wrong in userRouter.get",
             details: error.message
@@ -392,7 +398,11 @@ export async function getUserByEmail(role, email) { //Can be moved to database s
         default:
             return false;
     }
+    
     const user = await Model.findOne({email: email});
+    if (user === "student") { 
+        await Application.find({assignedStudent: user._id}); 
+    }
     return user;
 }
 
