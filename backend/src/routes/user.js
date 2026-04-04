@@ -5,6 +5,7 @@ import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
 import Student from '../models/Student.js';
 import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
+import Application from '../models/Application.js';
 import { UserListItemResponse } from '../response-classes/UserListItemResponse.js';
 import { UserResponse } from '../response-classes/UserResponse.js';
 
@@ -177,6 +178,11 @@ userRouter.get('/list', authenticateToken, validateListRequest, async (req, res,
 
         const Model = getModelByRole(role);
         const filteredSortedUsers = await Model.find(filterQuery).sort({ [sortBy] : order });
+        
+        // Populate assignedApplication for students
+        if (role === 'student') {
+            await Model.populate(filteredSortedUsers, 'assignedApplication');
+        }
 
         const sanitizedUsers = filteredSortedUsers.map((user) => {
             return UserListItemResponse.createUserListItemResponse(user);
@@ -374,7 +380,8 @@ userRouter.get('/:role', authenticateToken, async(req, res) =>{
 
         const sanitizedUser = UserResponse.createUserResponse(user);
         
-        if (user === "student") { const apps = await Application.find({assignedStudent: user._id });
+        if (role === "student") { 
+            const apps = await Application.find({schoolEmail: user.email});
             res.status(200).json({user: sanitizedUser, applications: apps});
         };
 
@@ -405,8 +412,8 @@ export async function getUserByEmail(role, email) { //Can be moved to database s
     }
     
     const user = await Model.findOne({email: email});
-    if (user === "student") { 
-        await Application.find({assignedStudent: user._id}); 
+    if (user && role === "student") { 
+        await user.populate('assignedApplication');
     }
     return user;
 }

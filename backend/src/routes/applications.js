@@ -43,6 +43,12 @@ applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
                 {assignedApplication: newApplication._id},
                 {new: true}
             );
+            // Also link the application back to the student
+            await Application.findByIdAndUpdate(
+                newApplication._id,
+                {assignedStudent: studentUser._id},
+                {new: true}
+            );
         }
         return res.status(201).json({ 
             message: "Application submitted successfully", 
