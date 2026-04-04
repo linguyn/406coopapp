@@ -27,7 +27,7 @@ function Login() {
                     email: email, 
                     password: password,
                     rememberMe: rememberMe,
-                    role: "supervisor"
+                    role: "coordinator"
                 });
 
             if (response.status == 200 || response) { 

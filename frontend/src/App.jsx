@@ -19,9 +19,6 @@ import {setAccessToken} from './services/api';
 import { useAuth } from './context/authContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
-
-
-
 function App() {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL; 
@@ -31,6 +28,8 @@ function App() {
   const [students, setStudents] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { userData } = useAuth();
+  const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
     /*try to restore the previous authentication state*/
@@ -70,70 +69,7 @@ function App() {
     return <div>Loading...</div>;
   }
 
-  
-/*
-  //grab student data
-useEffect(() => {
-  setIsLoading(true);
-  const token = localStorage.getItem('token');
-  
-  fetch('http://localhost:5005/api/user/list?role=student', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`, 
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
-    const flattenedStudents = data.map(user => ({
-      ...user,
-      program: user.academics?.program ?? "N/A",
-      year: user.academics?.year ?? "N/A",
-      gpa: user.academics?.gpa ?? "N/A",
-      resume: user.documents?.resume ?? "Missing",
-      coverLetter: user.documents?.coverLetter ?? "Missing",
-      status: user.status ?? "Pending",
-      isApplicant: user.isApplicant ?? true 
-    }));
 
-    setTimeout(() => {
-      setStudents(flattenedStudents); 
-      setIsLoading(false);
-    }, 500);
-  })
-  .catch(err => {
-    console.error("Error fetching students:", err);
-    setIsLoading(false);
-  });
-}, []);
-
-//grab supervisor data
-useEffect(() => {
-  const token = localStorage.getItem('token'); 
-  
-  fetch('http://localhost:5005/api/user/list?role=supervisor', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`, 
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
-    setSupervisors(data); 
-  })
-  .catch(err => console.error("Error fetching supervisors:", err));
-}, []);
-*/ 
-
-
-/*
-//show nothing to allow data to load
-if (isLoading){
-  return null;
-}
-*/
 
   return (
       <Routes>
