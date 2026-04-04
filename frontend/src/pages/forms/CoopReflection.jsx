@@ -1,5 +1,5 @@
 import './CoopReflection.css';
-import AuthLayout from '../../components/AuthLayout';
+import AuthLayout from '../../components/auth-layout/AuthLayout';
 import { reflectionSubmit } from '../../services/formServices';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';

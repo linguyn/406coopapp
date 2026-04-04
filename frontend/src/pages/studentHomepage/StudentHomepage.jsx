@@ -16,7 +16,6 @@ function StudentHomepage() {
     const { userData } = useAuth();
     const { currentTerm } = useAuth(); 
     const isSidebarVisible = isPinned;
-    //const isNavbarVisible = !isSidebarVisible;
 
 
     //homepage student info
@@ -77,7 +76,7 @@ function StudentHomepage() {
         <div className='student-homepage-container'>   
 
             <div className='student-bars'>
-                {/*{isNavbarVisible && (*/}
+    
                 <div className='student-navbar-layout'>
                     <button name='student-burger' 
                         onClick={handleClick}>
@@ -88,7 +87,7 @@ function StudentHomepage() {
                     <button name='student-apply' onClick={handleClick}>Apply to Co-op</button>
                     <button name='student-jobs' onClick={handleClick}>Job Postings</button>
                     <button name='student-reflection' onClick={handleClick}>Co-op Reflection</button>
-                </div> {/*)} */}
+                </div>
 
                 {isSidebarVisible && (
                     <div className='student-sidebar'>

@@ -1,9 +1,9 @@
 import Login from './pages/login/Login'; 
-import StudentHomepage from './pages/homepage/StudentHomepage';
+import StudentHomepage from './pages/studentHomepage/StudentHomepage';
 import StudentRegister from './pages/signup/StudentRegister';
-import SupervisorHomepage from './pages/homepage/SupervisorHomepage';
+import SupervisorHomepage from './pages/supervisorHomepage/SupervisorHomepage';
 import SupervisorRegister from './pages/signup/SupervisorRegister';
-import CoordinatorHomepage from './pages/homepage/CoordinatorHomepage';
+import CoordinatorHomepage from './pages/coordinatorHomepage/CoordinatorHomepage';
 import Roles from './pages/roles/Roles';
 import Application from './pages/forms/CoopApplication';
 import UserList from './pages/userList/UserList';
@@ -192,12 +192,16 @@ function App() {
           <Route path='/roles' element={<Roles />}/>
 
 
+
+          <Route path='/coordinator' element={<CoordinatorHomepage />}/>
+
+
         {/* Protected route, only visible if userData */}
         <Route element={<ProtectedRoute/>}>
             {/*homepages*/}
             <Route path='/student' element={<StudentHomepage />}/>
             <Route path='/supervisor' element={<SupervisorHomepage />}/>
-            <Route path='/coordinator' element={<CoordinatorHomepage />}/>
+            
 
             {/*application page*/}
             <Route path='/student/apply' element={<Application/>}/>
