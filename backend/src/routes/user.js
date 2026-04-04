@@ -7,6 +7,7 @@ import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
 import { UserListItemResponse } from '../response-classes/UserListItemResponse.js';
 import { UserResponse } from '../response-classes/UserResponse.js';
+import Application from '../models/Application.js';
 
 export const userRouter = express.Router();
 
@@ -367,14 +368,15 @@ userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
         if (!user) return res.status(404).json({message: "User not found"});
 
         const sanitizedUser = UserResponse.createUserResponse(user);
+        console.log("before if statement");
         
-        if (user === "student") { const apps = await Application.find({assignedStudent: user._id });
+        if (user.role === "student") { const apps = await Application.find({assignedStudent: user._id});
+            console.log("in the right path");
             return res.status(200).json({user: sanitizedUser, applications: apps});
+   
         };
-
-        return res.status(200).json({ 
-            user: sanitizedUser
-        });
+        
+       return res.status(200).json(sanitizedUser);
  
     } catch(error){
         return res.status(500).json({error: "something went wrong in userRouter.get",
