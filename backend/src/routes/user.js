@@ -381,7 +381,7 @@ userRouter.get('/:role', authenticateToken, async(req, res) =>{
         const sanitizedUser = UserResponse.createUserResponse(user);
         
         if (role === "student") { 
-            const apps = await Application.find({schoolEmail: user.email});
+            const apps = await Application.find({assignedStudent: user._id });
             res.status(200).json({user: sanitizedUser, applications: apps});
         };
 
