@@ -28,7 +28,7 @@ function StudentHomepage() {
     let startTerm = userData?.termActivity.startTerm;  
     let newPostings = userData?.newPostings;
     let openPostings = userData?.openPostings;
-    let createdAt = userData?.createdAt;
+    let createdAt = (userData?.createdAt).slice(0,10);
     let coordinators = userData?.support.coordinators;
     let facultyAdvisor = userData?.support.facultyAdvisor;
 
@@ -107,7 +107,7 @@ function StudentHomepage() {
                     <div className='student-info'>
                         <div className='student-info-1'>
                             <h2>Application Overview</h2>
-                            <div style={{ marginTop: '30px', width: '500px', height: '700px' }}>
+                            <div className = 'student-chart-container'>
                                 <Doughnut
                                 data ={{
                                     labels: [
@@ -132,14 +132,14 @@ function StudentHomepage() {
                                         duration: 1000, 
                                         easing: 'easeInOutExpo',
                                     },
-                                    maintainAspectRatio: true,
+                                    maintainAspectRatio: false,
                                     responsive: true,
                                     plugins: {
                                         legend: {
                                             position: 'bottom',
                                             labels: {
-                                                boxWidth: 15,
-                                                padding: 50,
+                                                boxWidth: 12,
+                                                padding: 60,
                                                 useBorderRadius: true,
                                                 borderRadius: 10,
 
@@ -157,7 +157,7 @@ function StudentHomepage() {
                                         }
                                     }
                                 }}
-                            />
+                                />
                             </div>
                         </div>
 

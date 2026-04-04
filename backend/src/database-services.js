@@ -378,7 +378,7 @@ export function getSanitizedUsers(users, options) {
 
 // WE ARE KEEPING ALL CODE FROM BELOW THIS LINE. ANY ADDED CODE THAT USES THE DATABASE SHOULD BE BELOW THIS LINE.
 
-export async function getStudentStats(req, res, next){
+export async function getStudentStats(req, res, next){ //Make this multi-functional for all Users.
     try {
 
         const stats = await Student.aggregate([
