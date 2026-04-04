@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 const applicantListHeaders = [
     {
         id: 1,
-        KEY: "date",
+        KEY: "createdAt",
         LABEL: "Date",
     },
     {
         id: 2,
-        KEY: "name",
+        KEY: "fullName",
         LABEL: "Name",
     },
     {
@@ -52,7 +52,7 @@ const applicantListHeaders = [
 const coopStudentListHeaders = [
     {
         id: 1,
-        KEY: "name",
+        KEY: "fullName",
         LABEL: "Name",
     },
     {
@@ -95,7 +95,7 @@ const coopStudentListHeaders = [
 const supervisorListHeaders = [
     {
         id: 1,
-        KEY: "name",
+        KEY: "fullName",
         LABEL: "Name",
     },
     {
@@ -131,7 +131,7 @@ const supervisorListHeaders = [
 ]
 
 function DataTable(props) {
-
+    console.log(props);
     
     const listTypeMap = new Map()
     listTypeMap.set("applicant", applicantListHeaders);
@@ -173,13 +173,16 @@ function DataTable(props) {
                     
                             {listType.map((column) =>(
                                 <td key={column.id} className="table-cell">
-                                    {column.KEY === "name" ? (
+                                    {column.KEY === "fullName" ? (
                                         <span className="clickable-name" onClick={() => handleRowClick(item.id)}>
-                                            {item[column.KEY]}
+                                            {item[column.KEY] ?? "N/A"}
                                         </span>
-                                    ) : (item[column.KEY])
+                                    ) : column.KEY === "createdAt" ? (
+                                        item[column.KEY]?.slice(0,10)
+                                    ) : (
+                                        item[column.KEY] ?? "N/A"
 
-                                    }
+                                    )}
                                 </td>
 
                             ))}
