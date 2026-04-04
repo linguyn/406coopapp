@@ -56,6 +56,7 @@ export class UserListItemResponse {
 
 class StudentListItemResponse extends UserListItemResponse {
     #studentId;
+    #isApplicant;
 
     #academics;
     #termActivity;
@@ -64,9 +65,10 @@ class StudentListItemResponse extends UserListItemResponse {
     constructor(userData) {
         super(userData);
         // todo: figure out how to get the supervisor progress report here?
-        const { studentId, academics, documents, termActivity } = userData;
+        const { studentId, isApplicant = false, academics, documents, termActivity } = userData;
 
         this.#studentId = studentId;
+        this.#isApplicant = isApplicant;
         this.#academics = {
             program : academics.program
         };
@@ -84,6 +86,7 @@ class StudentListItemResponse extends UserListItemResponse {
         return {
             ...super.toJSON(),
             studentId : this.#studentId,
+            isApplicant : this.#isApplicant,
             academics : this.#academics,
             termActivity : this.#termActivity,
             documents : this.#documents
@@ -124,13 +127,15 @@ class ApplicantListItemResponse extends UserListItemResponse {
     #studentId;
     #academics;
     #documents;
+    #isApplicant;
 
     constructor(userData) {
         super(userData);
 
-        const { studentId, academics, documents } = userData;
+        const { studentId, isApplicant = true, academics, documents } = userData;
 
         this.#studentId = studentId;
+        this.#isApplicant = isApplicant;
         this.#academics = {
             program : academics.program,
             year : academics.year,
@@ -147,6 +152,7 @@ class ApplicantListItemResponse extends UserListItemResponse {
         return {
             ...super.toJSON(),
             studentId : this.#studentId,
+            isApplicant : this.#isApplicant,
             academics : this.#academics,
             documents : this.#documents
         }
