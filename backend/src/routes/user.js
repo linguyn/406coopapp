@@ -374,14 +374,12 @@ userRouter.get('/:role', authenticateToken, async(req, res) =>{
         
 
         const sanitizedUser = UserResponse.createUserResponse(user);
-        console.log("before if statement");
-        
+      
         if (user.role === "student") { const apps = await Application.find({assignedStudent: user._id});
-            console.log("in the right path");
             return res.status(200).json({user: sanitizedUser, applications: apps});
    
         };
-        
+
        return res.status(200).json(sanitizedUser);
  
     } catch(error){
