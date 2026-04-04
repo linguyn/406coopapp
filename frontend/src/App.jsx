@@ -11,125 +11,77 @@ import ApplicantStatusPage from './pages/applicantStatusPage/ApplicantStatusPage
 import CoopReflection from './pages/forms/CoopReflection';   
 import StudentProgress from './pages/forms/StudentProgress';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
+import { useState, useEffect } from 'react';
 import DetailedUserInfo from './pages/detailedUserInfo/DetailedUserInfo';
 
-//fake data (ignore this)
-const fakeApplicantData =[
-  {
-    id: 1,
-    date: "2026-03-23",
-    name: "Sung Jin-woo",
-    email: "sjwoo@ahjin.com",
-    studentId: "00000001",
-    program: "Hunter Academy",
-    year: "4",
-    gpa: "4.0",
-    coverLetter: "arise.pdf",
-    status: "Approved"
-  },
-  {
-    id: 2,
-    date: "2026-03-02",
-    name: "Sarah Chen",
-    email: "schen99@university.edu",
-    studentId: "10095562",
-    program: "Software Engineering",
-    year: "2",
-    gpa: "3.9",
-    coverLetter: "sarah_cl_final.pdf",
-    status: "Approved"
-  },
-  {
-    id: 3,
-    date: "2026-03-05",
-    name: "Marcus Johnson",
-    email: "mjohnson@university.edu",
-    studentId: "10074412",
-    program: "Data Science",
-    year: "4",
-    gpa: "3.5",
-    coverLetter: "mj_cover_v2.pdf",
-    status: "Rejected"
-  },
-  {
-    id: 4,
-    date: "2026-03-10",
-    name: "Elena Rodriguez",
-    email: "erodriguez@university.edu",
-    studentId: "10103321",
-    program: "Computer Science",
-    year: "1",
-    gpa: "4.0",
-    coverLetter: "elena_apply.pdf",
-    status: "Pending"
-  },
-  {
-    id: 5,
-    date: "2026-03-12",
-    name: "Alex Kim",
-    email: "akim_dev@university.edu",
-    studentId: "10061189",
-    program: "Information Systems",
-    year: "3",
-    gpa: "3.2",
-    coverLetter: "resume_cl.pdf",
-    status: "Interviewing"
-  }
-]
 
-const fakeStudentData = [
-  {
-    id: "stu-101",
-    name: "Kevin Miller",
-    email: "kevin.m@student.uwaterloo.ca",
-    studentId: "20984432",
-    program: "Computer Science",
-    applications: 12,
-    report: "Pending",
-    status: "Interviewing",
-    interviews: 2,
-    workTerms: 1,
-    supervisor: "Dr. Sarah Chen"
-  },
-  {
-    id: "stu-102",
-    name: "Aisha Khan",
-    email: "a.khan@student.utoronto.ca",
-    studentId: "20875561",
-    program: "Software Engineering",
-    applications: 8,
-    report: "Completed",
-    status: "Placed",
-    interviews: 0,
-    workTerms: 0,
-    supervisor: "N/A"
-  }
-];
-
-const fakeSupervisorData = [
-  {
-    id: "sup-001",
-    name: "Dr. Sarah Chen",
-    company: "Sectra",
-    jobTitle: "Senior Software Architect",
-    email: "s.chen@sectra.com",
-    interns: ["Kevin Miller"], 
-    progressReports: "2/3 Submitted",
-    status: "Active"
-  },
-  {
-    id: "sup-002",
-    name: "Marcus Thorne",
-    company: "Home Trust",
-    jobTitle: "Cloud Operations Manager",
-    email: "m.thorne@hometrust.ca",
-    interns: ["Jordan Smith"],
-    progressReports: "1/1 Submitted",
-    status: "On Leave"
-  }
-];
 
 function App() {
+
+  const [applicants, setApplicants] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+
+  //grab student data
+useEffect(() => {
+  setIsLoading(true);
+  const token = localStorage.getItem('token');
+  
+  fetch('http://localhost:5005/api/user/list?role=student', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`, 
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    const flattenedStudents = data.map(user => ({
+      ...user,
+      program: user.academics?.program ?? "N/A",
+      year: user.academics?.year ?? "N/A",
+      gpa: user.academics?.gpa ?? "N/A",
+      resume: user.documents?.resume ?? "Missing",
+      coverLetter: user.documents?.coverLetter ?? "Missing",
+      status: user.status ?? "Pending",
+      isApplicant: user.isApplicant ?? true 
+    }));
+
+    setTimeout(() => {
+      setStudents(flattenedStudents); 
+      setIsLoading(false);
+    }, 500);
+  })
+  .catch(err => {
+    console.error("Error fetching students:", err);
+    setIsLoading(false);
+  });
+}, []);
+
+//grab supervisor data
+useEffect(() => {
+  const token = localStorage.getItem('token'); 
+  
+  fetch('http://localhost:5005/api/user/list?role=supervisor', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`, 
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    setSupervisors(data); 
+  })
+  .catch(err => console.error("Error fetching supervisors:", err));
+}, []);
+
+//show nothing to allow data to load
+if (isLoading){
+  return null;
+}
 
   return (
           
@@ -159,14 +111,14 @@ function App() {
           <Route path='/supervisor/student-progress' element={<StudentProgress/>}/>
 
           {/*coordinator list*/}
-          <Route path='/coordinator/applicant-list' element={<UserList starterData={fakeApplicantData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"applicant"}/>}></Route>
-          <Route path='/coordinator/student-list' element={<UserList starterData={fakeStudentData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"coop-student"}/>}></Route>
-          <Route path='/coordinator/supervisor-list' element={<UserList starterData={fakeSupervisorData} applicantData={fakeApplicantData} studentData={fakeStudentData} supervisorData={fakeSupervisorData} listType={"supervisor"}/>}></Route>
+          <Route path='/coordinator/applicant-list' element={<UserList starterData={students} applicantData={students} studentData={students} supervisorData={supervisors} listType={"applicant"}/>}></Route>
+          <Route path='/coordinator/student-list' element={<UserList starterData={students} applicantData={students} studentData={students} supervisorData={supervisors} listType={"coop-student"}/>}></Route>
+          <Route path='/coordinator/supervisor-list' element={<UserList starterData={supervisors} applicantData={students} studentData={students} supervisorData={supervisors} listType={"supervisor"}/>}></Route>
 
           {/*detailed user info*/}
-          <Route path='/coordinator/detailed-user-info/applicant/:id' element={<DetailedUserInfo userData = {fakeApplicantData} listType = "applicant"></DetailedUserInfo>}></Route>
-          <Route path='/coordinator/detailed-user-info/coop-student/:id' element={<DetailedUserInfo userData = {fakeStudentData} listType = "coop-student"></DetailedUserInfo>}></Route>
-          <Route path='/coordinator/detailed-user-info/supervisor/:id' element={<DetailedUserInfo userData = {fakeSupervisorData} listType = "supervisor"></DetailedUserInfo>}></Route>
+          <Route path='/coordinator/detailed-user-info/applicant/:id' element={<DetailedUserInfo userData = {students} listType = "applicant"></DetailedUserInfo>}></Route>
+          <Route path='/coordinator/detailed-user-info/coop-student/:id' element={<DetailedUserInfo userData = {students} listType = "coop-student"></DetailedUserInfo>}></Route>
+          <Route path='/coordinator/detailed-user-info/supervisor/:id' element={<DetailedUserInfo userData = {supervisors} listType = "supervisor"></DetailedUserInfo>}></Route>
 
           {/*thank-you pages*/}
           <Route path='/supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submittion!"} secondaryText={"An email has been sent to your inbox with details of your submittion"} type="supervisor"></ThankYouPage>}></Route>

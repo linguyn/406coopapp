@@ -24,8 +24,6 @@ export const userRouter = express.Router();
  *      GET /api/user/list?role=student&sortBy=studentId&order=desc&searchStr=.com
  */
 
-// TODO: add the documentation for exact filters
-
 /**
  * @swagger
  * /api/user/list:
@@ -221,14 +219,12 @@ function extractExactFilters(role, query) {
 }
 
 /**
- * @function getFilteredUsers
- * @description Retrieves a filtered list of users from the database. The filters are given by exactFilters, which
- *  contains the user fields (key/value) to exactly match and fuzzyFilterKeys, which is a list of user fields to try to fuzzy match with searchStr
- * @param {String} role - the user role type, which group of users to retrieve
- * @param {String} searchStr - the search query to match with certain user fields
- * @param {Object} exactFilters - user fields with specific values that have to exactly match a user
- * @param {Array} fuzzyFilterKeys - the list of user fields that are allowed to be matched with the searchStr
- * @returns a filtered list of users
+ * @function getFilterQuery
+ * @description Creates a query object for use on the database based on the provided search string, exact, and fuzzy filter options
+ * @param {String} searchStr - the search string filter used to match users
+ * @param {Object} exactFilters - the list of field filters used to exactly match fields in users
+ * @param {Array} fuzzyFilterKeys - the list of field filters that are allowed to be matched with the search string filter
+ * @returns a database query object
  */
 
 function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
@@ -252,7 +248,6 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
  * @api {PATCH} - /api/user/:role/:id
  * @description - Updates a user's information
  * @param id - Student id
- * @body {String} status - New student status. Options: "applying", "applied", "waitlisted", "rejected", etc.
  * @success {200} {Object} - Returns the updated student information
  * @error {400} {Object} - Invalid or missing status information
  * @error {401} {Object} - Student doesn't exist or missing authorization header
@@ -282,7 +277,7 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
 
         const updatedInfo = await Model.findByIdAndUpdate(
             userId,
-            req.body,
+            req.update,
             {
                 new: true,
                 runValidators: true
@@ -294,7 +289,9 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
         if (!updatedInfo) {
             return res.status(404).json({ message: "User not found" });
         }
-        res.status(200).json(updatedInfo);
+        return res.status(200).json({
+            user : updatedInfo
+        });
     } catch (error) {
         console.error("PATCH Route Error:", error);
         return res.status(500).json({
@@ -315,7 +312,7 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
 
 /**
  * @swagger
- * /api/user/{role}:
+ * /api/user/{role}/{email}:
  *   get:
  *     summary: Gets a user by role and email and returns a complete response depending on the role
  *     tags: 
@@ -328,14 +325,13 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
  *           example: student
  *         required: true
  *         description: The user's role
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             required: [email]
- *             properties:
- *               email: { type: string, example: john@gmail.com }
+ *       - in: path
+ *         name: email
+ *         schema:
+ *           type: string
+ *           example: jinwoo@sung.com
+ *         required: true
+ *         description: The user's email
  *     responses:
  *       200:
  *         description: Successfully retrieved the user
@@ -363,15 +359,13 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
  *         description: Internal server error
  */
 
-userRouter.get('/:role', authenticateToken, async(req, res) =>{
+userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
     try{
-        const { role } = req.params;
-        const { email } = req.body;
+        const { role, email } = req.params;
 
         const user = await getUserByEmail(role, email);
 
         if (!user) return res.status(404).json({message: "User not found"});
-        
 
         const sanitizedUser = UserResponse.createUserResponse(user);
         console.log("before if statement");
@@ -439,7 +433,7 @@ userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, r
         if (!user) 
             return res.status(404).json({message: "User has already been deleted or does not exist."});
 
-        res.status(200).json({message: "User deleted successfully!", deletedUser: user});
+        return res.status(200).json({message: "User deleted successfully!", deletedUser: user});
     
     } catch(error){
         console.error("DELETE Route Error:", error);
