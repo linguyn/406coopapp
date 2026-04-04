@@ -13,6 +13,7 @@ import cookieParser from 'cookie-parser';
 import connectDB from './database.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
+import { statsRouter } from './routes/statistics.js';
 
 
 // TODO: connect to database and reconfigure database-services to actual database
