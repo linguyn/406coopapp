@@ -37,19 +37,8 @@ applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
         const newApplication = new Application(req.body);
         await newApplication.save();
         const studentUser = await getUserByEmail("student", schoolEmail);
-        if (studentUser) {
-            await Student.findByIdAndUpdate(
-                studentUser._id,
-                {assignedApplication: newApplication._id},
-                {new: true}
-            );
-            // Also link the application back to the student
-            await Application.findByIdAndUpdate(
-                newApplication._id,
-                {assignedStudent: studentUser._id},
-                {new: true}
-            );
-        }
+        await Application.findByIdAndUpdate(newApplication._id, { assignedStudent: studentUser._id }, {new: true});
+
         return res.status(201).json({ 
             message: "Application submitted successfully", 
             applicationId: newApplication.id
