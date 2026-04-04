@@ -36,7 +36,7 @@ const student = new studentSchema({
         facultyAdvisor: {type: String, required: false, default: null},
         coordinators:{ type: String, required: false, default: null}
     },
-    assignedApplications: { 
+    assignedApplication: { 
         type: mongoose.Schema.Types.ObjectId,
         ref: "Application",
     }
