@@ -13,6 +13,7 @@ import StudentProgress from './pages/forms/StudentProgress';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
 import { useState, useEffect } from 'react';
 import DetailedUserInfo from './pages/detailedUserInfo/DetailedUserInfo';
+import { useAuth } from './context/authContext';
 
 
 
@@ -22,9 +23,13 @@ function App() {
   const [students, setStudents] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const auth = useAuth();
+  console.log(auth);
   
 
   //grab student data
+
+/*
 useEffect(() => {
   setIsLoading(true);
   const token = localStorage.getItem('token');
@@ -83,9 +88,9 @@ if (isLoading){
   return null;
 }
 
+*/
   return (
           
-    <BrowserRouter>
       <Routes>
       
           {/*login*/}
@@ -129,7 +134,6 @@ if (isLoading){
           <Route path= '/applicant/application-status/accepted' element={<ApplicantStatusPage status={"accepted"}></ApplicantStatusPage>}></Route>
           <Route path= '/applicant/application-status/rejected' element={<ApplicantStatusPage status={"rejected"}></ApplicantStatusPage>}></Route>
       </Routes>
-    </BrowserRouter>   
   );
 }
 
