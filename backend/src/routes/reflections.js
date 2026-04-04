@@ -4,8 +4,9 @@ export const reflectionsRouter = express.Router();
 import { addReflectionToDatabase, updateReflection } from '../database-services.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
+import Reflection from '../models/Reflection.js';
 
-reflectionsRouter.post('/submit', authenticateToken, (req, res, next) => {
+reflectionsRouter.post('/submit', authenticateToken, async (req, res, next) => {
     const { company, supervisor, jobTitle, termDuration, skills, challenges, supported } = req.body;
     try {
         if (!company || !company.trim()) { throw new HTTPError(400, "Company name is required"); }
@@ -16,7 +17,8 @@ reflectionsRouter.post('/submit', authenticateToken, (req, res, next) => {
         if (!challenges || !challenges.trim()) { throw new HTTPError(400, "Challenges description is required"); }
         if (!supported || !supported.trim()) { throw new HTTPError(400, "Support description is required"); }
 
-        const newReflection = addReflectionToDatabase({company, supervisor, jobTitle, termDuration, skills, challenges, supported});
+        const newReflection = new Reflection(req.body);
+        await newReflection.save();
         return res.status(201).json({ 
             message: "Reflection submitted successfully", 
             reflectionId: newReflection.id
@@ -27,9 +29,17 @@ reflectionsRouter.post('/submit', authenticateToken, (req, res, next) => {
     }
 });
 
-reflectionsRouter.patch('/update/:id', authenticateToken, (req, res, next) => {
+reflectionsRouter.patch('/update/:id', authenticateToken, async (req, res, next) => {
     try {
-        const updatedReflection = updateReflection(parseInt(req.params.id), req.body);
+        const userId = req.params.id;
+        const updatedReflection = await Reflection.findByIdAndUpdate(
+            userId,
+            req.body,
+            {
+                new: true,
+                runValidators: true
+            }
+        );
         return res.status(200).json({
             message: "Reflection updated successfully",
             reflection: updatedReflection

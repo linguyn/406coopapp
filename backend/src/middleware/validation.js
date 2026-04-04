@@ -45,11 +45,17 @@ export function validateRegister(req, res, next) {
     }
 }
 
+const baseFields = ["firstName", "lastName", "email", "password"];
+const studentFields = [...baseFields, "location", "year", "gpa", "resume", "coverLetter", "transcript", "reflection"];
+const supervisorFields = [...baseFields, "location", "interns", "company"];
+
 const allowedUpdates = {
-    user: ["firstName", "lastName", "email", "password"],
-    student: ["isApplicant", "location", "status", "year", "gpa", "resume", "coverLetter", "transcript", "reflection"],
-    supervisor: ["location", "status", "interns", "company"],
-    coordinator: []
+    student: studentFields,
+    supervisor: supervisorFields,
+    coordinator: [...baseFields],
+    coordinatorOther: [...studentFields, ...supervisorFields, "isApplicant"],
+    admin: [...baseFields],
+    adminOther: [...studentFields, ...supervisorFields, "isApplicant"]
 }
 
 function isValidCaller(callerRole, userRole) {
@@ -60,38 +66,41 @@ function isValidCaller(callerRole, userRole) {
 export function validateUserUpdate(req, res, next) {
     const callingUser = req.user;
     const callingUserRole = callingUser.role;
-    const { role, userId } = req.params;
+    const { userRole, userId } = req.params;
     const reqFields = req.body;
 
-    if (!isValidCaller(callingUserRole, userRole)) { throw new HTTPError("Missing permissions", 403); }
+    if (!userRole || !userId) { throw new HTTPError("Missing parameters role or userId", 422); }
 
-    let fieldsToUpdate = {};
-    // todo: come back to this
-    // todo: change so not all fields corresponding to a role in allowedUpdates are modifiable by that role (e.g. isApplicant)
-    switch (callingUserRole) {
-        case "coordinator":
-        case "admin":
-            for (const key in allowedUpdates) {
-                allowedUpdates[key].forEach((field) => {
-                    const reqFieldsVal = reqFields[field];
-                    if (reqFieldsVal !== null) { fieldsToUpdate[field] = reqFieldsVal }
-                })
+    let roleScope = callingUserRole;
+
+    try {
+        if (!isValidCaller(callingUserRole, userRole)) { throw new HTTPError("Missing permissions to update user", 403); }
+
+        if (callingUserRole !== userRole) {
+            if (callingUserRole === "coordinator") {
+                roleScope = "coordinatorOther";
+            } else if (callingUserRole === "admin") {
+                roleScope = "adminOther";
             }
-            break;
-        case "supervisor":
-            allowedUpdates[callingUserRole].forEach((field) => {
-                
-            })
-            break;
-        case "student":
-            break;
-        default:
+        }
 
+        let fieldsToUpdate = {};
+
+        // update for general user (universal for each user type) and then after for the specific role scope
+        allowedUpdates[user].forEach((field) => {
+            const reqFieldsVal = reqFields[field];
+            if (reqFieldsVal !== null) { fieldsToUpdate[field] = reqFieldsVal; }
+        });
+        allowedUpdates[roleScope].forEach((field) => {
+            const reqFieldsVal = reqFields[field];
+            if (reqFieldsVal !== null) { fieldsToUpdate[field] = reqFieldsVal; }
+        });
+
+        req.update = fieldsToUpdate;
+        next();
+    } catch(error) { 
+        next(error); 
     }
-
-
-    if (!isValidStatusUpdate(role, status)) { throw new HTTPError("Missing fields or invalid update", 400); }
-    next();
 }
 
 export function validateLogout(req, res, next) {

@@ -16,7 +16,7 @@ export const USER_DETAILS = {
         coordinator : [...BASE_FUZZY]
     },
     exactFilters : {
-        student : ["status", "program", "date", "gpa", "year", "location", "isApplicant"],
+        student : ["status", "program", "createdAt", "gpa", "year", "location", "isApplicant"],
         supervisor : ["status", "location", "jobTitle"],
         coordinator : []
     },
@@ -71,7 +71,8 @@ export const API = {
         auth : "/api/auth",
         applications : "/api/applications",
         reflections : "/api/reflections",
-        progressForms : "/api/progress-forms"
+        progressForms : "/api/progress-forms",
+        statistics : "/api/coordinator/homepage"
     }
 };
 

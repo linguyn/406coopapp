@@ -14,7 +14,6 @@ html, body {
 .student-bars {
     display: flex;
     flex-direction: column;
-    flex-direction: center  ;
 }
 
 .student-navbar-layout {
@@ -73,6 +72,9 @@ html, body {
     flex-direction: column;
     align-items: flex-start;
     gap: 3%;
+
+    z-index: 999; 
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
 }
 
 
@@ -136,7 +138,7 @@ html, body {
     font-size: clamp(0.1rem, 2.3vw, 5rem);
     font-family: "Roboto", "Inter", sans-serif;
     letter-spacing: -0.05em;
-    color: #444E5E;
+    color: #6593BB
 }
 
 .student-info {
@@ -149,17 +151,32 @@ html, body {
 }
 
 .student-info-1 {
-    display: flex; 
+    display: flex;
     margin-left: 2%;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     width: 30%;
     height: 90%;
     align-items: center;
 
     border: 1px solid #525252;
     border-radius: 10px;
+    padding: 0 20px 20px 20px;
+    box-sizing: border-box;
 }
+
+
+.student-chart-container {
+    position: relative;
+    width: 90%;  
+    height: 80%;   
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
 
 .student-info-1 h2 {
     margin-top: 8%;
@@ -239,7 +256,6 @@ html, body {
 .student-info-box-2 h2 {
     margin: 0;
 }
-
 
 .student-info-descr {
     font-size: clamp(0.1rem, 1.4vw, 4rem);

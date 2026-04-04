@@ -49,6 +49,22 @@
  *       required: [message]
  *       properties:
  *         message: { type: string, example: Supervisor successfully registered }
+ *     SupervisorListItemRes:
+ *       type: object
+ *       required: [company, jobTitle, interns, report]
+ *       properties:
+ *         company: { type: string, example: Gogle }
+ *         jobTitle: { type: string, example: Googoo }
+ *         interns:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: [Gigi, Bigi, Wigi]
+ *         report: { type: string, example: N/A }
+ *     SupervisorListRes:
+ *       type: array
+ *       items:
+ *         $ref: '#/components/schemas/SupervisorListItemRes'
  *   examples:
  *     SupervisorResEx:
  *       value: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, fullName: Jin-Woo Sung, id : "238945789237457817", dateCreated : "DNE", company: NBA, jobTitle: The Goat, location: Toronto, status : "active", interns : [David, Michaela, Rachael] }
@@ -58,6 +74,10 @@
  *       value: { message: Supervisor successfully registered }
  *     SupervisorLoginResEx:
  *       value: { accessToken: AKDJSNAKSJFBkjbskdjBFK, user: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, fullName: Jin-Woo Sung, id : "238945789237457817", dateCreated : "DNE", status : "active" } }
+ *     SupervisorListItemResEx:
+ *       value: { company: EvilCorp, jobTitle: chud, interns: [chud1, jid2, bomboclat3], report: N/A}
+ *     SupervisorListResEx:
+ *       value: [ { company: EvilCorp, jobTitle: chud, interns: [chud1, jid2, bomboclat3], report: N/A}, { company: EvilCorp, jobTitle: chud, interns: [chud1, jid2, bomboclat3], report: N/A}, { company: EvilCorp, jobTitle: chud, interns: [chud1, jid2, bomboclat3], report: N/A} ]
  */
 
 import mongoose from 'mongoose';

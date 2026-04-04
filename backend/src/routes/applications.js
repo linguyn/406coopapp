@@ -5,6 +5,8 @@ import { updateApplication, addApplicationToDatabase } from '../database-service
 import { isValidEmail, hasValidReason } from '../validate-services.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
+import Application from '../models/Application.js';
+import { getUserByEmail } from './user.js';
 
 /**
  * @api {POST} /api/applications/submit
@@ -21,7 +23,7 @@ import { authenticateToken } from '../server.js';
  * @error {500} {Object} - Internal server error
  */
 
-applicationsRouter.post('/submit', authenticateToken, (req, res, next) => {
+applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
     const { firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink } = req.body;
     try {
         if (!firstName || !firstName.trim() || !lastName || !lastName.trim()) { throw new HTTPError(400, "First and last name is required"); }        if (!studentId || !studentId.trim()) { throw new HTTPError(400, "Student ID is required"); }
@@ -31,19 +33,31 @@ applicationsRouter.post('/submit', authenticateToken, (req, res, next) => {
         if (typeof eligibility !== "boolean") { throw new HTTPError(400, "Eligibility must be a boolean value"); }
         if (!reasonToApply || !hasValidReason(reasonToApply)) { throw new HTTPError(400, "Reason to apply must be 150 words or less"); }
 
-        const newApp = addApplicationToDatabase({firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink});
+        const newApplication = new Application(req.body);
+        await newApplication.save();
+        const studentUser = await getUserByEmail("student", schoolEmail);
+        await Student.findByIdAndUpdate(studentUser._id, { assignedApplications: newApplication._id }, {new: true});
+
         return res.status(201).json({ 
             message: "Application submitted successfully", 
-            applicationId: newApp.id
+            applicationId: newApplication.id
         });
     } catch (error) {
         next(error);
     }
 });
 
-applicationsRouter.patch('/update/:id', authenticateToken, (req, res, next) => {
+applicationsRouter.patch('/update/:id', authenticateToken, async (req, res, next) => {
     try {
-        const updatedApplication = updateApplication(parseInt(req.params.id), req.body);
+        const userId = req.params.id;
+        const updatedApplication = await Application.findByIdAndUpdate(
+            userId,
+            req.body,
+            {
+                new: true,
+                runValidators: true
+            }
+        );
         return res.status(200).json({
             message: "Application updated successfully",
             application: updatedApplication
