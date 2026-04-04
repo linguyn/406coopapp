@@ -1,7 +1,7 @@
 import './SupervisorRegister.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import AuthLayout from '../../components/AuthLayout';
+import AuthLayout from '../../components/auth-layout/AuthLayout';
 import { signIn } from '../../services/authService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';

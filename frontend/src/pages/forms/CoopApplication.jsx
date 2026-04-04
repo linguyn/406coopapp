@@ -1,9 +1,9 @@
 import './CoopApplication.css'
-import AuthLayout from '../../components/AuthLayout';
+import AuthLayout from '../../components/auth-layout/AuthLayout';
 import { signIn } from '../../services/authService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { applicationSubmit } from '../../services/applicationService';
+import { applicationSubmit } from '../../services/formServices';
 
 function Application() {
     const [firstName, setFirstName] = useState('');
@@ -160,7 +160,7 @@ function Application() {
                                         <p className='apply-error'>{pageError}</p>
                                         </div>
                                     )}
-                                <button className='blue-button'>Register</button>
+                                <button className='blue-button'>Submit</button>
                             </div>
                             
 

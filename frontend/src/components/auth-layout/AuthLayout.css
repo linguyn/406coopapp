@@ -12,7 +12,7 @@ body {
 
 .auth-layout {
     margin-top: 10vh;
-    padding: 20px;
+    padding: 20px; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,16 +23,16 @@ body {
     display: flex;
     width: 80vw;
     min-width: 700px; 
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     background-color: #ffffff;
-    overflow: hidden; 
+    overflow: hidden;
 }
 
 .auth-left {
     display: flex;
     flex-direction: column;
     flex: 3; 
-    min-width: 280px;
+    min-width: 280px; 
     height: 80vh;
     padding: 60px 40px;
     gap: 24px;
@@ -43,13 +43,14 @@ body {
 }
 
 .auth-left h1 {
+    display: block; 
+    max-width: min-content; 
     margin: 0;
     font-size: clamp(2.5rem, 4vw, 4rem);
     line-height: 1.2;
     letter-spacing: -0.05rem;
     width: 100%;
     
-
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;

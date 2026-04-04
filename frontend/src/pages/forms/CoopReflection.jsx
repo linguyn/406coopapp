@@ -1,5 +1,6 @@
 import './CoopReflection.css';
-import AuthLayout from '../../components/AuthLayout';
+import AuthLayout from '../../components/auth-layout/AuthLayout';
+import { reflectionSubmit } from '../../services/formServices';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,7 +25,7 @@ function CoopReflection() {
         }
 
         try { 
-            const response = await applicationSubmit({
+            const response = await reflectionSubmit({
                 company: company,
                 supervisor: supervisor,
                 jobTitle: jobTitle,
@@ -35,7 +36,7 @@ function CoopReflection() {
             });
 
             if (response.status == 201 || response){
-                console.log("Application submitted successfully: ", response.data);
+                console.log("Reflection submitted successfully: ", response.data);
                 navigate('/student'); 
             }
         } catch (error) {
