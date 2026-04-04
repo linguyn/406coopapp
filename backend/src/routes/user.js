@@ -288,7 +288,9 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
         if (!updatedInfo) {
             return res.status(404).json({ message: "User not found" });
         }
-        res.status(200).json(updatedInfo);
+        return res.status(200).json({
+            user : updatedInfo
+        });
     } catch (error) {
         console.error("PATCH Route Error:", error);
         return res.status(500).json({
@@ -309,7 +311,7 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
 
 /**
  * @swagger
- * /api/user/{role}:
+ * /api/user/{role}/{email}:
  *   get:
  *     summary: Gets a user by role and email and returns a complete response depending on the role
  *     tags: 
@@ -322,14 +324,13 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
  *           example: student
  *         required: true
  *         description: The user's role
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             required: [email]
- *             properties:
- *               email: { type: string, example: john@gmail.com }
+ *       - in: path
+ *         name: email
+ *         schema:
+ *           type: string
+ *           example: jinwoo@sung.com
+ *         required: true
+ *         description: The user's email
  *     responses:
  *       200:
  *         description: Successfully retrieved the user
@@ -357,23 +358,23 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
  *         description: Internal server error
  */
 
-userRouter.get('/:role', authenticateToken, async(req, res) =>{
+userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
     try{
-        const { role } = req.params;
-        const { email } = req.body;
+        const { role, email } = req.params;
 
         const user = await getUserByEmail(role, email);
 
         if (!user) return res.status(404).json({message: "User not found"});
-        
 
         const sanitizedUser = UserResponse.createUserResponse(user);
         
         if (user === "student") { const apps = await Application.find({assignedStudent: user._id });
-            res.status(200).json({user: sanitizedUser, applications: apps});
+            return res.status(200).json({user: sanitizedUser, applications: apps});
         };
 
-        res.status(200).json(sanitizedUser, );
+        return res.status(200).json({ 
+            user: sanitizedUser
+        });
  
     } catch(error){
         return res.status(500).json({error: "something went wrong in userRouter.get",
@@ -430,7 +431,7 @@ userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, r
         if (!user) 
             return res.status(404).json({message: "User has already been deleted or does not exist."});
 
-        res.status(200).json({message: "User deleted successfully!", deletedUser: user});
+        return res.status(200).json({message: "User deleted successfully!", deletedUser: user});
     
     } catch(error){
         console.error("DELETE Route Error:", error);
