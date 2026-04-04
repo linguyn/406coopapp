@@ -12,60 +12,22 @@ import ApplicantStatusPage from './pages/applicantStatusPage/ApplicantStatusPage
 import CoopReflection from './pages/forms/CoopReflection';   
 import StudentProgress from './pages/forms/StudentProgress';
 import DetailedUserInfo from './pages/detailedUserInfo/DetailedUserInfo';
-<<<<<<< HEAD
-import { useAuth } from './context/authContext';
-
-
-=======
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'; 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {setAccessToken} from './services/api';
 import { useAuth } from './context/authContext';
 import ProtectedRoute from './components/ProtectedRoute';
->>>>>>> feature/auth-pages
 
 function App() {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL; 
   const [loading, setLoading] = useState(true);
   const { setUserData } = useAuth();
-   const [applicants, setApplicants] = useState([]);
+  const [applicants, setApplicants] = useState([]);
   const [students, setStudents] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-<<<<<<< HEAD
-  const auth = useAuth();
-  console.log(auth);
-  
-
-  //grab student data
-
-/*
-useEffect(() => {
-  setIsLoading(true);
-  const token = localStorage.getItem('token');
-  
-  fetch('http://localhost:5005/api/user/list?role=student', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`, 
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
-    const flattenedStudents = data.map(user => ({
-      ...user,
-      program: user.academics?.program ?? "N/A",
-      year: user.academics?.year ?? "N/A",
-      gpa: user.academics?.gpa ?? "N/A",
-      resume: user.documents?.resume ?? "Missing",
-      coverLetter: user.documents?.coverLetter ?? "Missing",
-      status: user.status ?? "Pending",
-      isApplicant: user.isApplicant ?? true 
-    }));
-=======
   const { userData } = useAuth();
   const [allUsers, setAllUsers] = useState([]);
 
@@ -76,7 +38,6 @@ useEffect(() => {
         const response = await axios.post(`${API_URL}/auth/refresh-token`, {}, { withCredentials: true });
         setAccessToken(response.data.accessToken);
         setUserData(response.data.user);
->>>>>>> feature/auth-pages
 
         if (response.status == 200 || response) { 
           console.log("User authenticated, forwarding to homepage");
@@ -108,14 +69,7 @@ useEffect(() => {
     return <div>Loading...</div>;
   }
 
-
-
-*/
   return (
-<<<<<<< HEAD
-          
-=======
->>>>>>> feature/auth-pages
       <Routes>
       
           {/*login*/}
@@ -153,14 +107,16 @@ useEffect(() => {
 
             
             {/*coordinator list*/}
-            <Route path='/coordinator/applicant-list'></Route>
-            <Route path='/coordinator/student-list'></Route>
-            <Route path='/coordinator/supervisor-list'></Route>
-           
+            <Route path='/coordinator/applicant-list' element={<UserList starterData={students} applicantData={students} studentData={students} supervisorData={supervisors} listType={"applicant"}/>}></Route>
+            <Route path='/coordinator/student-list' element={<UserList starterData={students} applicantData={students} studentData={students} supervisorData={supervisors} listType={"coop-student"}/>}></Route>
+            <Route path='/coordinator/supervisor-list' element={<UserList starterData={supervisors} applicantData={students} studentData={students} supervisorData={supervisors} listType={"supervisor"}/>}></Route>
+
+          
             {/*detailed user info*/}
-            <Route path='/coordinator/detailed-user-info/applicant/:id'></Route>
-            <Route path='/coordinator/detailed-user-info/coop-student/:id'></Route>
-            <Route path='/coordinator/detailed-user-info/supervisor/:id'></Route>
+            <Route path='/coordinator/detailed-user-info/applicant/:id' element={<DetailedUserInfo userData = {students} listType = "applicant"></DetailedUserInfo>}></Route>
+            <Route path='/coordinator/detailed-user-info/coop-student/:id' element={<DetailedUserInfo userData = {students} listType = "coop-student"></DetailedUserInfo>}></Route>
+            <Route path='/coordinator/detailed-user-info/supervisor/:id' element={<DetailedUserInfo userData = {supervisors} listType = "supervisor"></DetailedUserInfo>}></Route>
+
 
             {/*thank-you pages*/}
             <Route path='/supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submittion!"} secondaryText={"An email has been sent to your inbox with details of your submittion"} type="supervisor"></ThankYouPage>}></Route>
