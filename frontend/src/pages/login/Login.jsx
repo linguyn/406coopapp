@@ -190,14 +190,14 @@ function Login() {
 
                     </div>
 
-                    {/* sign in button + create account option */}
-                    <div className='options-column'>
-                    
-                        {serverError && (
+                    {serverError && (
                             <div className='error-message'>
                             <p className='err'>{serverError}</p>
                             </div>
                         )}
+
+                    {/* sign in button + create account option */}
+                    <div className='options-column'>
                         
                         {/* sign in button */}
                         <div className='sign-in-button'>
@@ -217,6 +217,3 @@ function Login() {
 }
 
 export default Login;
-
-
-
