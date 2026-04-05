@@ -15,22 +15,22 @@ import DetailedUserInfo from './pages/detailedUserInfo/DetailedUserInfo';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'; 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import {setAccessToken} from './services/api';
 import { useAuth } from './context/authContext';
 import ProtectedRoute from './components/ProtectedRoute';
-
-
-
+import api, {setAccessToken, getAccessToken} from './services/api';
 
 function App() {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL; 
   const [loading, setLoading] = useState(true);
   const { setUserData } = useAuth();
-   const [applicants, setApplicants] = useState([]);
+  const [applicants, setApplicants] = useState([]);
   const [students, setStudents] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { userData } = useAuth();
+  const [allUsers, setAllUsers] = useState([]);
+
 
   useEffect(() => {
     /*try to restore the previous authentication state*/
@@ -65,75 +65,92 @@ function App() {
     initAuth();
   }, []);
 
+  //grabs data on all applicants
+  useEffect(() => {
+
+    //stops api call if user doesnt exist or isnt a coordinator
+    if (!userData) return;
+
+    if (userData.role !== "coordinator") {
+    console.log("User is not a coordinator. Skipping user list fetch.");
+    return;
+  }
+
+    const getAllApplicants = async (params = "") => {
+      try {
+        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=true&searchStr=Sung` 
+        );
+        console.log("SUCCESS! Here is the data:", response.data);
+        setApplicants(response.data);
+
+      } catch (error) {
+        console.error('Failed to get users:', error);
+      } finally{
+        setLoading(false);
+      }
+    }; 
+
+    getAllApplicants();
+  }, [userData]);
+
+  //grabs data on all co-op students
+  useEffect(() => {
+
+    //stops api call if user doesnt exist or isnt a coordinator
+    if (!userData) return;
+
+    if (userData.role !== "coordinator") {
+    console.log("User is not a coordinator. Skipping user list fetch.");
+    return;
+  }
+
+    const getAllStudents = async () => {
+      try {
+        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=false`);
+        
+        console.log("SUCCESS! Here is the data:", response.data);
+        setStudents(response.data)
+
+      } catch (error) {
+        console.error('Failed to get users:', error);
+      } finally{
+        setLoading(false);
+      }
+    }; 
+
+    getAllStudents();
+  }, [userData]);
+
+  //grabs data on all supervisors
+  useEffect(() => {
+
+    //stops api call if user doesnt exist or isnt a coordinator
+    if (!userData) return;
+
+    if (userData.role !== "coordinator") {
+    return;
+  }
+
+    const getAllSupervisors = async () => {
+      try {
+        const response = await api.get(`${API_URL}/user/list?role=supervisor`);
+        console.log("SUCCESS! Here is the data:", response.data);
+        setSupervisors(response.data);
+
+      } catch (error) {
+        console.error('Failed to get users:', error);
+      } finally{
+        setLoading(false);
+      }
+    }; 
+
+    getAllSupervisors();
+  }, [userData]);
+
 
   if (loading) { 
     return <div>Loading...</div>;
   }
-
-  
-/*
-  //grab student data
-useEffect(() => {
-  setIsLoading(true);
-  const token = localStorage.getItem('token');
-  
-  fetch('http://localhost:5005/api/user/list?role=student', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`, 
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
-    const flattenedStudents = data.map(user => ({
-      ...user,
-      program: user.academics?.program ?? "N/A",
-      year: user.academics?.year ?? "N/A",
-      gpa: user.academics?.gpa ?? "N/A",
-      resume: user.documents?.resume ?? "Missing",
-      coverLetter: user.documents?.coverLetter ?? "Missing",
-      status: user.status ?? "Pending",
-      isApplicant: user.isApplicant ?? true 
-    }));
-
-    setTimeout(() => {
-      setStudents(flattenedStudents); 
-      setIsLoading(false);
-    }, 500);
-  })
-  .catch(err => {
-    console.error("Error fetching students:", err);
-    setIsLoading(false);
-  });
-}, []);
-
-//grab supervisor data
-useEffect(() => {
-  const token = localStorage.getItem('token'); 
-  
-  fetch('http://localhost:5005/api/user/list?role=supervisor', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`, 
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
-    setSupervisors(data); 
-  })
-  .catch(err => console.error("Error fetching supervisors:", err));
-}, []);
-*/ 
-
-
-/*
-//show nothing to allow data to load
-if (isLoading){
-  return null;
-}
-*/
 
   return (
       <Routes>
@@ -166,14 +183,16 @@ if (isLoading){
 
             
             {/*coordinator list*/}
-            <Route path='/coordinator/applicant-list'></Route>
-            <Route path='/coordinator/student-list'></Route>
-            <Route path='/coordinator/supervisor-list'></Route>
-           
+            <Route path='/coordinator/applicant-list' element={<UserList starterData={applicants} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"applicant"} />}></Route>
+            <Route path='/coordinator/student-list' element={<UserList starterData={students} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"coop-student"} />}></Route>
+            <Route path='/coordinator/supervisor-list' element={<UserList starterData={supervisors} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"supervisor"} />}></Route>
+
+          
             {/*detailed user info*/}
-            <Route path='/coordinator/detailed-user-info/applicant/:id'></Route>
-            <Route path='/coordinator/detailed-user-info/coop-student/:id'></Route>
-            <Route path='/coordinator/detailed-user-info/supervisor/:id'></Route>
+            <Route path='/coordinator/detailed-user-info/applicant/:id' element={<DetailedUserInfo userData = {applicants} listType = "applicant"></DetailedUserInfo>}></Route>
+            <Route path='/coordinator/detailed-user-info/coop-student/:id' element={<DetailedUserInfo userData = {students} listType = "coop-student"></DetailedUserInfo>}></Route>
+            <Route path='/coordinator/detailed-user-info/supervisor/:id' element={<DetailedUserInfo userData = {supervisors} listType = "supervisor"></DetailedUserInfo>}></Route>
+
 
             {/*thank-you pages*/}
             <Route path='/supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submittion!"} secondaryText={"An email has been sent to your inbox with details of your submittion"} type="supervisor"></ThankYouPage>}></Route>
