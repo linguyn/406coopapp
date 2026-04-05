@@ -10,6 +10,7 @@ import ProgressForm from '../models/ProgressForm.js';
 import Reflection from '../models/Reflection.js';
 import { UserListItemResponse } from '../response-classes/UserListItemResponse.js';
 import { UserResponse } from '../response-classes/UserResponse.js';
+import { HTTPError } from '../errors.js'
 
 export const userRouter = express.Router();
 
@@ -247,7 +248,7 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
 }
 
 /**
- * @api {PATCH} - /api/user/:role/:id
+ * @api {PATCH} - /api/user/:role/:userId
  * @description - Updates a user's information
  * @param id - Student id
  * @success {200} {Object} - Returns the updated student information
@@ -255,6 +256,70 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
  * @error {401} {Object} - Student doesn't exist or missing authorization header
  * @errpr {403} {Object} - Forbidden, the calling user does not have permission
  * @error {500} {Object} - Internal server error
+ */
+
+/**
+ * @swagger
+ * /api/user/{role}/{userId}:
+ *   patch:
+ *     summary: Updates an existing user's information
+ *     description: Finds a user by role and id and updates the fields specified
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: path
+ *         name: role
+ *         schema:
+ *           type: string
+ *           example: student
+ *         required: true
+ *         description: The user's role
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *         required: true
+ *         description: The user's id
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             oneOf:
+ *               - $ref: '#/components/schemas/StudentSelfUpdateReq'
+ *               - $ref: '#/components/schemas/SupervisorSelfUpdateReq'
+ *               - $ref: '#/components/schemas/CoordinatorSelfUpdateReq'
+ *               - $ref: '#/components/schemas/CoordinatorOtherUpdateReq'
+ *           examples:
+ *             studentSelf:
+ *               $ref: '#/components/examples/StudentSelfUpdateReqEx'
+ *             supervisorSelf:
+ *               $ref: '#/components/examples/SupervisorSelfUpdateReqEx'
+ *             coordinatorSelf:
+ *               $ref: '#/components/examples/CoordinatorSelfUpdateReqEx'
+ *             coordinatorOther:
+ *               $ref: '#/components/examples/CoordinatorOtherUpdateReqEx'
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/StudentRes'
+ *                 - $ref: '#/components/schemas/SupervisorRes'
+ *                 - $ref: '#/components/schemas/CoordinatorRes'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentResEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorResEx'
+ *               coordinator:
+ *                 $ref: '#/components/examples/CoordinatorResEx'
+ *       400:
+ *         description: Invalid role
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
  */
 
 userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => { //change this path to remove :userId as it would not be known to
@@ -274,7 +339,7 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
                 Model = Supervisor;
                 break;
             default:
-                return res.status(400).json({ message: "Invalid type" });
+                throw new HTTPError("Invalid type", 422);
         }
 
         const updatedInfo = await Model.findByIdAndUpdate(
@@ -286,26 +351,22 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
             }
         );
         
-        // TODO: return a cleaned version of updatedInfo
+        const sanitizedUser = UserResponse.createUserResponse(updatedInfo);
 
         if (!updatedInfo) {
-            return res.status(404).json({ message: "User not found" });
+            throw new HTTPError("User not found", 404);
         }
         return res.status(200).json({
-            user : updatedInfo
+            user : sanitizedUser
         });
     } catch (error) {
-        console.error("PATCH Route Error:", error);
-        return res.status(500).json({
-            error: "something went wrong in userRouter.patch",
-            details: error.message
-        });
+        next(error);
     }
 });
 
 
 /**
- * @api {GET} - /api/user/:id
+ * @api {GET} - /api/user/:role/:email
  * @description Retrieves the user's information
  * @param id - User's id
  * @success {200} {Object} - Returns the user's information
@@ -367,7 +428,7 @@ userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
 
         const user = await getUserByEmail(role, email);
 
-        if (!user) return res.status(404).json({message: "User not found"});
+        if (!user) throw new HTTPError("User not found", 404);
 
         const sanitizedUser = UserResponse.createUserResponse(user);
         
@@ -380,9 +441,7 @@ userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
         
         return res.status(200).json(sanitizedUser);
     } catch(error){
-        return res.status(500).json({error: "something went wrong in userRouter.get",
-            details: error.message
-        });
+        next(error);
     }
 }); 
 
@@ -407,6 +466,21 @@ export async function getUserByEmail(role, email) { //Can be moved to database s
     return user;
 }
 
+export async function getUserByEmailAllRoles(email) {
+    const normalizedEmail = String(email || "").trim().toLowerCase();
+    if (!normalizedEmail) {
+        return null;
+    }
+
+    const [student, supervisor, coordinator] = await Promise.all([
+        Student.findOne({ email: normalizedEmail }),
+        Supervisor.findOne({ email: normalizedEmail }),
+        Coordinator.findOne({ email: normalizedEmail })
+    ]);
+
+    return student || supervisor || coordinator || null;
+}
+
 userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res) => {
     try{
         const { role } = req.params;
@@ -424,19 +498,16 @@ userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, r
                 Model = Supervisor;
                 break;
             default:
-                return res.status(400).json({message: "Invalid type"});
+                throw new HTTPError("Invalid type", 400);
         }
         const user = await Model.findOneAndDelete({email: email});
 
-        if (!user) 
-            return res.status(404).json({message: "User has already been deleted or does not exist."});
+        if (!user) {
+            throw new HTTPError("User has already been deleted or does not exist.", 404);
+        }
 
         return res.status(200).json({message: "User deleted successfully!", deletedUser: user});
-    
     } catch(error){
-        console.error("DELETE Route Error:", error);
-        return res.status(500).json({error: "something went wrong in userRouter.delete",
-            details: error.message
-        });
+        next(error);
     }
 });

@@ -147,6 +147,27 @@ export default Student;
  *       type: array
  *       items:
  *         $ref: '#/components/schemas/ApplicantListItemRes'
+ *     StudentSelfUpdateReq:
+ *       allOf:
+ *         - $ref: '#/components/schemas/UserSelfUpdateReq'
+ *         - type: object
+ *           properties:
+ *             location: { type: string, example: Hello }
+ *             academics:
+ *               type: object
+ *               required: [program, year, gpa]
+ *               properties:
+ *                 program: { type: string, example: Computer Science }
+ *                 year: { type: number, example: 4 }
+ *                 gpa: { type: string, example: 2.33 }
+ *             documents:
+ *               type: object
+ *               required: [resume, coverLetter, transcript]
+ *               properties:
+ *                 resume: { type: string, example: N/A }
+ *                 coverLetter: { type: string, example: N/A }
+ *                 transcript: { type: string, example: N/A }
+ *                 reflection: { type: string, example: N/A }
  *     TermActivity:
  *       type: object
  *       required: [applications, interviews, applied, interviewed, shortlisted, workTerms, startTerm]
@@ -197,4 +218,6 @@ export default Student;
  *       value: { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} }
  *     ApplicantListResEx:
  *       value: [ { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} }, { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} }, { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} } ]
+ *     StudentSelfUpdateReqEx:
+ *       value: { firstName: "Jin-Woo", lastName: "Sung", email: "jinwoo@thegreatest.com", password: "password1234", location: "Seoul", academics: { program: "Computer Science", year: 4, gpa: "3.98"}, documents: { resume: "resume_v1.pdf", coverLetter: "cl_final.pdf", transcript: "official_transcript.pdf", reflection: "internship_reflection.pdf" }}
  */
