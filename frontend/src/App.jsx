@@ -76,9 +76,9 @@ function App() {
     return;
   }
 
-    const getAllApplicants = async (params = "") => {
+    const getAllApplicants = async (params = "", search = "") => {
       try {
-        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=true&searchStr=Sung` 
+        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=true` 
         );
         console.log("SUCCESS! Here is the data:", response.data);
         setApplicants(response.data);
@@ -104,7 +104,7 @@ function App() {
     return;
   }
 
-    const getAllStudents = async () => {
+    const getAllStudents = async (params = "", search = "") => {
       try {
         const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=false`);
         
@@ -131,7 +131,7 @@ function App() {
     return;
   }
 
-    const getAllSupervisors = async () => {
+    const getAllSupervisors = async (params = "", search = "") => {
       try {
         const response = await api.get(`${API_URL}/user/list?role=supervisor`);
         console.log("SUCCESS! Here is the data:", response.data);
