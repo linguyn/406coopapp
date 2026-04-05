@@ -147,20 +147,12 @@ if (isLoading){
           <Route path='/roles' element={<Roles />}/>
 
 
-
-          <Route path='/coordinator' element={<CoordinatorHomepage />}/>
-          <Route path='/supervisor' element={<SupervisorHomepage />}/>
-
-
-          <Route path='/supervisor/student-progress' element={<StudentProgress/>}/>
-
-
         {/* Protected route, only visible if userData */}
         <Route element={<ProtectedRoute/>}>
             {/*homepages*/}
             <Route path='/student' element={<StudentHomepage />}/>
-
-            
+            <Route path='/coordinator' element={<CoordinatorHomepage />}/>
+            <Route path='/supervisor' element={<SupervisorHomepage />}/>
 
             {/*application page*/}
             <Route path='/student/apply' element={<Application/>}/>
@@ -169,6 +161,7 @@ if (isLoading){
             <Route path='/student/reflection' element={<CoopReflection/>}/>
 
             {/*student progress page*/}
+            <Route path='/supervisor/student-progress' element={<StudentProgress/>}/>
 
 
             
