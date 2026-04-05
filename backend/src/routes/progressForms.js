@@ -1,12 +1,14 @@
 import express from 'express';
 export const progressFormsRouter = express.Router();
 
+import { isValidEmail } from '../validate-services.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
 import ProgressForm from '../models/ProgressForm.js';
+import { getUserByEmail } from './user.js';
 
 progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) => {
-    const { studentName, supervisorName, company, jobTitle, stars, stairs, employable } = req.body;
+    const { studentName, supervisorName, company, jobTitle, stars, stairs, employable, schoolEmail } = req.body;
     try {
         if (!studentName || !studentName.trim()) { throw new HTTPError(400, "Student name is required"); }
         if (!supervisorName || !supervisorName.trim()) { throw new HTTPError(400, "Supervisor name is required"); }
@@ -15,9 +17,15 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
         if (!stars || !stars.trim()) { throw new HTTPError(400, "Stars are required"); }
         if (!stairs || !stairs.trim()) { throw new HTTPError(400, "Stairs are required"); }
         if (!employable || !employable.trim()) { throw new HTTPError(400, "Employable status is required"); }
+        if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
 
         const newProgressForm = new ProgressForm(req.body);
         await newProgressForm.save();
+        const studentUser = await getUserByEmail("student", schoolEmail);
+        if (studentUser) {
+            await ProgressForm.findByIdAndUpdate(newProgressForm._id, { assignedStudent: studentUser._id }, {new: true});
+        }
+        
         return res.status(201).json({ 
             message: "Progress form submitted successfully", 
             progressFormId: newProgressForm.id

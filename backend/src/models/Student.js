@@ -36,10 +36,6 @@ const student = new studentSchema({
         facultyAdvisor: {type: String, required: false, default: null},
         coordinators:{ type: String, required: false, default: null}
     },
-    assignedApplication: { 
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Application",
-    }
 }, { timestamps: true });
 
 const Student = mongoose.model('Student', student);
