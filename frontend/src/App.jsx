@@ -43,17 +43,14 @@ function App() {
         if (response.status == 200 || response) { 
           console.log("User authenticated, forwarding to homepage");
 
-
           if (response.data.user.role === "student") 
               navigate("/student");
-          
-
+        
           if (response.data.user.role === "supervisor") 
               navigate("/supervisor");
 
           if (response.data.user.role === "coordinator") 
               navigate("/coordinator");
-          
         }
       } catch (error) {
         console.error("No valid refresh token found: ", error);
@@ -61,28 +58,14 @@ function App() {
         setLoading(false);
       }
     }; 
-
     initAuth();
   }, []);
 
-  //grabs data on all applicants
-  useEffect(() => {
-
-    //stops api call if user doesnt exist or isnt a coordinator
-    if (!userData) return;
-
-    if (userData.role !== "coordinator") {
-    console.log("User is not a coordinator. Skipping user list fetch.");
-    return;
-  }
-
-    const getAllApplicants = async (params = "", search = "") => {
+    const getAllApplicants = async (search = "", params = "", order="asc") => {
       try {
-        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=true` 
+        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=true&searchStr=${search}&sortBy=${params}&order=${order}` 
         );
-        console.log("SUCCESS! Here is the data:", response.data);
         setApplicants(response.data);
-
       } catch (error) {
         console.error('Failed to get users:', error);
       } finally{
@@ -90,27 +73,10 @@ function App() {
       }
     }; 
 
-    getAllApplicants();
-  }, [userData]);
-
-  //grabs data on all co-op students
-  useEffect(() => {
-
-    //stops api call if user doesnt exist or isnt a coordinator
-    if (!userData) return;
-
-    if (userData.role !== "coordinator") {
-    console.log("User is not a coordinator. Skipping user list fetch.");
-    return;
-  }
-
-    const getAllStudents = async (params = "", search = "") => {
+    const getAllStudents = async (search = "", params = "", order="asc") => {
       try {
-        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=false`);
-        
-        console.log("SUCCESS! Here is the data:", response.data);
+        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=false&searchStr=${search}&sortBy=${params}&order=${order}`);
         setStudents(response.data)
-
       } catch (error) {
         console.error('Failed to get users:', error);
       } finally{
@@ -118,25 +84,10 @@ function App() {
       }
     }; 
 
-    getAllStudents();
-  }, [userData]);
-
-  //grabs data on all supervisors
-  useEffect(() => {
-
-    //stops api call if user doesnt exist or isnt a coordinator
-    if (!userData) return;
-
-    if (userData.role !== "coordinator") {
-    return;
-  }
-
-    const getAllSupervisors = async (params = "", search = "") => {
+    const getAllSupervisors = async (search = "", params = "", order="asc") => {
       try {
-        const response = await api.get(`${API_URL}/user/list?role=supervisor`);
-        console.log("SUCCESS! Here is the data:", response.data);
+        const response = await api.get(`${API_URL}/user/list?role=supervisor&searchStr=${search}&sortBy=${params}&order=${order}`);
         setSupervisors(response.data);
-
       } catch (error) {
         console.error('Failed to get users:', error);
       } finally{
@@ -144,9 +95,13 @@ function App() {
       }
     }; 
 
-    getAllSupervisors();
+  useEffect(() => {
+    if (userData?.role === "coordinator") {
+      getAllApplicants();
+      getAllStudents();
+      getAllSupervisors();
+    }
   }, [userData]);
-
 
   if (loading) { 
     return <div>Loading...</div>;
@@ -179,23 +134,19 @@ function App() {
 
             {/*student progress page*/}
             <Route path='/supervisor/student-progress' element={<StudentProgress/>}/>
-
-
             
             {/*coordinator list*/}
-            <Route path='/coordinator/applicant-list' element={<UserList starterData={applicants} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"applicant"} />}></Route>
-            <Route path='/coordinator/student-list' element={<UserList starterData={students} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"coop-student"} />}></Route>
-            <Route path='/coordinator/supervisor-list' element={<UserList starterData={supervisors} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"supervisor"} />}></Route>
+            <Route path='/coordinator/applicant-list' element={<UserList starterData={applicants} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"applicant"} fetchApplicants={getAllApplicants} fetchStudents={getAllStudents} fetchSupervisors={getAllSupervisors}/>}></Route>
+            <Route path='/coordinator/student-list' element={<UserList starterData={students} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"coop-student"} fetchApplicants={getAllApplicants} fetchStudents={getAllStudents} fetchSupervisors={getAllSupervisors}/>}></Route>
+            <Route path='/coordinator/supervisor-list' element={<UserList starterData={supervisors} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"supervisor"} fetchApplicants={getAllApplicants} fetchStudents={getAllStudents} fetchSupervisors={getAllSupervisors}/>}></Route>
 
-          
             {/*detailed user info*/}
             <Route path='/coordinator/detailed-user-info/applicant/:id' element={<DetailedUserInfo userData = {applicants} listType = "applicant"></DetailedUserInfo>}></Route>
             <Route path='/coordinator/detailed-user-info/coop-student/:id' element={<DetailedUserInfo userData = {students} listType = "coop-student"></DetailedUserInfo>}></Route>
             <Route path='/coordinator/detailed-user-info/supervisor/:id' element={<DetailedUserInfo userData = {supervisors} listType = "supervisor"></DetailedUserInfo>}></Route>
 
-
             {/*thank-you pages*/}
-            <Route path='/supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submittion!"} secondaryText={"An email has been sent to your inbox with details of your submittion"} type="supervisor"></ThankYouPage>}></Route>
+            <Route path='/supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submission!"} secondaryText={"An email has been sent to your inbox with details of your submission"} type="supervisor"></ThankYouPage>}></Route>
             <Route path='applicant/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n applying!"} secondaryText={"An email has been sent to your inbox with details of your application"} type="applicant"></ThankYouPage>}></Route>
 
             {/*applicant status page */}
