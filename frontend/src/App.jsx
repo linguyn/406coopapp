@@ -15,9 +15,9 @@ import DetailedUserInfo from './pages/detailedUserInfo/DetailedUserInfo';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'; 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import {setAccessToken} from './services/api';
 import { useAuth } from './context/authContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import api, {setAccessToken, getAccessToken} from './services/api';
 
 function App() {
   const navigate = useNavigate();
@@ -30,6 +30,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const { userData } = useAuth();
   const [allUsers, setAllUsers] = useState([]);
+
 
   useEffect(() => {
     /*try to restore the previous authentication state*/
@@ -63,6 +64,84 @@ function App() {
 
     initAuth();
   }, []);
+
+  //grabs data on all applicants
+  useEffect(() => {
+
+    if (!userData) return;
+
+    const getAllApplicants = async () => {
+      try {
+        const token = getAccessToken();
+        const response = await axios.get(`${API_URL}/user/list?role=student&isApplicant=true`, {
+          headers: {
+          Authorization: `Bearer ${token}`
+          }
+        });
+        console.log("SUCCESS! Here is the data:", response.data);
+        setApplicants(response.data);
+
+      } catch (error) {
+        console.error("No valid refresh token found: ", error);
+      } finally{
+        setLoading(false);
+      }
+    }; 
+
+    getAllApplicants();
+  }, [userData]);
+
+  //grabs data on all co-op students
+  useEffect(() => {
+
+    if (!userData) return;
+
+    const getAllStudents = async () => {
+      try {
+        const token = getAccessToken();
+        const response = await axios.get(`${API_URL}/user/list?role=student&isApplicant=false`, {
+          headers: {
+          Authorization: `Bearer ${token}`
+          }
+        });
+        console.log("SUCCESS! Here is the data:", response.data);
+        setStudents(response.data);
+
+      } catch (error) {
+        console.error("No valid refresh token found: ", error);
+      } finally{
+        setLoading(false);
+      }
+    }; 
+
+    getAllStudents();
+  }, [userData]);
+
+  //grabs data on all supervisors
+  useEffect(() => {
+
+    if (!userData) return;
+
+    const getAllSupervisors = async () => {
+      try {
+        const token = getAccessToken();
+        const response = await axios.get(`${API_URL}/user/list?role=supervisor`, {
+          headers: {
+          Authorization: `Bearer ${token}`
+          }
+        });
+        console.log("SUCCESS! Here is the data:", response.data);
+        setSupervisors(response.data);
+
+      } catch (error) {
+        console.error("No valid refresh token found: ", error);
+      } finally{
+        setLoading(false);
+      }
+    }; 
+
+    getAllSupervisors();
+  }, [userData]);
 
 
   if (loading) { 
@@ -107,13 +186,13 @@ function App() {
 
             
             {/*coordinator list*/}
-            <Route path='/coordinator/applicant-list' element={<UserList starterData={students} applicantData={students} studentData={students} supervisorData={supervisors} listType={"applicant"}/>}></Route>
-            <Route path='/coordinator/student-list' element={<UserList starterData={students} applicantData={students} studentData={students} supervisorData={supervisors} listType={"coop-student"}/>}></Route>
-            <Route path='/coordinator/supervisor-list' element={<UserList starterData={supervisors} applicantData={students} studentData={students} supervisorData={supervisors} listType={"supervisor"}/>}></Route>
+            <Route path='/coordinator/applicant-list' element={<UserList starterData={applicants} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"applicant"}/>}></Route>
+            <Route path='/coordinator/student-list' element={<UserList starterData={students} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"coop-student"}/>}></Route>
+            <Route path='/coordinator/supervisor-list' element={<UserList starterData={supervisors} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"supervisor"}/>}></Route>
 
           
             {/*detailed user info*/}
-            <Route path='/coordinator/detailed-user-info/applicant/:id' element={<DetailedUserInfo userData = {students} listType = "applicant"></DetailedUserInfo>}></Route>
+            <Route path='/coordinator/detailed-user-info/applicant/:id' element={<DetailedUserInfo userData = {applicants} listType = "applicant"></DetailedUserInfo>}></Route>
             <Route path='/coordinator/detailed-user-info/coop-student/:id' element={<DetailedUserInfo userData = {students} listType = "coop-student"></DetailedUserInfo>}></Route>
             <Route path='/coordinator/detailed-user-info/supervisor/:id' element={<DetailedUserInfo userData = {supervisors} listType = "supervisor"></DetailedUserInfo>}></Route>
 

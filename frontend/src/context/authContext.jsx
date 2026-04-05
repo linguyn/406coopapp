@@ -30,14 +30,5 @@ export const AuthProvider = ({children}) => {
 }; 
 
 
-<<<<<<< HEAD
-export const useAuth = () => useContext(AuthContext); 
-=======
 export const useAuth = () => useContext(AuthContext); 
 
-
-
-
-
-
->>>>>>> feature/auth-pages

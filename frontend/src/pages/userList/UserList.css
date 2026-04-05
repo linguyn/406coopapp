@@ -41,6 +41,11 @@
     color: #444E5E;
 }
 
+.homepage h3:hover{
+    color:#0C49A6;
+    cursor: pointer;
+}
+
 .home-icon{
     width: 15%;
     max-width: 40px;
@@ -187,6 +192,11 @@ table{
 
 .clickable-name{
     text-decoration: underline;
+    color:#0C49A6;
+    cursor: pointer;
+}
+
+.detailed-user-info-homepage h2:hover{
     color:#0C49A6;
     cursor: pointer;
 }

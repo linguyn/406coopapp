@@ -11,7 +11,7 @@ function DetailedUserInfo({userData, listType}){
     const navigate = useNavigate();
     const { id } = useParams();
     const { listTypeStr } = useParams();
-    const user = userData.find((u) => String(u.id) === id);
+    const user = userData.find((u) => String(u.id || u._id) === id);
 
     if (!user) {
         return <h1>User with ID {id} not found.</h1>
@@ -81,7 +81,7 @@ function DetailedUserInfo({userData, listType}){
                         <h2>Status: {status}</h2>
                     </div>
 
-                    <div className='detailed-user-info-homepage'>
+                    <div className='detailed-user-info-homepage'  onClick={() => navigate('/coordinator')}>
                         <img src={HomeButtonIcon}></img>
                         <h2>Homepage</h2>
                     </div>
