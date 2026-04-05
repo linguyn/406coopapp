@@ -86,14 +86,13 @@ const supervisorSchema = mongoose.Schema;
 const supervisor = new supervisorSchema({
     firstName:{type: String, required: true},
     lastName:{type: String, required: true},
-    email: { type: String, required: true, },
+    email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true },
     role: { type: String, required: true},
     dateCreated: { type: Date, default: Date.now },
-   
     company: {type: String, required: true},
-    jobTitle: {type: String,},
-    location: {type: String,},
+    jobTitle: {type: String, required: true},
+    location: {type: String, required: true},
     status: { type: String, default: "inactive"},
     interns: { type: [String], default: [] },
 }, { timestamps: true });
