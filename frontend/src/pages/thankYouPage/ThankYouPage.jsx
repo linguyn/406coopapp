@@ -1,7 +1,10 @@
 import './ThankYouPage.css'
 import YellowWave from '../../assets/yellowWave.svg'
+import { useNavigate } from 'react-router-dom'
 
 function ThankYouPage(props){
+    const navigate = useNavigate()
+
     return(
         <div className='thank-you-background'>
 
@@ -16,7 +19,7 @@ function ThankYouPage(props){
                         <p>{props.secondaryText}</p>
                         
                         <div className='button-row'>
-                            <button>Home</button>
+                            <button onClick={() => navigate(`/${props.type}`)}>Home</button>
                             {String (props.type) === "applicant" && (
                                 <button>Status</button>
                             )}
