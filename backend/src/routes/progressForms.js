@@ -1,12 +1,14 @@
 import express from 'express';
 export const progressFormsRouter = express.Router();
 
+import { isValidEmail } from '../validate-services.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
 import ProgressForm from '../models/ProgressForm.js';
+import { getUserByEmail } from './user.js';
 
 progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) => {
-    const { studentName, supervisorName, company, jobTitle, stars, stairs, employable } = req.body;
+    const { studentName, supervisorName, company, jobTitle, stars, stairs, employable, schoolEmail } = req.body;
     try {
         if (!studentName || !studentName.trim()) { throw new HTTPError(400, "Student name is required"); }
         if (!supervisorName || !supervisorName.trim()) { throw new HTTPError(400, "Supervisor name is required"); }
@@ -15,9 +17,14 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
         if (!stars || !stars.trim()) { throw new HTTPError(400, "Stars are required"); }
         if (!stairs || !stairs.trim()) { throw new HTTPError(400, "Stairs are required"); }
         if (!employable || !employable.trim()) { throw new HTTPError(400, "Employable status is required"); }
+        if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
 
-        const newProgressForm = new ProgressForm(req.body);
+        const studentUser = await getUserByEmail("student", schoolEmail);
+        if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+
+        const newProgressForm = new ProgressForm({ ...req.body, assignedStudent: studentUser._id });
         await newProgressForm.save();
+        
         return res.status(201).json({ 
             message: "Progress form submitted successfully", 
             progressFormId: newProgressForm.id
@@ -31,9 +38,17 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
 progressFormsRouter.patch('/update/:id', authenticateToken, async (req, res, next) => {
     try {
         const userId = req.params.id;
+        const updateData = { ...req.body };
+
+        if (req.body.schoolEmail) {
+            const studentUser = await getUserByEmail("student", req.body.schoolEmail);
+            if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+            updateData.assignedStudent = studentUser._id;
+        }
+
         const updatedProgressForm = await ProgressForm.findByIdAndUpdate(
             userId,
-            req.body,
+            updateData,
             {
                 new: true,
                 runValidators: true

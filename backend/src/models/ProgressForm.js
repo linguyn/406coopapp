@@ -9,6 +9,10 @@ const progressForm = new progressFormSchema({
     stars: { type: String, required: true },
     stairs: { type: String, required: true },
     employable: { type: String, required: true },
+    assignedStudent: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student",
+    }
 }, { timestamps: true });
 
 const ProgressForm = mongoose.model('ProgressForm', progressForm);

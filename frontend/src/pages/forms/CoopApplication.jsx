@@ -20,10 +20,10 @@ function Application() {
 
     const handleSubmit = async (e) => { 
         e.preventDefault(); 
-        if (!file) {
+        /*if (!file) {
             setPageError("Please upload your resume");
             return;
-        }
+        }*/
 
         try { 
             const response = await applicationSubmit({
@@ -41,7 +41,7 @@ function Application() {
                 navigate('/applicant/thank-you-page'); 
             }
         } catch (error) {
-            const msg = error.response?.data.message;
+            const msg = error.response?.data.message || error.message || "Something went wrong";
             console.error(msg);
             setPageError(msg);
         }
@@ -111,9 +111,16 @@ function Application() {
                                 <div className='apply-input-field-1'>
                                     <label>Are you eligible to work in Canada/have your work permit?</label>
                                     <input type='text' 
-                                           value={permission}
-                                           onChange={(e) => setPermission(e.target.value)}
-                                           placeholder='Your eligibility status...'
+                                           value={String(permission)}
+                                           onChange={(e) => {
+                                                   const raw = e.target.value;
+                                                    const value = raw.trim().toLowerCase();
+
+                                                    if (value === 'true') setPermission(true);
+                                                    else if (value === 'false') setPermission(false);
+                                                    else setPermission(raw); 
+                                                }}
+                                           placeholder='true/false (must be boolen value)'
                                            required
                                     />
                                 </div>

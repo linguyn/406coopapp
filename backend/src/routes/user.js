@@ -5,6 +5,9 @@ import { USER_DETAILS, LIST_CRITERIA } from '../constants.js';
 import Student from '../models/Student.js';
 import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
+import Application from '../models/Application.js';
+import ProgressForm from '../models/ProgressForm.js';
+import Reflection from '../models/Reflection.js';
 import { UserListItemResponse } from '../response-classes/UserListItemResponse.js';
 import { UserResponse } from '../response-classes/UserResponse.js';
 
@@ -368,14 +371,14 @@ userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
 
         const sanitizedUser = UserResponse.createUserResponse(user);
         
-        if (user === "student") { const apps = await Application.find({assignedStudent: user._id });
-            return res.status(200).json({user: sanitizedUser, applications: apps});
-        };
-
-        return res.status(200).json({ 
-            user: sanitizedUser
-        });
- 
+        if (user.role === "student") {
+            const applications = await Application.find({assignedStudent: user._id});
+            const progressForms = await ProgressForm.find({assignedStudent: user._id});
+            const reflections = await Reflection.find({assignedStudent: user._id});
+            return res.status(200).json({user: sanitizedUser, applications, progressForms, reflections});
+        }
+        
+        return res.status(200).json(sanitizedUser);
     } catch(error){
         return res.status(500).json({error: "something went wrong in userRouter.get",
             details: error.message
@@ -401,9 +404,6 @@ export async function getUserByEmail(role, email) { //Can be moved to database s
     }
     
     const user = await Model.findOne({email: email});
-    if (user === "student") { 
-        await Application.find({assignedStudent: user._id}); 
-    }
     return user;
 }
 

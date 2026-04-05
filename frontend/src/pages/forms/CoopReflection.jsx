@@ -19,10 +19,7 @@ function CoopReflection() {
 
     const handleSubmit = async (e) => { 
         e.preventDefault(); 
-        if (!file) {
-            setPageError("Please upload your resume");
-            return;
-        }
+
 
         try { 
             const response = await reflectionSubmit({
@@ -40,7 +37,7 @@ function CoopReflection() {
                 navigate('/student'); 
             }
         } catch (error) {
-            const msg = error.response?.data.message;
+            const msg = error.response?.data.message || error.message || "Something went wrong"; 
             console.error(msg);
             setPageError(msg);
         }
