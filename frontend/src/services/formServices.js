@@ -14,3 +14,8 @@ export const reflectionSubmit = async (reflectionData) => {
     const res = await api.post(`/reflections/submit`, reflectionData, { withCredentials: true });
     return res;
 }
+
+export const progressSubmit = async (progressData) => {
+    const res = await api.post(`/progress-forms/submit`, progressData, { withCredentials: true });
+    return res;
+}

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { applicationSubmit } from '../../services/applicationService';
 import { useAuth } from '../../context/authContext';
+import { progressSubmit } from '../../services/formServices';
 
 function StudentProgress() {
     const [studentName, setStudentName] = useState('');
@@ -24,7 +25,7 @@ function StudentProgress() {
         setPageError('');
 
         try {
-            const response = await applicationSubmit({
+            const response = await progressSubmit({
                 studentName,
                 supervisorName,
                 company,
@@ -32,7 +33,7 @@ function StudentProgress() {
                 stars,
                 stairs,
                 employable,
-                schoolEmail: userData?.email
+                schoolEmail: schoolEmail
             });
 
             if (response.status === 201 || response) {
@@ -128,6 +129,19 @@ function StudentProgress() {
                     <div id='progress-field-5'>
                         <div className='progress-input-field-1'>
                             <label>Is this student employable after their co-op term? Please briefly explain.</label>
+                            <input
+                                type='text'
+                                value={schoolEmail}
+                                onChange={(e) => setSchoolEmail(e.target.value)}
+                                placeholder='Your response...'
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div id='progress-field-7'>
+                        <div className='progress-input-field-1'>
+                            <label>Student Email</label>
                             <input
                                 type='text'
                                 value={employable}
