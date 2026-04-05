@@ -466,6 +466,21 @@ export async function getUserByEmail(role, email) { //Can be moved to database s
     return user;
 }
 
+export async function getUserByEmailAllRoles(email) {
+    const normalizedEmail = String(email || "").trim().toLowerCase();
+    if (!normalizedEmail) {
+        return null;
+    }
+
+    const [student, supervisor, coordinator] = await Promise.all([
+        Student.findOne({ email: normalizedEmail }),
+        Supervisor.findOne({ email: normalizedEmail }),
+        Coordinator.findOne({ email: normalizedEmail })
+    ]);
+
+    return student || supervisor || coordinator || null;
+}
+
 userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res) => {
     try{
         const { role } = req.params;

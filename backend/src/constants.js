@@ -84,7 +84,7 @@ export const TOKEN_OPTIONS = {
         sameSite : "lax"            // allows cookie to be sent across websites
     },
     access : { expiresIn : '1d' },
-    refreshShort : { expiresIn : '1d' },
+    refreshShort : { expiresIn : '1d' }, // used for testing purposes, should be 15m
     refreshLong : { expiresIn : '7d' },
     sev_day_milli : 7*24*60*60*1000,
 };
