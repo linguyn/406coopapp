@@ -92,7 +92,7 @@ const supervisor = new supervisorSchema({
     dateCreated: { type: Date, default: Date.now },
     company: {type: String, required: true},
     jobTitle: {type: String, required: true},
-    location: {type: String,},
+    location: {type: String, required: true},
     status: { type: String, default: "inactive"},
     interns: { type: [String], default: [] },
 }, { timestamps: true });

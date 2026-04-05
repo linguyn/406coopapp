@@ -1,7 +1,6 @@
 import express from 'express';
 export const reflectionsRouter = express.Router();
 
-import { addReflectionToDatabase, updateReflection } from '../database-services.js';
 import { isValidEmail } from '../validate-services.js';
 import { HTTPError } from '../errors.js';
 import { authenticateToken } from '../server.js';
