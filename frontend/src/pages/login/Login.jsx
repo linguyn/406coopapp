@@ -73,11 +73,7 @@ function Login() {
                     email: email, 
                     password: password,
                     rememberMe: rememberMe,
-<<<<<<< HEAD
-                    role: "applicant"
-=======
                     role: role
->>>>>>> main
                 });
 
             if (response.status == 200 || response) { 
