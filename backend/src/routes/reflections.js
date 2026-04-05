@@ -20,12 +20,11 @@ reflectionsRouter.post('/submit', authenticateToken, async (req, res, next) => {
         if (!supported || !supported.trim()) { throw new HTTPError(400, "Support description is required"); }
         if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
 
-        const newReflection = new Reflection(req.body);
-        await newReflection.save();
         const studentUser = await getUserByEmail("student", schoolEmail);
-        if (studentUser) {
-            await Reflection.findByIdAndUpdate(newReflection._id, { assignedStudent: studentUser._id }, {new: true});
-        }
+        if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+
+        const newReflection = new Reflection({ ...req.body, assignedStudent: studentUser._id });
+        await newReflection.save();
 
         return res.status(201).json({ 
             message: "Reflection submitted successfully", 
@@ -40,9 +39,17 @@ reflectionsRouter.post('/submit', authenticateToken, async (req, res, next) => {
 reflectionsRouter.patch('/update/:id', authenticateToken, async (req, res, next) => {
     try {
         const userId = req.params.id;
+        const updateData = { ...req.body };
+
+        if (req.body.schoolEmail) {
+            const studentUser = await getUserByEmail("student", req.body.schoolEmail);
+            if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+            updateData.assignedStudent = studentUser._id;
+        }
+
         const updatedReflection = await Reflection.findByIdAndUpdate(
             userId,
-            req.body,
+            updateData,
             {
                 new: true,
                 runValidators: true

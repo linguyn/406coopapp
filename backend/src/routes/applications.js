@@ -33,12 +33,11 @@ applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
         if (typeof eligibility !== "boolean") { throw new HTTPError(400, "Eligibility must be a boolean value"); }
         if (!reasonToApply || !hasValidReason(reasonToApply)) { throw new HTTPError(400, "Reason to apply must be 150 words or less"); }
 
-        const newApplication = new Application(req.body);
-        await newApplication.save();
         const studentUser = await getUserByEmail("student", schoolEmail);
-        if (studentUser) {
-            await Application.findByIdAndUpdate(newApplication._id, { assignedStudent: studentUser._id }, {new: true});
-        }
+        if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+
+        const newApplication = new Application({ ...req.body, assignedStudent: studentUser._id });
+        await newApplication.save();
 
         return res.status(201).json({ 
             message: "Application submitted successfully", 
@@ -52,9 +51,17 @@ applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
 applicationsRouter.patch('/update/:id', authenticateToken, async (req, res, next) => {
     try {
         const userId = req.params.id;
+        const updateData = { ...req.body };
+
+        if (req.body.schoolEmail) {
+            const studentUser = await getUserByEmail("student", req.body.schoolEmail);
+            if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+            updateData.assignedStudent = studentUser._id;
+        }
+
         const updatedApplication = await Application.findByIdAndUpdate(
             userId,
-            req.body,
+            updateData,
             {
                 new: true,
                 runValidators: true

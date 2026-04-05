@@ -19,12 +19,11 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
         if (!employable || !employable.trim()) { throw new HTTPError(400, "Employable status is required"); }
         if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
 
-        const newProgressForm = new ProgressForm(req.body);
-        await newProgressForm.save();
         const studentUser = await getUserByEmail("student", schoolEmail);
-        if (studentUser) {
-            await ProgressForm.findByIdAndUpdate(newProgressForm._id, { assignedStudent: studentUser._id }, {new: true});
-        }
+        if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+
+        const newProgressForm = new ProgressForm({ ...req.body, assignedStudent: studentUser._id });
+        await newProgressForm.save();
         
         return res.status(201).json({ 
             message: "Progress form submitted successfully", 
@@ -39,9 +38,17 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
 progressFormsRouter.patch('/update/:id', authenticateToken, async (req, res, next) => {
     try {
         const userId = req.params.id;
+        const updateData = { ...req.body };
+
+        if (req.body.schoolEmail) {
+            const studentUser = await getUserByEmail("student", req.body.schoolEmail);
+            if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+            updateData.assignedStudent = studentUser._id;
+        }
+
         const updatedProgressForm = await ProgressForm.findByIdAndUpdate(
             userId,
-            req.body,
+            updateData,
             {
                 new: true,
                 runValidators: true
