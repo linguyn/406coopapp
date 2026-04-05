@@ -134,20 +134,17 @@ const supervisorListHeaders = [
 
 function DataTable(props) {
 
-    
-    
     const listTypeMap = new Map()
     listTypeMap.set("applicant", applicantListHeaders);
     listTypeMap.set("coop-student", coopStudentListHeaders);
     listTypeMap.set("supervisor", supervisorListHeaders);
 
-    const apiMap = new Map()
+    const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
 
     const listType = (listTypeMap.get(String(props.listType)));
     const listTypeStr = String(props.listType)
 
     const [users, setUsers] = useState(props.userData);
-    console.log(users);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -155,7 +152,7 @@ function DataTable(props) {
     }, [props.userData]);
 
     const labelToKeyURL = {
-    "First Name": "firstName",
+    "Name": "firstName",
     "Email": "email",
     "Date": "createdAt",
     "Applications": "applications",
@@ -172,18 +169,22 @@ function DataTable(props) {
             const apiKey = labelToKeyURL[label];
             if (!apiKey) return;
 
-            // Construct the query (You can expand this to handle asc/desc toggling later)
-            const queryString = `sortBy=${apiKey}&order=asc`;
+            let newDirection = 'asc';
 
-            try {
-                // Call the function passed from props (e.g., getAllApplicants)
-                const sortedData = await props.getAllApplicants(queryString);
-                if (sortedData) {
-                    setUsers(sortedData); // Update ONLY this table's state
-                }
-            } catch (err) {
-                console.error("Sorting failed:", err);
+            if (sortConfig.key === apiKey && sortConfig.direction === 'asc') {
+                newDirection = 'desc';
             }
+
+            setSortConfig({ key: apiKey, direction: newDirection });
+
+            if (props.listType === "applicant") {
+                props.fetchApplicants("", apiKey, newDirection);
+            } else if (props.listType === "coop-student") {
+                props.fetchStudents("", apiKey, newDirection);
+            } else if (props.listType === "supervisor") {
+                props.fetchSupervisors("", apiKey, newDirection);
+            }
+
         };
 
     const handleRowClick = (id) => {
@@ -214,6 +215,8 @@ function DataTable(props) {
                 className={`sort-icon sort-icon-${header.LABEL.toLowerCase()}`}
                 src={sortIcon}
                 alt="sort"
+                style={{ cursor: 'pointer', marginLeft: '5px' }} // Make it look clickable
+                onClick={() => handleHeaderClick(header.LABEL)}
             />
         )}
     </th>
