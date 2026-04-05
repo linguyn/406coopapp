@@ -22,6 +22,7 @@
 .header{
     display: flex;
     justify-content: space-between;
+    height: 160px;
 }
 
 .main-title{
@@ -37,8 +38,9 @@
     align-items: center;
     width: 15%;
     font-size: 2rem;
-    margin-top: 2%;
+    margin-top: 1.5%;
     color: #444E5E;
+    margin-right: 2%;
 }
 
 .homepage h3:hover{
@@ -58,7 +60,7 @@
     margin-left: 5%;
     gap: 60px;
     font-family: "Roboto", "Inter", Helvetica ;
-    
+    height: 70px;
 }
 
 .current-list{
@@ -159,7 +161,7 @@ table{
 .table-cell{
     text-align: center;
     color: #444E5E;
-    font-size: 1.15rem;
+    font-size: 1em;
     padding: 2.5vh;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }

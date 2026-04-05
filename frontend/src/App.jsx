@@ -68,21 +68,23 @@ function App() {
   //grabs data on all applicants
   useEffect(() => {
 
+    //stops api call if user doesnt exist or isnt a coordinator
     if (!userData) return;
+
+    if (userData.role !== "coordinator") {
+    console.log("User is not a coordinator. Skipping user list fetch.");
+    return;
+  }
 
     const getAllApplicants = async () => {
       try {
-        const token = getAccessToken();
-        const response = await axios.get(`${API_URL}/user/list?role=student&isApplicant=true`, {
-          headers: {
-          Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=true` 
+        );
         console.log("SUCCESS! Here is the data:", response.data);
         setApplicants(response.data);
 
       } catch (error) {
-        console.error("No valid refresh token found: ", error);
+        console.error('Failed to get users:', error);
       } finally{
         setLoading(false);
       }
@@ -94,21 +96,23 @@ function App() {
   //grabs data on all co-op students
   useEffect(() => {
 
+    //stops api call if user doesnt exist or isnt a coordinator
     if (!userData) return;
+
+    if (userData.role !== "coordinator") {
+    console.log("User is not a coordinator. Skipping user list fetch.");
+    return;
+  }
 
     const getAllStudents = async () => {
       try {
-        const token = getAccessToken();
-        const response = await axios.get(`${API_URL}/user/list?role=student&isApplicant=false`, {
-          headers: {
-          Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=false`);
+        
         console.log("SUCCESS! Here is the data:", response.data);
-        setStudents(response.data);
+        setStudents(response.data)
 
       } catch (error) {
-        console.error("No valid refresh token found: ", error);
+        console.error('Failed to get users:', error);
       } finally{
         setLoading(false);
       }
@@ -120,21 +124,21 @@ function App() {
   //grabs data on all supervisors
   useEffect(() => {
 
+    //stops api call if user doesnt exist or isnt a coordinator
     if (!userData) return;
+
+    if (userData.role !== "coordinator") {
+    return;
+  }
 
     const getAllSupervisors = async () => {
       try {
-        const token = getAccessToken();
-        const response = await axios.get(`${API_URL}/user/list?role=supervisor`, {
-          headers: {
-          Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await api.get(`${API_URL}/user/list?role=supervisor`);
         console.log("SUCCESS! Here is the data:", response.data);
         setSupervisors(response.data);
 
       } catch (error) {
-        console.error("No valid refresh token found: ", error);
+        console.error('Failed to get users:', error);
       } finally{
         setLoading(false);
       }

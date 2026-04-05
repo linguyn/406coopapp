@@ -209,7 +209,7 @@ function DetailedUserInfo({userData, listType}){
 
                     <div className='detailed-user-info-file'>
                         <h2>PROGRESS REPORT</h2>
-                        <div className='detailed-user-info-pdf'></div>
+                        <div className='detailed-user-info-pdf'> <h2>PDF SHOWS HERE</h2></div>
                         <p className='detailed-user-info-date'>Date: {date.slice(0, 10)}</p>
                     </div>
 

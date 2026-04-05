@@ -104,6 +104,7 @@
     height: 100%;
     color:#444E5E;
     font-size: 1.5rem;
+    
 }
 
 .detailed-user-info-fields button{
@@ -128,7 +129,10 @@
     height: 4.7vh;
     margin-left: 2%;
     color:black;
-    font-size: 1.5rem;
+    font-size: 0.8em;
+    font-family: "Roboto", "Inter", Helvetica ;
+    letter-spacing: -7%;
+    color: #444E5E;
 }
 
 .double-input input{
@@ -164,6 +168,15 @@
     background-color: #D4C5C5;
     width: 80%;
     height: 80%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.detailed-user-info-pdf h2{
+    color: black;
+    font-size: 2.8em;
 }
 
 .detailed-user-info-date{
