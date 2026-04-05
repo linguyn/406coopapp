@@ -47,7 +47,7 @@ function SupervisorHomepage() {
         }
 
         if (option === 'supervisor-progress-forms' || option === 'supervisor-progress-forms-sidebar') {
-            navigate('/supervisor/progress-forms');
+            navigate('/supervisor/student-progress');
             return;
         }
 
