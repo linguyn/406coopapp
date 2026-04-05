@@ -11,7 +11,7 @@ function DetailedUserInfo({userData, listType}){
     const navigate = useNavigate();
     const { id } = useParams();
     const { listTypeStr } = useParams();
-    const user = userData.find((u) => String(u.id) === id);
+    const user = userData.find((u) => String(u.id || u._id) === id);
 
     if (!user) {
         return <h1>User with ID {id} not found.</h1>
@@ -52,7 +52,7 @@ function DetailedUserInfo({userData, listType}){
 
     const listTypeMap2 = new Map()
     listTypeMap2.set("applicant", "APPLICANT INFO");
-    listTypeMap2.set("coop-student", "CO-OP STUDENT INFO");
+    listTypeMap2.set("coop-student", "STUDENT INFO");
     listTypeMap2.set("supervisor", "SUPERVISOR INFO");
 
     const listTypeMap3 = new Map()
@@ -81,7 +81,7 @@ function DetailedUserInfo({userData, listType}){
                         <h2>Status: {status}</h2>
                     </div>
 
-                    <div className='detailed-user-info-homepage'>
+                    <div className='detailed-user-info-homepage'  onClick={() => navigate('/coordinator')}>
                         <img src={HomeButtonIcon}></img>
                         <h2>Homepage</h2>
                     </div>
@@ -191,7 +191,7 @@ function DetailedUserInfo({userData, listType}){
                         <div className='double-input'>
                             
                             <div className='single-input'>
-                            <label className='left-label'> Applications Sent: </label>
+                            <label className='left-label'> Apps Sent: </label>
                             <input type='text' value={applications}></input>
                             </div>
 
@@ -202,14 +202,23 @@ function DetailedUserInfo({userData, listType}){
                         </div>
                         )}
                         
-
+                        {listType !== "applicant" && (
                             <button>Adjust</button>
+                        )}
+
+                        {listType === "applicant" && (
+                            <div className='detatiled-user-info-accept-reject-buttons'>
+                            <button className='detailed-user-info-accept-button'>Accept</button> 
+                            <button className='detailed-user-info-reject-button'>Reject</button>
+                            </div>
+                        )}
+
 
                     </div>
 
                     <div className='detailed-user-info-file'>
                         <h2>PROGRESS REPORT</h2>
-                        <div className='detailed-user-info-pdf'></div>
+                        <div className='detailed-user-info-pdf'> <h2>PDF SHOWS HERE</h2></div>
                         <p className='detailed-user-info-date'>Date: {date.slice(0, 10)}</p>
                     </div>
 

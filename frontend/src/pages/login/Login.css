@@ -63,7 +63,7 @@ body {
   margin-top: 0;
 }
 
-
+  
 .right-panel h1 {
   margin-left: 50px;
   margin-top: 95px;
@@ -155,6 +155,16 @@ body {
 }
 
 
+.icon-gear {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 11%;
+  color: #555;
+  font-size: 0.9rem;
+  z-index: 10;
+  pointer-events: 'none';
+}
 
 
 .options-row {

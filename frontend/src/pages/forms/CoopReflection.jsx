@@ -1,5 +1,6 @@
 import './CoopReflection.css';
-import AuthLayout from '../../components/AuthLayout';
+import AuthLayout from '../../components/auth-layout/AuthLayout';
+import { reflectionSubmit } from '../../services/formServices';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,13 +19,10 @@ function CoopReflection() {
 
     const handleSubmit = async (e) => { 
         e.preventDefault(); 
-        if (!file) {
-            setPageError("Please upload your resume");
-            return;
-        }
+
 
         try { 
-            const response = await applicationSubmit({
+            const response = await reflectionSubmit({
                 company: company,
                 supervisor: supervisor,
                 jobTitle: jobTitle,
@@ -35,11 +33,11 @@ function CoopReflection() {
             });
 
             if (response.status == 201 || response){
-                console.log("Application submitted successfully: ", response.data);
+                console.log("Reflection submitted successfully: ", response.data);
                 navigate('/student'); 
             }
         } catch (error) {
-            const msg = error.response?.data.message;
+            const msg = error.response?.data.message || error.message || "Something went wrong"; 
             console.error(msg);
             setPageError(msg);
         }

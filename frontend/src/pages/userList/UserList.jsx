@@ -5,6 +5,7 @@ import SearchIcon from '../../assets/searchIcon.svg'
 import LeftArrowIcon from '../../assets/leftArrow.svg'
 import RightArrowIcon from '../../assets/rightArrow.svg'
 import DataTable from '../../components/DataTable.jsx'
+import { useNavigate } from 'react-router-dom'
 
 
 function UserList(props){
@@ -13,6 +14,7 @@ function UserList(props){
     const [userData, setUserData] = useState(props.starterData)
     const [currentPage, setCurrentPage] = useState(1)
     const [usersPerPage, setUsersPerPage] = useState(5)
+    const navigate = useNavigate()
 
     //pages logic
     const endIndex = currentPage * usersPerPage;
@@ -88,7 +90,7 @@ function UserList(props){
                 <div className='header'>
                 <h1 className='main-title'>{titleName}</h1>
 
-                    <div className='homepage'>
+                    <div className='homepage' onClick={() => navigate('/coordinator')}>
                     <img src={HomeIcon} className='home-icon'></img>
                     <h3>Homepage</h3>
                     </div>
@@ -132,7 +134,7 @@ function UserList(props){
 
                 </div>
 
-            <DataTable userData={currentUserData} listType={listType}></DataTable>
+            <DataTable userData={currentUserData} listType={listType} fetchFunction={""}></DataTable>
 
                 <div className='bottom-header'>
                     <h2>{currentPage} of {totalPages}</h2>
