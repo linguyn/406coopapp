@@ -34,7 +34,7 @@ applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
         if (!reasonToApply || !hasValidReason(reasonToApply)) { throw new HTTPError(400, "Reason to apply must be 150 words or less"); }
 
         const studentUser = await getUserByEmail("student", schoolEmail);
-        if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+        if (!studentUser) { throw new HTTPError("Student not found", 404); }
 
         const newApplication = new Application({ ...req.body, assignedStudent: studentUser._id });
         await newApplication.save();
@@ -55,7 +55,7 @@ applicationsRouter.patch('/update/:id', authenticateToken, async (req, res, next
 
         if (req.body.schoolEmail) {
             const studentUser = await getUserByEmail("student", req.body.schoolEmail);
-            if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+            if (!studentUser) { throw new HTTPError("Student not found", 404); }
             updateData.assignedStudent = studentUser._id;
         }
 

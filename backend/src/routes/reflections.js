@@ -21,7 +21,7 @@ reflectionsRouter.post('/submit', authenticateToken, async (req, res, next) => {
         if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
 
         const studentUser = await getUserByEmail("student", schoolEmail);
-        if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+        if (!studentUser) { throw new HTTPError("Student not found", 404); }
 
         const newReflection = new Reflection({ ...req.body, assignedStudent: studentUser._id });
         await newReflection.save();
@@ -43,7 +43,7 @@ reflectionsRouter.patch('/update/:id', authenticateToken, async (req, res, next)
 
         if (req.body.schoolEmail) {
             const studentUser = await getUserByEmail("student", req.body.schoolEmail);
-            if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+            if (!studentUser) { throw new HTTPError("Student not found", 404); }
             updateData.assignedStudent = studentUser._id;
         }
 
