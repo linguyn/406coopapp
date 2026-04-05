@@ -1,3 +1,5 @@
+
+
 .detailed-user-info-main-background{
     display: flex;
     align-items: center;
@@ -133,6 +135,8 @@
     font-family: "Roboto", "Inter", Helvetica ;
     letter-spacing: -7%;
     color: #444E5E;
+    border-radius: 10px;
+    border: solid black 0.5 px;
 }
 
 .double-input input{
@@ -184,4 +188,29 @@
     font-weight: bold;
     color:#444E5E;
     text-decoration: underline;
+}
+
+.detatiled-user-info-accept-reject-buttons{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+.detatiled-user-info-accept-reject-buttons button{
+    width: 40%;
+    color:black;
+    border: none;
+}
+
+.detatiled-user-info-accept-reject-buttons button:hover{
+    color:white;
+    font-size: 0.9em;
+}
+.detatiled-user-info-accept-reject-buttons .detailed-user-info-accept-button {
+    background-color: #6BD15A;           
+}
+
+.detatiled-user-info-accept-reject-buttons .detailed-user-info-reject-button {
+    background-color: #FB6188;         
 }

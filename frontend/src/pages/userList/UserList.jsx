@@ -134,7 +134,7 @@ function UserList(props){
 
                 </div>
 
-            <DataTable userData={currentUserData} listType={listType}></DataTable>
+            <DataTable userData={currentUserData} listType={listType} fetchFunction={""}></DataTable>
 
                 <div className='bottom-header'>
                     <h2>{currentPage} of {totalPages}</h2>

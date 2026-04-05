@@ -76,9 +76,9 @@ function App() {
     return;
   }
 
-    const getAllApplicants = async () => {
+    const getAllApplicants = async (params = "") => {
       try {
-        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=true` 
+        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=true&searchStr=Sung` 
         );
         console.log("SUCCESS! Here is the data:", response.data);
         setApplicants(response.data);
@@ -190,9 +190,9 @@ function App() {
 
             
             {/*coordinator list*/}
-            <Route path='/coordinator/applicant-list' element={<UserList starterData={applicants} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"applicant"}/>}></Route>
-            <Route path='/coordinator/student-list' element={<UserList starterData={students} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"coop-student"}/>}></Route>
-            <Route path='/coordinator/supervisor-list' element={<UserList starterData={supervisors} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"supervisor"}/>}></Route>
+            <Route path='/coordinator/applicant-list' element={<UserList starterData={applicants} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"applicant"} />}></Route>
+            <Route path='/coordinator/student-list' element={<UserList starterData={students} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"coop-student"} />}></Route>
+            <Route path='/coordinator/supervisor-list' element={<UserList starterData={supervisors} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"supervisor"} />}></Route>
 
           
             {/*detailed user info*/}

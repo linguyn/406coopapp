@@ -52,7 +52,7 @@ function DetailedUserInfo({userData, listType}){
 
     const listTypeMap2 = new Map()
     listTypeMap2.set("applicant", "APPLICANT INFO");
-    listTypeMap2.set("coop-student", "CO-OP STUDENT INFO");
+    listTypeMap2.set("coop-student", "STUDENT INFO");
     listTypeMap2.set("supervisor", "SUPERVISOR INFO");
 
     const listTypeMap3 = new Map()
@@ -191,7 +191,7 @@ function DetailedUserInfo({userData, listType}){
                         <div className='double-input'>
                             
                             <div className='single-input'>
-                            <label className='left-label'> Applications Sent: </label>
+                            <label className='left-label'> Apps Sent: </label>
                             <input type='text' value={applications}></input>
                             </div>
 
@@ -202,8 +202,17 @@ function DetailedUserInfo({userData, listType}){
                         </div>
                         )}
                         
-
+                        {listType !== "applicant" && (
                             <button>Adjust</button>
+                        )}
+
+                        {listType === "applicant" && (
+                            <div className='detatiled-user-info-accept-reject-buttons'>
+                            <button className='detailed-user-info-accept-button'>Accept</button> 
+                            <button className='detailed-user-info-reject-button'>Reject</button>
+                            </div>
+                        )}
+
 
                     </div>
 
