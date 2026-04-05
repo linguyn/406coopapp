@@ -25,12 +25,12 @@ import { getUserByEmail } from './user.js';
 applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
     const { firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink } = req.body;
     try {
-        if (!firstName || !firstName.trim() || !lastName || !lastName.trim()) { throw new HTTPError(400, "First and last name is required"); }        if (!studentId || !studentId.trim()) { throw new HTTPError(400, "Student ID is required"); }
-        if (!schoolEmail ||!isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
-        if (!studentId || !studentId.trim()) { throw new HTTPError(400, "Student ID is required"); }
-        if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
-        if (typeof eligibility !== "boolean") { throw new HTTPError(400, "Eligibility must be a boolean value"); }
-        if (!reasonToApply || !hasValidReason(reasonToApply)) { throw new HTTPError(400, "Reason to apply must be 150 words or less"); }
+        if (!firstName || !firstName.trim() || !lastName || !lastName.trim()) { throw new HTTPError("First and last name is required", 400); }        if (!studentId || !studentId.trim()) { throw new HTTPError("Student ID is required", 400); }
+        if (!schoolEmail ||!isValidEmail(schoolEmail)) { throw new HTTPError("Valid school email is required", 400); }
+        if (!studentId || !studentId.trim()) { throw new HTTPError("Student ID is required", 400); }
+        if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError("Valid school email is required", 400); }
+        if (typeof eligibility !== "boolean") { throw new HTTPError("Eligibility must be a boolean value", 400); }
+        if (!reasonToApply || !hasValidReason(reasonToApply)) { throw new HTTPError("Reason to apply must be 150 words or less", 400); }
 
         const studentUser = await getUserByEmail("student", schoolEmail);
         if (!studentUser) { throw new HTTPError("Student not found", 404); }

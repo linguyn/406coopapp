@@ -10,14 +10,14 @@ import { getUserByEmail } from './user.js';
 reflectionsRouter.post('/submit', authenticateToken, async (req, res, next) => {
     const { company, supervisor, jobTitle, termDuration, skills, challenges, supported, schoolEmail } = req.body;
     try {
-        if (!company || !company.trim()) { throw new HTTPError(400, "Company name is required"); }
-        if (!supervisor || !supervisor.trim()) { throw new HTTPError(400, "Supervisor name is required"); }
-        if (!jobTitle || !jobTitle.trim()) { throw new HTTPError(400, "Job title is required"); }
-        if (!termDuration || !termDuration.trim()) { throw new HTTPError(400, "Term duration is required"); }
-        if (!skills || !skills.trim()) { throw new HTTPError(400, "Skills description is required"); }
-        if (!challenges || !challenges.trim()) { throw new HTTPError(400, "Challenges description is required"); }
-        if (!supported || !supported.trim()) { throw new HTTPError(400, "Support description is required"); }
-        if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
+        if (!company || !company.trim()) { throw new HTTPError("Company name is required", 400); }
+        if (!supervisor || !supervisor.trim()) { throw new HTTPError("Supervisor name is required", 400); }
+        if (!jobTitle || !jobTitle.trim()) { throw new HTTPError("Job title is required", 400); }
+        if (!termDuration || !termDuration.trim()) { throw new HTTPError("Term duration is required", 400); }
+        if (!skills || !skills.trim()) { throw new HTTPError("Skills description is required", 400); }
+        if (!challenges || !challenges.trim()) { throw new HTTPError("Challenges description is required", 400); }
+        if (!supported || !supported.trim()) { throw new HTTPError("Support description is required", 400); }
+        if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError("Valid school email is required", 400); }
 
         const studentUser = await getUserByEmail("student", schoolEmail);
         if (!studentUser) { throw new HTTPError("Student not found", 404); }
