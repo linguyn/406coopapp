@@ -90,9 +90,8 @@ const supervisor = new supervisorSchema({
     password: { type: String, required: true },
     role: { type: String, required: true},
     dateCreated: { type: Date, default: Date.now },
-   
     company: {type: String, required: true},
-    jobTitle: {type: String,},
+    jobTitle: {type: String, required: true},
     location: {type: String,},
     status: { type: String, default: "inactive"},
     interns: { type: [String], default: [] },
