@@ -52,12 +52,13 @@ body {
 #reflect-field-2,
 #reflect-field-3,
 #reflect-field-4,
-#reflect-field-5 {
+#reflect-field-5,
+#reflect-field-7 {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     width: 80%;
-    height: 15%;
+    height: 14%;
     gap: 5%;
     
 }   

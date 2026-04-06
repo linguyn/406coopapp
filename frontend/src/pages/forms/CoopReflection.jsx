@@ -14,6 +14,7 @@ function CoopReflection() {
     const [challenges, setChallenges] = useState('');
     const [supported, setSupported] = useState('');
     const [pageError, setPageError] = useState('');
+    const [schoolEmail, setSchoolEmail] = useState('');
     const navigate = useNavigate(); 
 
 
@@ -29,7 +30,8 @@ function CoopReflection() {
                 termDuration: termDuration,
                 skills: skills,
                 challenges: challenges,
-                supported: supported
+                supported: supported,
+                schoolEmail: schoolEmail
             });
 
             if (response.status == 201 || response){
@@ -103,6 +105,19 @@ function CoopReflection() {
                             </div>
 
 
+                            <div id='reflect-field-7'>
+                                <div className='reflect-input-field-1'>
+                                    <label>Student Email</label>
+                                    <input type='text' 
+                                           value={schoolEmail}
+                                           onChange={(e) => setSchoolEmail(e.target.value)}
+                                           placeholder='Your response...'
+                                           required
+                                    />
+                                </div>
+                            </div>
+
+
                             <div id='reflect-field-3'>
                                 <div className='reflect-input-field-1'>
                                     <label>What is a technical skill you’ve learned and how have you implemented it in your role?</label>
@@ -138,7 +153,6 @@ function CoopReflection() {
                                     />
                                 </div>
                             </div>
-
 
                             <div id='reflect-field-6'>
                                 {pageError && (
