@@ -57,9 +57,9 @@ const allowedUpdates = {
     student: studentFields,
     supervisor: supervisorFields,
     coordinator: [...baseFields],
-    coordinatorOther: [...studentFields, ...supervisorFields, "isApplicant", "status"],
+    coordinatorOther: [...studentFields, ...supervisorFields, "isApplicant", "status", "support"],
     admin: [...baseFields],
-    adminOther: [...studentFields, ...supervisorFields, "isApplicant", "status"]
+    adminOther: [...studentFields, ...supervisorFields, "isApplicant", "status", "support"]
 }
 
 function isValidCaller(callerRole, userRole) {
