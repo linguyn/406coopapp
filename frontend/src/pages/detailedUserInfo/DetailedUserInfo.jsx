@@ -18,6 +18,7 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
     }
 
     const nameArray = user.fullName.split(" ");
+    console.log(user.role);
 
     //general fields
     const [firstName, setfirstName] = useState(nameArray[0]);
@@ -26,7 +27,7 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
     const [email, setEmail] = useState(user.email);
     const [status, setStatus] = useState(user.status);
     const [date, setDate] = useState(user.createdAt);
-    const [program, setProgram] = useState(user.program);
+    const [program, setProgram] = useState(user.academics?.program);
 
     //co-op student fields
     const [supervisor, setSupervisor] = useState(user.supervisor);
@@ -36,13 +37,15 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
     const [studentID, setStudentID] = useState(user.studentId);
 
     //applicant fields
-    const [year, setYear] = useState(user.year);
-    const [gpa, setGPA] = useState(user.gpa);
+    const [year, setYear] = useState(user.academics?.year);
+    const [gpa, setGPA] = useState(user.academics?.gpa || "");
+
+    console.log(`Gpa is: ${gpa}`);
 
     //supervisor fields
     const [company, setCompany] = useState(user.company);
     const [jobTitle, setJobTitle] = useState(user.jobTitle);
-    const [interns, setInterns] = useState(user.interns);
+    const [interns, setInterns] = useState(Array.isArray(user.interns) ? user.interns.join(", ") : user.interns || "");
 
     //titles
     const listTypeMap = new Map()
@@ -68,11 +71,12 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
     //function to accept applicant
     const handleAccept = async () => {
         const body = {
-            isApplicant: false
+            isApplicant: false,
+            status: "accepted"
         };
 
         await updateUserInfo("student", id, body);
-
+        setStatus("Accepted")
         console.log("User accepted to program. Moved to co-op student list")
         navigate('/coordinator/applicant-list')
     }
@@ -84,6 +88,45 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
         };
         await updateUserInfo("student", id, body);
         setStatus("Rejected")
+        navigate('/coordinator/applicant-list')
+    }
+
+    //function to allow field change of users
+    const handleUpdate = async () => {
+        let body = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            academics: {
+                program: program,
+                year: Number(year), 
+                gpa: gpa
+            },
+
+            supervisor: supervisor,
+            interviews:  interviewed,
+            applications: applications,
+            workTerms: workTerms,
+
+            company: company,
+            jobTitle: jobTitle,
+            interns: interns.split(',').map(name => name.trim()).filter(name => name !== "")
+        };
+
+        try {
+            await updateUserInfo(user.role, id, body);
+            console.log("Update successful with Interns Array:", body.interns);
+            navigate(`/coordinator/applicant-list`);
+            } catch (err) {
+                console.error("Update Failed", err)
+        };
+    }
+
+    //function to capitalize words
+    function capitalizeFirstLetter(str) {
+        if (!str) 
+            return ""; // Handle empty strings
+        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
 
@@ -102,7 +145,7 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
 
                     <div className='detailed-user-info-main-title'>
                         <h1>{listTitle2}</h1>
-                        <h2>Status: {status}</h2>
+                        <h2>Status: {capitalizeFirstLetter(status)}</h2>
                     </div>
 
                     <div className='detailed-user-info-homepage'  onClick={() => navigate('/coordinator')}>
@@ -120,51 +163,51 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
 
                             <div className='single-input'>
                             <label className='left-label'> First Name: </label>
-                            <input type='text' value={firstName}></input>
+                            <input type='text' value={firstName} onChange={(e) => setfirstName(e.target.value)}></input>
                             </div>
 
                             <div className='single-input'>
                             <label> Last Name: </label>
-                            <input type='text' value={lastName}></input>
+                            <input type='text' value={lastName} onChange={(e) => setlastName(e.target.value)}></input>
                             </div>
                         </div>
                         
                         {listType === "supervisor" && (
                         <div className='single-input'>
                         <label>ID: </label>
-                        <input type='text' value={userID}></input>
+                        <input type='text' value={userID} ></input>
                         </div>
                         )}
                         {listType != "supervisor" && (
                         <div className='single-input'>
                         <label> ID: </label>
-                        <input type='text' value={studentID}></input>
+                        <input type='text' value={studentID} onChange={(e) => setStudentID(e.target.value)}></input>
                         </div>
                         )}
 
                         <div className='single-input'>
                         <label> Email: </label>
-                        <input type='text' value={email}></input>
+                        <input type='text' value={email} onChange={(e) => setEmail(e.target.value)}></input>
                         </div>
 
                         {listType != "supervisor" && (
                         <div className='single-input'>
                         <label> Program: </label>
-                        <input type='text' value={program}></input>
+                        <input type='text' value={program} onChange={(e) => setProgram(e.target.value)}></input>
                         </div>
                         )}
 
                         {listType === "supervisor" && (
                         <div className='single-input'>
                         <label> Company: </label>
-                        <input type='text' value={company}></input>
+                        <input type='text' value={company} onChange={(e) => setCompany(e.target.value)}></input>
                         </div>
                         )}
 
                         {listType === "supervisor" && (
                         <div className='single-input'>
                         <label> Job Title: </label>
-                        <input type='text' value={jobTitle}></input>
+                        <input type='text' value={jobTitle} onChange={(e) => setJobTitle(e.target.value)}></input>
                         </div>
                         )}
 
@@ -172,26 +215,21 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
                         {listType === "supervisor" && (
                         <div className='single-input'>
                         <label> Interns: </label>
-                        <input type='text' value={interns}></input>
+                        <input type='text' value={interns} onChange={(e) => setInterns(e.target.value)}placeholder="Separate names with commas (e.g. Jin-woo, Bethany, Layla)"></input>
                         </div>
                         )}
-
-
-                        
-
-                        
 
                         {listType === "applicant" && (
                             <div className='double-input'>
 
                             <div className='single-input'>
                             <label className='left-label'> Year: </label>
-                            <input type='text' value={year}></input>
+                            <input type='text' value={year} onChange={(e) => setYear(e.target.value)}></input>
                             </div>
 
                             <div className='single-input'>
                             <label> GPA: </label>
-                            <input type='text' value={gpa}></input>
+                            <input type='text' value={gpa} onChange={(e) => setGPA(e.target.value)}></input>
                             </div>
                         </div>
                         )}
@@ -201,12 +239,12 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
 
                             <div className='single-input'>
                             <label className='left-label'>Supervisor:</label>
-                            <input type='text' value={supervisor}></input>
+                            <input type='text' value={supervisor} onChange={(e) => setSupervisor(e.target.value)}></input>
                             </div>
 
                             <div className='single-input'>
                             <label>Interviewed:</label>
-                            <input type='text' value={interviewed}></input>
+                            <input type='text' value={interviewed} onChange={(e) => setInterviewed(e.target.value)}></input>
                             </div>
                         </div>
                         )}
@@ -216,23 +254,25 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
                             
                             <div className='single-input'>
                             <label className='left-label'> Apps Sent: </label>
-                            <input type='text' value={applications}></input>
+                            <input type='text' value={applications} onChange={(e) => setApplications(e.target.value)}></input>
                             </div>
 
                             <div className='single-input'>
                             <label> Work Terms: </label>
-                            <input type='text' value={workTerms}></input>
+                            <input type='text' value={workTerms} onChange={(e) => setWorkTerms(e.target.value)}></input>
                             </div>
                         </div>
                         )}
                         
-                        {listType !== "applicant" && (
-                            <button>Adjust</button>
+                        
+                        {(listType !== "applicant"  || status === "rejected")&& (
+                            <button className='detailed-user-info-adjust-button' onClick={handleUpdate}>Adjust</button>
                         )}
 
-                        {listType === "applicant" && (
+                        {(listType === "applicant" && status !== "rejected" && status !== "accepted") && (
                             <div className='detatiled-user-info-accept-reject-buttons'>
                             <button className='detailed-user-info-accept-button' onClick={handleAccept}>Accept</button> 
+                            <button onClick={handleUpdate}> Adjust </button>
                             <button className='detailed-user-info-reject-button' onClick={handleReject}>Reject</button>
                             </div>
                         )}
