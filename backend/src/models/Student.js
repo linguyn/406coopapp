@@ -60,10 +60,10 @@ export default Student;
  *               $ref: '#/components/schemas/TermActivity'
  *             support:
  *               $ref: '#/components/schemas/Support'
- *             isApplicant: { type: boolean, example: true }
+ *             isApplicant: { type: boolean, example: true, enum: [true, false] }
  *             studentId: { type: string, example: 123456789 }
  *             location: { type: string, example: Xi'an }
- *             status: { type: string, example: applied }
+ *             status: { type: string, example: applied, enum: ["applying", "applied", "offered", "rejected", "waitlisted", "probation", "searching", "placed"] }
  *         - $ref: '#/components/schemas/StudentStats'
  *     StudentRegisterReq:
  *       required: [studentId]
@@ -89,9 +89,9 @@ export default Student;
  *                   $ref: '#/components/schemas/TermActivity'
  *                 support:
  *                   $ref: '#/components/schemas/Support'
- *                 isApplicant: { type: boolean, example: false }
+ *                 isApplicant: { type: boolean, example: false, enum: [true, false] }
  *                 studentId: { type: string, example: 123456789 }
- *                 status: { type: string, example: searching }
+ *                 status: { type: string, example: searching, enum: ["applying", "applied", "offered", "rejected", "waitlisted", "probation", "searching", "placed"] }
  *             - $ref: '#/components/schemas/StudentStats'
  *     StudentRegisterRes:
  *       type: object
@@ -134,7 +134,7 @@ export default Student;
  *           required: [program, year, gpa]
  *           properties:
  *             program: { type: string, example: Computer Science }
- *             year: { type: number, example: 4 }
+ *             year: { type: number, example: 4, enum: [1, 2, 3, 4, 5]}
  *             gpa: { type: string, example: 2.33 }
  *         documents:
  *           type: object
@@ -158,7 +158,7 @@ export default Student;
  *               required: [program, year, gpa]
  *               properties:
  *                 program: { type: string, example: Computer Science }
- *                 year: { type: number, example: 4 }
+ *                 year: { type: number, example: 4, enum: [1, 2, 3, 4, 5] }
  *                 gpa: { type: string, example: 2.33 }
  *             documents:
  *               type: object
@@ -177,7 +177,7 @@ export default Student;
  *         applied: { type: number, example: 1000 }
  *         interviewed: { type: number, example: 0 }
  *         shortlisted: { type: number, example: 2200 }
- *         workTerms: { type: number, example: 2 }
+ *         workTerms: { type: number, example: 2, enum: [1, 2, 3, 4, 5] }
  *         startTerm: { type: string, example: Summer 2025 }
  *     Documents:
  *       type: object
@@ -192,7 +192,7 @@ export default Student;
  *       required: [program, year, gpa, department]
  *       properties:
  *         program: { type: string, example: Computer Science }
- *         year: { type: number, example: 2 }
+ *         year: { type: number, example: 2, enum: [1, 2, 3, 4, 5] }
  *         gpa: { type: string, example: 3.23 }
  *         department: { type: string, example: Faculty of Science }
  *     StudentStats:

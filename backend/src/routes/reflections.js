@@ -7,6 +7,33 @@ import { authenticateToken } from '../server.js';
 import Reflection from '../models/Reflection.js';
 import { getUserByEmail } from './user.js';
 
+/**
+ * @swagger
+ * /api/reflections/submit:
+ *   post:
+ *     summary: Submits a reflection
+ *     description: Saves a reflection to the database and associates it with its student
+ *     tags:
+ *       - Documents
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ReflectionSubmitReq'
+ *     responses:
+ *       201:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ReflectionSubmitRes'
+ *       400:
+ *         description: Request fields are required
+ *       404:
+ *         description: Student not found
+ *       500: 
+ *         description: Internal server error
+ */
+
 reflectionsRouter.post('/submit', authenticateToken, async (req, res, next) => {
     const { company, supervisor, jobTitle, termDuration, skills, challenges, supported, schoolEmail } = req.body;
     try {
@@ -34,6 +61,40 @@ reflectionsRouter.post('/submit', authenticateToken, async (req, res, next) => {
         next(error);
     }
 });
+
+/**
+ * @swagger
+ * /api/reflections/update/{id}:
+ *   patch:
+ *     summary: Updates a reflection
+ *     description: Finds a reflection based on the user id and email, and updates and returns their reflection
+ *     tags:
+ *       - Documents
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *           example: "1241r3h0qidsakn"
+ *         required: true
+ *         description: The user's id
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ReflectionUpdateReq'
+ *     responses:
+ *       200:
+ *         description: Successfully updated the reflection
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ReflectionUpdateRes'
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Internal server error
+ */
 
 reflectionsRouter.patch('/update/:id', authenticateToken, async (req, res, next) => {
     try {
