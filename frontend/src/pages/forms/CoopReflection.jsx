@@ -3,6 +3,7 @@ import AuthLayout from '../../components/auth-layout/AuthLayout';
 import { reflectionSubmit } from '../../services/formServices';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ReturnButton from '../../assets/returnButton.svg'
 
 
 function CoopReflection() {
@@ -57,7 +58,9 @@ function CoopReflection() {
                     description='"Reflect on your co-op experience and the skills you have developed. This reflection will help you articulate your growth and achievements during your co-op term."'
                     rightPanel={
                         <form id='reflection-container' onSubmit={handleSubmit}>
-                            
+                            <div className='app-home-button' onClick={() => navigate('/student')}>
+                                <img src={ReturnButton} className='home-icon'></img>                    
+                            </div>
                             <div id='reflect-field-1'>
                                 <div className='reflect-input-field-1'>
                                     <label>Employer/Company Name</label>

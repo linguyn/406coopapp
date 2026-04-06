@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { applicationSubmit } from '../../services/applicationService';
 import { useAuth } from '../../context/authContext';
+import ReturnButton from '../../assets/returnButton.svg'
 
 function StudentProgress() {
     const [studentName, setStudentName] = useState('');
@@ -51,6 +52,9 @@ function StudentProgress() {
             title='STUDENT PROGRESS FORM'
             rightPanel={
                 <form id='progress-container' onSubmit={handleSubmit}>
+                    <div className='app-home-button' onClick={() => navigate('/supervisor')}>
+                        <img src={ReturnButton} className='home-icon'></img>                    
+                    </div>
                     <div id='progress-field-1'>
                         <div className='progress-input-field-1'>
                             <label>Student Name</label>

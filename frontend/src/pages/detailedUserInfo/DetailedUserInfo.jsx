@@ -68,7 +68,7 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
     //function to accept applicant
     const handleAccept = async () => {
         const body = {
-            isApplicant: false,
+            isApplicant: false
         };
 
         await updateUserInfo("student", id, body);

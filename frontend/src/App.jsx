@@ -104,6 +104,8 @@ function App() {
     console.log("Request Body (Data):", updatedFields);
     try{
       const url = `${API_URL}/user/${role}/${userId}`;
+      console.log(role);
+      console.log(userId)
       console.log("Final URL:", url);
       const response = await api.patch(`${API_URL}/user/${role}/${userId}`, updatedFields);
       console.log("Update Successful:", response.data);
