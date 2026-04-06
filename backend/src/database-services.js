@@ -12,12 +12,12 @@ export let tempStats = {
     totalPlaced: 6 
 }
 
-export function getGlobalStats() {
+export function getGlobalStats() { //return all global stats: current term, total students, total active, 
     return tempStats;
 }
 // WE ARE KEEPING ALL CODE FROM BELOW THIS LINE. ANY ADDED CODE THAT USES THE DATABASE SHOULD BE BELOW THIS LINE.
 
-export async function getStudentStats(req, res, next){ //Make this multi-functional for all Users.
+export async function getStudentStats(){ //Make this multi-functional for all Users.
     try {
 
         const stats = await Student.aggregate([
@@ -44,11 +44,9 @@ export async function getStudentStats(req, res, next){ //Make this multi-functio
             },
         ]);
 
-        res.status(200).json(stats);
-    } catch (error) {
-        console.error("Aggregation Error:", error);
-        res.status(500).json({ error: "Failed to calculate statistics.",
-            details: error.message
-        });
+        return stats;
+    } catch (err) {
+        console.error(err);
+        throw err;
     }
 }

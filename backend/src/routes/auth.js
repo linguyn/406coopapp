@@ -76,7 +76,7 @@ authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
     const user = req.user;
 
     const rememberMe = req.body.rememberMe;
-    const stats = getGlobalStats();
+    const stats = getStudentStats();
     const safeUser = UserLoginResponse.createUserLoginResponse(user, stats);
 
     const accessToken = generateAccessToken(user.id, user.role);
