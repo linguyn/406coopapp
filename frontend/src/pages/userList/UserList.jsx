@@ -155,8 +155,6 @@ function UserList(props){
                     </div>
 
                     <div className='search-section'> 
-
-                        <h2 className='entry-text'>Search:</h2>
                         
                         <div className='search-bar'>
                         <input type="search" value={searchTerm}

@@ -95,6 +95,32 @@ function App() {
       }
     }; 
 
+  //update user info
+  const updateUserInfo = async (role, userId, updatedFields) => {
+
+    console.log("--- 🚀 STARTING UPDATE ---");
+    console.log("Target Role:", role);
+    console.log("Target ID:", userId);
+    console.log("Request Body (Data):", updatedFields);
+    try{
+      const url = `${API_URL}/user/${role}/${userId}`;
+      console.log("Final URL:", url);
+      const response = await api.patch(`${API_URL}/user/${role}/${userId}`, updatedFields);
+      console.log("Update Successful:", response.data);
+
+      if (role === 'applicant') getAllApplicants();
+      if (role === 'student' || role === 'coop-student') getAllStudents();
+      if (role === 'supervisor') getAllSupervisors();
+      console.log("✅ SERVER SUCCESS:", response.data);
+        console.log("--- 🏁 UPDATE FINISHED ---");
+
+      return response.data;
+    } catch (error){
+      console.error("Error updating user:", error);
+    }
+  }
+
+  //constant refresh
   useEffect(() => {
     if (userData?.role === "coordinator") {
       getAllApplicants();
@@ -141,9 +167,9 @@ function App() {
             <Route path='/coordinator/supervisor-list' element={<UserList starterData={supervisors} applicantData={applicants} studentData={students} supervisorData={supervisors} listType={"supervisor"} fetchApplicants={getAllApplicants} fetchStudents={getAllStudents} fetchSupervisors={getAllSupervisors}/>}></Route>
 
             {/*detailed user info*/}
-            <Route path='/coordinator/detailed-user-info/applicant/:id' element={<DetailedUserInfo userData = {applicants} listType = "applicant"></DetailedUserInfo>}></Route>
-            <Route path='/coordinator/detailed-user-info/coop-student/:id' element={<DetailedUserInfo userData = {students} listType = "coop-student"></DetailedUserInfo>}></Route>
-            <Route path='/coordinator/detailed-user-info/supervisor/:id' element={<DetailedUserInfo userData = {supervisors} listType = "supervisor"></DetailedUserInfo>}></Route>
+            <Route path='/coordinator/detailed-user-info/applicant/:id' element={<DetailedUserInfo userData = {applicants} listType = "applicant" updateUserInfo={updateUserInfo}></DetailedUserInfo>}></Route>
+            <Route path='/coordinator/detailed-user-info/coop-student/:id' element={<DetailedUserInfo userData = {students} listType = "coop-student" updateUserInfo={updateUserInfo}></DetailedUserInfo>}></Route>
+            <Route path='/coordinator/detailed-user-info/supervisor/:id' element={<DetailedUserInfo userData = {supervisors} listType = "supervisor" updateUserInfo={updateUserInfo}></DetailedUserInfo>}></Route>
 
             {/*thank-you pages*/}
             <Route path='/supervisor/thank-you-page' element={<ThankYouPage mainText={"Thank you for \n your submission!"} secondaryText={"An email has been sent to your inbox with details of your submission"} type="supervisor"></ThankYouPage>}></Route>

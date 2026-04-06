@@ -6,7 +6,7 @@ import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 
 
-function DetailedUserInfo({userData, listType}){
+function DetailedUserInfo({userData, listType, updateUserInfo}){
 
     const navigate = useNavigate();
     const { id } = useParams();
@@ -63,6 +63,30 @@ function DetailedUserInfo({userData, listType}){
     const listTitle = listTypeMap.get(listType);
     const listTitle2 = listTypeMap2.get(listType);
     const listTitle3 = listTypeMap3.get(listType);
+    console.log(id);
+
+    //function to accept applicant
+    const handleAccept = async () => {
+        const body = {
+            isApplicant: false,
+        };
+
+        await updateUserInfo("student", id, body);
+
+        console.log("User accepted to program. Moved to co-op student list")
+        navigate('/coordinator/applicant-list')
+    }
+
+    //function to reject applicant
+    const handleReject = async () => {
+        const body = {
+            status: "rejected"
+        };
+        await updateUserInfo("student", id, body);
+        setStatus("Rejected")
+    }
+
+
     return (
 
         <div className='detailed-user-info-main-background'>
@@ -208,8 +232,8 @@ function DetailedUserInfo({userData, listType}){
 
                         {listType === "applicant" && (
                             <div className='detatiled-user-info-accept-reject-buttons'>
-                            <button className='detailed-user-info-accept-button'>Accept</button> 
-                            <button className='detailed-user-info-reject-button'>Reject</button>
+                            <button className='detailed-user-info-accept-button' onClick={handleAccept}>Accept</button> 
+                            <button className='detailed-user-info-reject-button' onClick={handleReject}>Reject</button>
                             </div>
                         )}
 
