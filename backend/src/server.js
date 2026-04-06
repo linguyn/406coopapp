@@ -6,7 +6,6 @@ import { userRouter } from './routes/user.js';
 import { reflectionsRouter } from './routes/reflections.js';
 import { applicationsRouter } from './routes/applications.js';
 import { progressFormsRouter } from './routes/progressForms.js';
-import { statsRouter } from './routes/statistics.js';
 import { API, TOKEN_OPTIONS } from './constants.js';
 import jwt from 'jsonwebtoken';
 import { HTTPError } from './errors.js';
@@ -14,7 +13,7 @@ import cookieParser from 'cookie-parser';
 import connectDB from './database.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
-import { statsRouter } from './routes/statistics.js';
+//import { statsRouter } from './routes/statistics.js';
 
 
 // TODO: connect to database and reconfigure database-services to actual database
@@ -53,7 +52,7 @@ app.use(API.prefixes.user, userRouter);
 app.use(API.prefixes.applications, applicationsRouter);
 app.use(API.prefixes.reflections, reflectionsRouter);
 app.use(API.prefixes.progressForms, progressFormsRouter);
-app.use(API.prefixes.statistics, statsRouter);
+// app.use(API.prefixes.statistics, statsRouter);
 
 const swaggerOptions = {
     definition: {

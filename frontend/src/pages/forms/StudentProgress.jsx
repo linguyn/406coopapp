@@ -1,165 +1,155 @@
 import './StudentProgress.css';
-import AuthLayout from '../../components/AuthLayout';
+import AuthLayout from '../../components/auth-layout/AuthLayout';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { applicationSubmit } from '../../services/applicationService';
+import { useAuth } from '../../context/authContext';
 
 function StudentProgress() {
     const [studentName, setStudentName] = useState('');
-    const [supervisor, setSupervisor] = useState('');
+    const [supervisorName, setSupervisorName] = useState('');
+    const [company, setCompany] = useState('');
     const [jobTitle, setJobTitle] = useState('');
-    const [termDuration, setTermDuration] = useState('');
-    const [skills, setSkills] = useState('');
-    const [challenges, setChallenges] = useState('');
-    const [supported, setSupported] = useState('');
+    const [stars, setStars] = useState('');
+    const [stairs, setStairs] = useState('');
+    const [employable, setEmployable] = useState('');
+    const [schoolEmail, setSchoolEmail] = useState('');
     const [pageError, setPageError] = useState('');
-    const navigate = useNavigate(); 
+    const { userData } = useAuth();
 
+    const navigate = useNavigate();
 
-    const handleSubmit = async (e) => { 
-        e.preventDefault(); 
-        if (!file) {
-            setPageError("Please upload your resume");
-            return;
-        }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setPageError('');
 
-        try { 
+        try {
             const response = await applicationSubmit({
-                studentName: studentName,
-                supervisor: supervisor,
-                jobTitle: jobTitle,
-                termDuration: termDuration,
-                skills: skills,
-                challenges: challenges,
-                supported: supported
+                studentName,
+                supervisorName,
+                company,
+                jobTitle,
+                stars,
+                stairs,
+                employable,
+                schoolEmail: userData?.email
             });
 
-            if (response.status == 201 || response){
-                console.log("Application submitted successfully: ", response.data);
-                navigate('/student'); 
+            if (response.status === 201 || response) {
+                console.log('Progress form submitted successfully:', response.data);
+                navigate('/student');
             }
         } catch (error) {
-            const msg = error.response?.data.message;
+            const msg = error.response?.data?.message || error.message || 'Something went wrong';
             console.error(msg);
             setPageError(msg);
         }
-    }
-
-
-    const handleFileChange = (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setFile(e.target.files[0]);
-            console.log('Selected file:', e.target.files[0]);
-        }
     };
 
-
     return (
-        <AuthLayout title='STUDENT PROGRESS FORM'
-                    description='"progress on your co-op experience and the skills you have developed. This progress will help you articulate your growth and achievements during your co-op term."'
-                    rightPanel={
-                        <form id='progress-container' onSubmit={handleSubmit}>
-                            
-                            <div id='progress-field-1'>
-                                <div className='progress-input-field-1'>
-                                    <label>Student Name</label>
-                                    <input type="text"
-                                           value={studentName}
-                                           onChange={(e) => setstudentName(e.target.value)}
-                                           required
-                                           placeholder='Student Name (e.g. John Doe)'>
-                                    </input>
-                                </div>
+        <AuthLayout
+            title='STUDENT PROGRESS FORM'
+            rightPanel={
+                <form id='progress-container' onSubmit={handleSubmit}>
+                    <div id='progress-field-1'>
+                        <div className='progress-input-field-1'>
+                            <label>Student Name</label>
+                            <input
+                                type='text'
+                                value={studentName}
+                                onChange={(e) => setStudentName(e.target.value)}
+                                required
+                                placeholder='Student Name (e.g. John Doe)'
+                            />
+                        </div>
 
-                                <div className='progress-input-field-2'>
-                                    <label>Supervisor Name</label>
-                                    <input type="text"
-                                           value={supervisor}
-                                           onChange={(e) => setSupervisor(e.target.value)}
-                                           required
-                                           placeholder='Supervisor Name (e.g. Jane Doe)'></input>
-                                </div>
+                        <div className='progress-input-field-2'>
+                            <label>Supervisor Name</label>
+                            <input
+                                type='text'
+                                value={supervisorName}
+                                onChange={(e) => setSupervisorName(e.target.value)}
+                                required
+                                placeholder='Supervisor Name (e.g. Jane Doe)'
+                            />
+                        </div>
+                    </div>
+
+                    <div id='progress-field-2'>
+                        <div className='progress-input-field-1'>
+                            <label>Employer/Company Name</label>
+                            <input
+                                type='text'
+                                value={company}
+                                onChange={(e) => setCompany(e.target.value)}
+                                required
+                                placeholder='Employer/Company Name'
+                            />
+                        </div>
+
+                        <div className='progress-input-field-2'>
+                            <label>Student Job Title</label>
+                            <input
+                                type='text'
+                                value={jobTitle}
+                                onChange={(e) => setJobTitle(e.target.value)}
+                                required
+                                placeholder='Job Title (e.g. Software Engineer Intern)'
+                            />
+                        </div>
+                    </div>
+
+                    <div id='progress-field-3'>
+                        <div className='progress-input-field-1'>
+                            <label>What are 2-3 strengths that the student has displayed during their co-op term?</label>
+                            <input
+                                type='text'
+                                value={stars}
+                                onChange={(e) => setStars(e.target.value)}
+                                placeholder='Your response...'
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div id='progress-field-4'>
+                        <div className='progress-input-field-1'>
+                            <label>What is an area that the student needs to improve on during/after their co-op term?</label>
+                            <input
+                                type='text'
+                                value={stairs}
+                                onChange={(e) => setStairs(e.target.value)}
+                                placeholder='Your response...'
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div id='progress-field-5'>
+                        <div className='progress-input-field-1'>
+                            <label>Is this student employable after their co-op term? Please briefly explain.</label>
+                            <input
+                                type='text'
+                                value={employable}
+                                onChange={(e) => setEmployable(e.target.value)}
+                                placeholder='Your response...'
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div id='progress-field-6'>
+                        {pageError && (
+                            <div className='register-error'>
+                                <p className='progress-error'>{pageError}</p>
                             </div>
-
-
-                            <div id='progress-field-2'>
-                                <div className='progress-input-field-1'>
-                                    <label>Job Title</label>
-                                    <input type="text"
-                                           value={jobTitle}
-                                           onChange={(e) => setJobTitle(e.target.value)}
-                                           required
-                                           placeholder='Job Title (e.g. Software Engineer)'>
-                                    </input>
-                                </div>
-                                            
-
-                                <div className='progress-input-field-2'>
-                                    <label>Work Term Duration</label>
-                                    <input type="text"
-                                           value={termDuration}
-                                           onChange={(e) => setTermDuration(e.target.value)}
-                                           required
-                                           placeholder='e.g. 4 months'></input>
-                                </div>
-                            </div>
-
-
-                            <div id='progress-field-3'>
-                                <div className='progress-input-field-1'>
-                                    <label>What is a technical skill you’ve learned and how have you implemented it in your role?</label>
-                                    <input type='text' 
-                                           value={skills}
-                                           onChange={(e) => setSkills(e.target.value)}
-                                           placeholder='Your response...'
-                                           required
-                                    />
-                                </div>
-                            </div>
-
-                            <div id='progress-field-4'>
-                                <div className='progress-input-field-1'>
-                                    <label>Describe a challenge you encountered and how you resolved it on your work term.</label>
-                                    <input type='text' 
-                                           value={challenges}
-                                           onChange={(e) => setChallenges(e.target.value)}
-                                           placeholder='Your response...'
-                                           required
-                                    />
-                                </div>
-                            </div>
-
-                            <div id='progress-field-5'>
-                                <div className='progress-input-field-1'>
-                                    <label>On a scale of 1-5, how well supported did you feel about your supervisor? Explain why.</label>
-                                    <input type='text' 
-                                           value={supported}
-                                           onChange={(e) => setSupported(e.target.value)}
-                                           placeholder='Your response...'
-                                           required
-                                    />
-                                </div>
-                            </div>
-
-
-                            <div id='progress-field-6'>
-                                {pageError && (
-                                        <div className='register-error'>
-                                        <p className='progress-error'>{pageError}</p>
-                                        </div>
-                                    )}
-                                <button className='blue-button'>Submit</button>
-                            </div>
-                            
-
-                            
-                        </form>
-                    }
-        
-        
+                        )}
+                        <button type='submit' className='blue-button'>Submit</button>
+                    </div>
+                </form>
+            }
         />
-
-    ); 
-}; 
+    );
+}
 
 export default StudentProgress;

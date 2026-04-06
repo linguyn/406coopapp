@@ -1,4 +1,5 @@
 import { USER_DETAILS } from './constants.js';
+import { HTTPError } from './errors.js';
 
 // TODO: move validation to schemas eventually so you can just call the validation from the schema
 // TODO: create hasStrongPassword validation (low priority)
@@ -26,7 +27,10 @@ export function isValidEmail(email) {
 function isValidPassword(password) {
     const minLength = USER_DETAILS.fieldConstraints.minPasswordLength;
     const maxLength = USER_DETAILS.fieldConstraints.maxPasswordLength;
-    return password.length >= minLength && password.length <= maxLength;
+    if (password.length >= minLength && password.length <= maxLength) {
+        return true;
+    }
+    throw new HTTPError("Password must be between 8 and 32 characters", 422);
 }
 
 /**
@@ -137,20 +141,6 @@ export function isValidSupervisor({email, password, company, location, jobTitle,
 
 export function isValidLogin(email, password) {
     return isValidEmail(email) && isValidPassword(password);
-}
-
-/**
- * @function isValidStatusUpdate
- * @description Validates status fields
- * @param {String} status - new status
- * @param {String} callerId - calling user id
- * @returns {boolean} True if all parameters are valid
- */
-
-export function isValidStatusUpdate(role, status) { //ALEX REMEMEBER TO UPDATE THIS SO THAT IT CHECKS FOR ALL STATUSES, NOT JUST STUDENT STATUSES.
-    if (role === "student") { return USER_DETAILS.studentStatuses.includes(status); }
-    else if (role === "supervisor") { return USER_DETAILS.supervisorStatuses.includes(status); } 
-    return false;
 }
 
 /**

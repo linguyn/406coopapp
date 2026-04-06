@@ -1,5 +1,7 @@
 
 import { useNavigate } from 'react-router-dom';
+import sortIcon from '../assets/sortButton.svg'
+import React, {useState, useEffect} from 'react'
 
 const applicantListHeaders = [
     {
@@ -73,7 +75,7 @@ const coopStudentListHeaders = [
     {
         id: 5,
         KEY: "applications",
-        LABEL: "Applications sent",
+        LABEL: "Applications",
     },
     {
         id: 6,
@@ -131,18 +133,59 @@ const supervisorListHeaders = [
 ]
 
 function DataTable(props) {
-    console.log(props);
-    
+
     const listTypeMap = new Map()
     listTypeMap.set("applicant", applicantListHeaders);
     listTypeMap.set("coop-student", coopStudentListHeaders);
     listTypeMap.set("supervisor", supervisorListHeaders);
 
+    const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
+
     const listType = (listTypeMap.get(String(props.listType)));
     const listTypeStr = String(props.listType)
 
-    const users = props.userData
+    const [users, setUsers] = useState(props.userData);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setUsers(props.userData);
+    }, [props.userData]);
+
+    const labelToKeyURL = {
+    "Name": "firstName",
+    "Email": "email",
+    "Date": "createdAt",
+    "Applications": "applications",
+    "Status": "status",
+    "Student ID": "studentId",
+    "Program": "program",
+    "Year": "year",
+    "GPA": "gpa",
+    "Company": "company",
+    "Job Title": "jobTitle"
+};
+
+    const handleHeaderClick = async (label) => {
+            const apiKey = labelToKeyURL[label];
+            if (!apiKey) return;
+
+            let newDirection = 'asc';
+
+            if (sortConfig.key === apiKey && sortConfig.direction === 'asc') {
+                newDirection = 'desc';
+            }
+
+            setSortConfig({ key: apiKey, direction: newDirection });
+
+            if (props.listType === "applicant") {
+                props.fetchApplicants("", apiKey, newDirection);
+            } else if (props.listType === "coop-student") {
+                props.fetchStudents("", apiKey, newDirection);
+            } else if (props.listType === "supervisor") {
+                props.fetchSupervisors("", apiKey, newDirection);
+            }
+
+        };
 
     const handleRowClick = (id) => {
         navigate(`/coordinator/detailed-user-info/${listTypeStr}/${id}`)
@@ -157,10 +200,27 @@ function DataTable(props) {
                 <tr>
                     
                     {listType.map((header) => (
-                        <th key={header.id} className="table-header">
-                            {header.LABEL}
-                        </th>
-                    ))}
+                    <th key={header.id} className="table-header">
+                        {header.LABEL}
+                        {(header.LABEL === "Name" || 
+                        header.LABEL === "Email" || 
+                        header.LABEL === "Date" ||
+                        header.LABEL === "Year" ||
+                        header.LABEL === "GPA" || 
+                        header.LABEL === "Status" ||
+                        header.LABEL === "Applications" ||
+                        header.LABEL === "Company" ||
+                        header.LABEL === "Job Title") && (
+            <img 
+                className={`sort-icon sort-icon-${header.LABEL.toLowerCase()}`}
+                src={sortIcon}
+                alt="sort"
+                style={{ cursor: 'pointer', marginLeft: '5px' }} // Make it look clickable
+                onClick={() => handleHeaderClick(header.LABEL)}
+            />
+        )}
+    </th>
+))}
 
                 </tr>
 
@@ -179,8 +239,18 @@ function DataTable(props) {
                                         </span>
                                     ) : column.KEY === "createdAt" ? (
                                         item[column.KEY]?.slice(0,10)
-                                    ) : (
-                                        item[column.KEY] ?? "N/A"
+                                    ) : column.KEY === "interns" ? (
+                                        Array.isArray(item[column.KEY]) && item[column.KEY].length > 0 ? (
+
+                                            <div className="table-interns-list">
+                                                {item[column.KEY].map((intern, i) => (
+                                                    <div key={intern._id || i} className="table-intern-tag">
+                                                        {typeof intern === 'string' ? intern : intern.fullName || "Unknown"}
+                                                    </div>
+                                                            ))}
+                                            </div>
+                                    ) : "No Interns"
+                                    ) : ( item[column.KEY] ?? "N/A"
 
                                     )}
                                 </td>

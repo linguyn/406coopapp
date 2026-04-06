@@ -1,9 +1,9 @@
 import './CoopApplication.css'
-import AuthLayout from '../../components/AuthLayout';
+import AuthLayout from '../../components/auth-layout/AuthLayout';
 import { signIn } from '../../services/authService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { applicationSubmit } from '../../services/applicationService';
+import { applicationSubmit } from '../../services/formServices';
 
 function Application() {
     const [firstName, setFirstName] = useState('');
@@ -20,10 +20,10 @@ function Application() {
 
     const handleSubmit = async (e) => { 
         e.preventDefault(); 
-        if (!file) {
+        /*if (!file) {
             setPageError("Please upload your resume");
             return;
-        }
+        }*/
 
         try { 
             const response = await applicationSubmit({
@@ -41,7 +41,7 @@ function Application() {
                 navigate('/applicant/thank-you-page'); 
             }
         } catch (error) {
-            const msg = error.response?.data.message;
+            const msg = error.response?.data.message || error.message || "Something went wrong";
             console.error(msg);
             setPageError(msg);
         }
@@ -111,9 +111,16 @@ function Application() {
                                 <div className='apply-input-field-1'>
                                     <label>Are you eligible to work in Canada/have your work permit?</label>
                                     <input type='text' 
-                                           value={permission}
-                                           onChange={(e) => setPermission(e.target.value)}
-                                           placeholder='Your eligibility status...'
+                                           value={String(permission)}
+                                           onChange={(e) => {
+                                                   const raw = e.target.value;
+                                                    const value = raw.trim().toLowerCase();
+
+                                                    if (value === 'true') setPermission(true);
+                                                    else if (value === 'false') setPermission(false);
+                                                    else setPermission(raw); 
+                                                }}
+                                           placeholder='true/false (must be boolen value)'
                                            required
                                     />
                                 </div>
@@ -160,7 +167,7 @@ function Application() {
                                         <p className='apply-error'>{pageError}</p>
                                         </div>
                                     )}
-                                <button className='blue-button'>Register</button>
+                                <button className='blue-button'>Submit</button>
                             </div>
                             
 

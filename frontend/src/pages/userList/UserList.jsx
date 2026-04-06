@@ -1,10 +1,11 @@
 import './UserList.css'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import HomeIcon from '../../assets/whiteHome.svg'
 import SearchIcon from '../../assets/searchIcon.svg'
 import LeftArrowIcon from '../../assets/leftArrow.svg'
 import RightArrowIcon from '../../assets/rightArrow.svg'
 import DataTable from '../../components/DataTable.jsx'
+import { useNavigate } from 'react-router-dom'
 
 
 function UserList(props){
@@ -13,6 +14,10 @@ function UserList(props){
     const [userData, setUserData] = useState(props.starterData)
     const [currentPage, setCurrentPage] = useState(1)
     const [usersPerPage, setUsersPerPage] = useState(5)
+    const navigate = useNavigate()
+
+
+    const [searchTerm, setSearchTerm] = useState("")
 
     //pages logic
     const endIndex = currentPage * usersPerPage;
@@ -78,7 +83,37 @@ function UserList(props){
     const handleChangeNumberOfEntries = (e) => {
         setUsersPerPage(e.target.value);
     }
-``
+
+    
+
+    //search 
+    const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+    };
+
+    const handleSearchClick = () => {
+    if (listType === "applicant") {
+        props.fetchApplicants(searchTerm);
+    } else if (listType === "coop-student") {
+        props.fetchStudents(searchTerm);
+    } else if (listType === "supervisor") {
+        props.fetchSupervisors(searchTerm);
+    }
+    };    
+
+    useEffect(() => {
+
+    if (listType === 'applicant') {
+        setUserData(props.applicantData);
+    } else if (listType === 'coop-student') {
+        setUserData(props.studentData);
+    } else if (listType === 'supervisor') {
+        setUserData(props.supervisorData);
+    }
+    
+    setCurrentPage(1); 
+}, [props.applicantData, props.studentData, props.supervisorData, listType]);
+
     return(
         
         <div className='main-page'>
@@ -88,7 +123,7 @@ function UserList(props){
                 <div className='header'>
                 <h1 className='main-title'>{titleName}</h1>
 
-                    <div className='homepage'>
+                    <div className='homepage' onClick={() => navigate('/coordinator')}>
                     <img src={HomeIcon} className='home-icon'></img>
                     <h3>Homepage</h3>
                     </div>
@@ -124,15 +159,19 @@ function UserList(props){
                         <h2 className='entry-text'>Search:</h2>
                         
                         <div className='search-bar'>
-                        <input type="search"></input>
-                        <img src={SearchIcon} className='search-icon'></img>
+                        <input type="search" value={searchTerm}
+                            onChange={handleInputChange} 
+                            placeholder="Search..."
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
+                            ></input>
+                        <img src={SearchIcon} className='search-icon' onClick={handleSearchClick} style={{ cursor: 'pointer' }}></img>
                         </div>
 
                     </div>
 
                 </div>
 
-            <DataTable userData={currentUserData} listType={listType}></DataTable>
+            <DataTable userData={currentUserData} listType={listType} fetchApplicants={props.fetchApplicants} fetchStudents={props.fetchStudents} fetchSupervisors={props.fetchSupervisors}></DataTable>
 
                 <div className='bottom-header'>
                     <h2>{currentPage} of {totalPages}</h2>

@@ -1,0 +1,16 @@
+import axios from 'axios';
+import api from "./api";
+
+const API_URL = import.meta.env.VITE_API_URL; 
+
+
+export const applicationSubmit = async (applicationData) => { 
+    const res = await api.post(`/applications/submit`, applicationData, { withCredentials: true });
+    return res;
+}
+
+
+export const reflectionSubmit = async (reflectionData) => {
+    const res = await api.post(`/reflections/submit`, reflectionData, { withCredentials: true });
+    return res;
+}

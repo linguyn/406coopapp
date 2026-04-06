@@ -1,41 +1,97 @@
 import './Login.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import { faLock, faUser, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faUser, faEye, faEyeSlash, faGear, faG } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { loginUser } from '../../services/authService';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
+import React from 'react';
+import Select from 'react-select';
+import { text } from '@fortawesome/fontawesome-svg-core';
 
+const roleOptions = [
+        { value: 'student', label: 'Student' },
+        { value: 'supervisor', label: 'Supervisor' },
+        { value: 'coordinator', label: 'Coordinator' }
+    ];
 
+const customStyles = {
+    control: (base) => ({
+        ...base,
+        backgroundColor: 'rgb(213, 213, 213)',
+        border: 'none',
+        borderRadius: '4px',
+        width: '82%',
+        margin: '0 auto',
+        minHeight: '46px',
+        boxShadow: 'none',
+        cursor: 'pointer',
+        fontFamily: '"Roboto", "Inter", Helvetica',
+        '&:hover': { backgroundColor: '#eaeaea' }
+    }),
+    valueContainer: (base) => ({
+        ...base,
+        paddingLeft: '35px', 
+        textAlign: 'left',
+        color: '#555',
+        fontSize: '0.9rem',
+        fontFamily: '"Roboto", "Inter", Helvetica'
+    }),
+    placeholder: (base) => ({
+        ...base,
+        textAlign: 'left',
+        color: '#555',
+        fontSize: '0.9rem',
+        fontFamily: '"Roboto", "Inter", Helvetica'
+    }),
+    menu: (base) => ({
+        ...base,
+        width: '82%',
+        left: '9%',
+        fontFamily: '"Roboto", "Inter", Helvetica',
+    })
+};
+    
 function Login() {
     const [email, setEmail] = useState(''); 
     const [password, setPassword] = useState(''); 
     const [visible, setVisible] = useState(false);
     const [serverError, setServerError] = useState('');
+    const [role, setRole] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
-
+    const { setUserData } = useAuth(); 
 
     const handleSubmit = async (event) => {
         
         event.preventDefault();
 
         try {
+
             const response = await loginUser(
                 {
                     email: email, 
                     password: password,
-                    rememberMe: rememberMe
+                    rememberMe: rememberMe,
+                    role: role
                 });
 
-            if (response.status == 200 || response) {
+            if (response.status == 200 || response) { 
                 console.log(response);
                 console.log("Login successful: " , response.status);
-                //sends token to coordinator
-                //localStorage.setItem('token', response.token || response.data?.token);
-                navigate("/homepage");
+                const user = response.data.user; 
+            
+                setUserData(user);
+                
+                if (user.role === 'student') navigate('/student');
+                if (user.role === 'supervisor') navigate('/supervisor');
+                if (user.role === 'coordinator') navigate('/coordinator');
             }
 
         } catch (error) {
+            if (!role) {
+                setServerError('Please select your role');
+            }
             const msg = error.response?.data.message;
             console.error(msg);
             setServerError(msg);
@@ -105,6 +161,21 @@ function Login() {
                             
                         </div>
 
+                            <div className='input'>
+                                <label className='role-label'>Role</label>
+                                <div className='input-field'>
+                                    <FontAwesomeIcon icon={faGear}
+                                                    className='icon-gear'/>
+                                    <Select
+                                        className='select-box'
+                                        styles={customStyles}
+                                        options={roleOptions}
+                                        value={roleOptions.find(option => option.value === role)}
+                                        onChange={(selected) => setRole(selected.value)}
+                                        placeholder="Select your role"/>
+                                </div>
+                            </div>
+
                     </div>
 
                     <div className="options-row">
@@ -119,14 +190,14 @@ function Login() {
 
                     </div>
 
-                    {/* sign in button + create account option */}
-                    <div className='options-column'>
-                    
-                        {serverError && (
+                    {serverError && (
                             <div className='error-message'>
                             <p className='err'>{serverError}</p>
                             </div>
                         )}
+
+                    {/* sign in button + create account option */}
+                    <div className='options-column'>
                         
                         {/* sign in button */}
                         <div className='sign-in-button'>
@@ -146,6 +217,3 @@ function Login() {
 }
 
 export default Login;
-
-
-

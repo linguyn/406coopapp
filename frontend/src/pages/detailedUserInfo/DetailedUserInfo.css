@@ -1,3 +1,5 @@
+
+
 .detailed-user-info-main-background{
     display: flex;
     align-items: center;
@@ -104,6 +106,7 @@
     height: 100%;
     color:#444E5E;
     font-size: 1.5rem;
+    
 }
 
 .detailed-user-info-fields button{
@@ -128,7 +131,12 @@
     height: 4.7vh;
     margin-left: 2%;
     color:black;
-    font-size: 1.5rem;
+    font-size: 0.8em;
+    font-family: "Roboto", "Inter", Helvetica ;
+    letter-spacing: -2%;
+    color: #444E5E;
+    border-radius: 10px;
+    border: solid black 0.5 px;
 }
 
 .double-input input{
@@ -164,6 +172,15 @@
     background-color: #D4C5C5;
     width: 80%;
     height: 80%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.detailed-user-info-pdf h2{
+    color: black;
+    font-size: 2.8em;
 }
 
 .detailed-user-info-date{
@@ -171,4 +188,29 @@
     font-weight: bold;
     color:#444E5E;
     text-decoration: underline;
+}
+
+.detatiled-user-info-accept-reject-buttons{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+.detatiled-user-info-accept-reject-buttons button{
+    width: 40%;
+    color:black;
+    border: none;
+}
+
+.detatiled-user-info-accept-reject-buttons button:hover{
+    color:white;
+    font-size: 0.9em;
+}
+.detatiled-user-info-accept-reject-buttons .detailed-user-info-accept-button {
+    background-color: #6BD15A;           
+}
+
+.detatiled-user-info-accept-reject-buttons .detailed-user-info-reject-button {
+    background-color: #FB6188;         
 }
