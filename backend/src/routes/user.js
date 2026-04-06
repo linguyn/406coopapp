@@ -155,9 +155,27 @@ userRouter.get('/list', authenticateToken, validateListRequest, async (req, res,
         const Model = getModelByRole(role);
         const filteredSortedUsers = await Model.find(filterQuery).sort({ [sortBy] : order });
 
-        const sanitizedUsers = filteredSortedUsers.map((user) => {
-            return UserListItemResponse.createUserListItemResponse(user);
+        const userPromises = filteredSortedUsers.map(async (user) => {
+            const sanitizedUser = UserListItemResponse.createUserListItemResponse(user);
+
+            if (user.role !== "student") {
+                return {
+                    user: sanitizedUser
+                }
+            } else {
+                const applications = await Application.find({assignedStudent: user._id});
+                const progressForms = await ProgressForm.find({assignedStudent: user._id});
+                const reflections = await Reflection.find({assignedStudent: user._id});
+                return {
+                    user: sanitizedUser, 
+                    applications : applications, 
+                    progressForms : progressForms, 
+                    reflections: reflections
+                };
+            }
         });
+
+        const sanitizedUsers = await Promise.all(userPromises);
         
         return res.status(200).json(sanitizedUsers);
     } catch (error) {
