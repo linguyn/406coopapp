@@ -158,25 +158,20 @@ userRouter.get('/list', authenticateToken, validateListRequest, async (req, res,
         const userPromises = filteredSortedUsers.map(async (user) => {
             const sanitizedUser = UserListItemResponse.createUserListItemResponse(user);
 
-            if (user.role !== "student") {
-                return {
-                    user: sanitizedUser
-                }
-            } else {
+            if (user.role === "student") {
                 const applications = await Application.find({assignedStudent: user._id});
                 const progressForms = await ProgressForm.find({assignedStudent: user._id});
                 const reflections = await Reflection.find({assignedStudent: user._id});
-                return {
-                    user: sanitizedUser, 
-                    applications : applications, 
-                    progressForms : progressForms, 
-                    reflections: reflections
-                };
+                sanitizedUser.applications = applications;
+                sanitizedUser.progressForms = progressForms;
+                sanitizedUser.reflections = reflections;
             }
+            
+            return sanitizedUser;
         });
 
         const sanitizedUsers = await Promise.all(userPromises);
-        
+
         return res.status(200).json(sanitizedUsers);
     } catch (error) {
         next(error);
@@ -406,7 +401,7 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
  *         description: Internal server error
  */
 
-userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
+userRouter.get('/:role/:email', authenticateToken, async(req, res, next) =>{
     try{
         const { role, email } = req.params;
 
@@ -451,7 +446,54 @@ export async function getUserByEmailAllRoles(email) {
     return student || supervisor || coordinator || null;
 }
 
-userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res) => {
+/**
+ * @swagger
+ * /api/user/{role}:
+ *   delete:
+ *     summary: Deletes a user
+ *     description: Removes a user from the database
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: path
+ *         name: role
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: student
+ *           enum: [student, supervisor, coordinator]
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email: { type: string, example: something@poop.com}
+ *     responses: 
+ *       200:
+ *         description: Successfully deleted the user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               required: [message, deletedUser]
+ *               properties:
+ *                 message: { type: string, example: "User deleted successfully!" }
+ *                 deletedUser:
+ *                   oneOf:
+ *                     - $ref: '#/components/schemas/StudentRes' 
+ *                     - $ref: '#/components/schemas/SupervisorRes' 
+ *                     - $ref: '#/components/schemas/CoordinatorRes' 
+ *       403:
+ *         description: Invalid user permissions
+ *       404:
+ *         description: User already deleted or does not exist
+ *       500:
+ *         description: Internal server error
+ */
+
+userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res, next) => {
     try{
         const { role } = req.params;
         const { email } = req.body;

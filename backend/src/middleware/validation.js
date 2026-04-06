@@ -50,16 +50,16 @@ export async function validateRegister(req, res, next) {
 }
 
 const baseFields = ["firstName", "lastName", "email", "password"];
-const studentFields = [...baseFields, "location", "year", "gpa", "resume", "coverLetter", "transcript", "reflection"];
-const supervisorFields = [...baseFields, "location", "interns", "company"];
+const studentFields = [...baseFields, "academics", "termActivity", "location"];
+const supervisorFields = [...baseFields, "location", "interns", "company", "jobTitle"];
 
 const allowedUpdates = {
     student: studentFields,
     supervisor: supervisorFields,
     coordinator: [...baseFields],
-    coordinatorOther: [...studentFields, ...supervisorFields, "isApplicant", "status"],
+    coordinatorOther: [...studentFields, ...supervisorFields, "isApplicant", "status", "support"],
     admin: [...baseFields],
-    adminOther: [...studentFields, ...supervisorFields, "isApplicant", "status"]
+    adminOther: [...studentFields, ...supervisorFields, "isApplicant", "status", "support"]
 }
 
 function isValidCaller(callerRole, userRole) {
