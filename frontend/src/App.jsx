@@ -78,7 +78,7 @@ function App() {
 
     const getAllApplicants = async (params = "") => {
       try {
-        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=true&searchStr=Sung` 
+        const response = await api.get(`${API_URL}/user/list?role=student&isApplicant=true` 
         );
         console.log("SUCCESS! Here is the data:", response.data);
         setApplicants(response.data);

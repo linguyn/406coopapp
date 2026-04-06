@@ -2,7 +2,7 @@ import { HTTPError } from "../errors.js";
 import { USER_DETAILS } from "../constants.js";
 import { isValidLogin } from "../validate-services.js";
 import { VALIDATE_OPERATIONS } from "../auth-services.js";
-import { getUserByEmail } from "../routes/user.js";
+import { getUserByEmail, getUserByEmailAllRoles } from "../routes/user.js";
 
 export async function validateLogin(req, res, next) {
     const {email, password, role } = req.body;
@@ -30,14 +30,14 @@ export async function  validatePermissions(req, res, next) {
     else { throw new HTTPError("Invalid user permissions.", 403); }
 }
 
-export function validateRegister(req, res, next) {
+export async function validateRegister(req, res, next) {
     const { email, role, password, passwordAgain } = req.body;
     try {
         const roleOperations = VALIDATE_OPERATIONS[role];
 
         if (password != passwordAgain) { throw new HTTPError("Passwords do not match", 422); }
         if (!roleOperations.validate(req.body)) { throw new HTTPError("Missing fields or invalid format 1", 422); }
-        if (!getUserByEmail(email)) { throw new HTTPError("Email taken by another user", 409); }
+        if (await getUserByEmailAllRoles(email)) { throw new HTTPError("Email taken by another user", 409); }
 
         next();
     } catch (error) {

@@ -38,17 +38,17 @@ import { getUserByEmail } from './user.js';
 progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) => {
     const { studentName, supervisorName, company, jobTitle, stars, stairs, employable, schoolEmail } = req.body;
     try {
-        if (!studentName || !studentName.trim()) { throw new HTTPError(400, "Student name is required"); }
-        if (!supervisorName || !supervisorName.trim()) { throw new HTTPError(400, "Supervisor name is required"); }
-        if (!company || !company.trim()) { throw new HTTPError(400, "Company name is required"); }
-        if (!jobTitle || !jobTitle.trim()) { throw new HTTPError(400, "Job title is required"); }
-        if (!stars || !stars.trim()) { throw new HTTPError(400, "Stars are required"); }
-        if (!stairs || !stairs.trim()) { throw new HTTPError(400, "Stairs are required"); }
-        if (!employable || !employable.trim()) { throw new HTTPError(400, "Employable status is required"); }
-        if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError(400, "Valid school email is required"); }
+        if (!studentName || !studentName.trim()) { throw new HTTPError("Student name is required", 400); }
+        if (!supervisorName || !supervisorName.trim()) { throw new HTTPError("Supervisor name is required", 400); }
+        if (!company || !company.trim()) { throw new HTTPError("Company name is required", 400); }
+        if (!jobTitle || !jobTitle.trim()) { throw new HTTPError("Job title is required", 400); }
+        if (!stars || !stars.trim()) { throw new HTTPError("Stars are required", 400); }
+        if (!stairs || !stairs.trim()) { throw new HTTPError("Stairs are required", 400); }
+        if (!employable || !employable.trim()) { throw new HTTPError("Employable status is required", 400); }
+        if (!schoolEmail || !isValidEmail(schoolEmail)) { throw new HTTPError("Valid school email is required", 400); }
 
         const studentUser = await getUserByEmail("student", schoolEmail);
-        if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+        if (!studentUser) { throw new HTTPError("Student not found", 404); }
 
         const newProgressForm = new ProgressForm({ ...req.body, assignedStudent: studentUser._id });
         await newProgressForm.save();
@@ -104,7 +104,7 @@ progressFormsRouter.patch('/update/:id', authenticateToken, async (req, res, nex
 
         if (req.body.schoolEmail) {
             const studentUser = await getUserByEmail("student", req.body.schoolEmail);
-            if (!studentUser) { throw new HTTPError(404, "Student not found"); }
+            if (!studentUser) { throw new HTTPError("Student not found", 404); }
             updateData.assignedStudent = studentUser._id;
         }
 
