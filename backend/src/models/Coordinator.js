@@ -66,6 +66,8 @@ export default Coordinator;
  *           properties:
  *             isApplicant: { type: Boolean, example: true }
  *             status: { type: string, example: applied }
+ *             termActivity: 
+ *               $ref: '#/components/schemas/TermActivity'
  *     CoordinatorOnSupervisorUpdateReq:
  *       allOf:
  *         - $ref: '#/components/schemas/SupervisorSelfUpdateReq'
@@ -87,7 +89,7 @@ export default Coordinator;
  *     CoordinatorSelfUpdateReqEx:
  *       value: { firstName: "Jin-Woo", lastName: "Sung", email: "jinwoo@thegreatest.com", password: "password1234"}
  *     CoordinatorOnStudentUpdateReqEx:
- *       value: { isApplicant: false, status: applied, firstName: "Jin-Woo", lastName: "Sung", email: "jinwoo@thegreatest.com", password: "password1234", location: "Seoul", academics: { program: "Computer Science", year: 4, gpa: "3.98"}, documents: { resume: "resume_v1.pdf", coverLetter: "cl_final.pdf", transcript: "official_transcript.pdf", reflection: "internship_reflection.pdf" } }
+ *       value: { isApplicant: false, status: applied, firstName: "Jin-Woo", lastName: "Sung", email: "jinwoo@thegreatest.com", password: "password1234", location: "Seoul", academics: { program: "Computer Science", year: 4, gpa: "3.98"}, termActivity: {applications: 1234, interviews: 67, applied: 67, interviewed: 67, shortlisted: 76, workTerms: 2, startTerm: Summer 2025} }
  *     CoordinatorOnSupervisorUpdateReqEx:
  *       value: { status: inactive, firstName: "Jin-Woo", lastName: "Sung", email: "jinwoo@thegreatest.com", password: "password1234", location: "Seoul", interns: [Gef, Bethany, pola], company: Google }
  */
