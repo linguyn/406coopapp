@@ -33,7 +33,7 @@ export default Supervisor;
  *             company: { type: string, example: NBA }
  *             jobTitle: { type: string, example: Bench Warmer }
  *             location: { type: string, example: Utah }
- *             status: { type: string, example: active }
+ *             status: { type: string, example: active, enum: [active, inactive] }
  *             interns:
  *               type: array
  *               items:
@@ -63,7 +63,7 @@ export default Supervisor;
  *             - $ref: '#/components/schemas/UserRes'
  *             - type: object
  *               properties:
- *                 status: { type: string, example: active }
+ *                 status: { type: string, example: active, enum: [active, inactive] }
  *                 support:
  *                   $ref: '#/components/schemas/Support'
  *     SupervisorRegisterRes:

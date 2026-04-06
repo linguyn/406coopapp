@@ -7,6 +7,34 @@ import { authenticateToken } from '../server.js';
 import ProgressForm from '../models/ProgressForm.js';
 import { getUserByEmail } from './user.js';
 
+/**
+ * @swagger
+ * /api/progress-forms/submit:
+ *   post:
+ *     summary: Submits a progress form
+ *     description: Saves a progress form to the database and associates it with its student
+ *     tags:
+ *       - Documents
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProgressFormSubmitReq'
+ *     responses:
+ *       201:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProgressFormSubmitRes'
+ *       400:
+ *         description: Request fields are required
+ *       404:
+ *         description: Student not found
+ *       500: 
+ *         description: Internal server error
+ */
+
+
 progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) => {
     const { studentName, supervisorName, company, jobTitle, stars, stairs, employable, schoolEmail } = req.body;
     try {
@@ -34,6 +62,40 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
         next(error);
     }
 });
+
+/**
+ * @swagger
+ * /api/progress-forms/update/{id}:
+ *   patch:
+ *     summary: Updates a progress form
+ *     description: Finds a progress form based on the user id and email, and updates and returns their progress form
+ *     tags:
+ *       - Documents
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *           example: "1241r3h0qidsakn"
+ *         required: true
+ *         description: The user's id
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProgressFormUpdateReq'
+ *     responses:
+ *       200:
+ *         description: Successfully updated the progress form
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProgressFormUpdateRes'
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Internal server error
+ */
 
 progressFormsRouter.patch('/update/:id', authenticateToken, async (req, res, next) => {
     try {

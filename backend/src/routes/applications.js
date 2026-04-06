@@ -23,6 +23,33 @@ import { getUserByEmail } from './user.js';
  * @error {500} {Object} - Internal server error
  */
 
+/**
+ * @swagger
+ * /api/applications/submit:
+ *   post:
+ *     summary: Submits an application
+ *     description: Saves an application to the database and associates it with its student
+ *     tags:
+ *       - Documents
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ApplicationSubmitReq'
+ *     responses:
+ *       201:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApplicationSubmitRes'
+ *       400:
+ *         description: Request fields are required
+ *       404:
+ *         description: Student not found
+ *       500: 
+ *         description: Internal server error
+ */
+
 applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
     const { firstName, lastName, studentId, schoolEmail, eligibility, reasonToApply, portfolioLink } = req.body;
     try {
@@ -47,6 +74,40 @@ applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
         next(error);
     }
 });
+
+/**
+ * @swagger
+ * /api/applications/update/{id}:
+ *   patch:
+ *     summary: Updates an application
+ *     description: Finds a application based on the user id and email, and updates and returns their application
+ *     tags:
+ *       - Documents
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *           example: "1241r3h0qidsakn"
+ *         required: true
+ *         description: The user's id
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ApplicationUpdateReq'
+ *     responses:
+ *       200:
+ *         description: Successfully updated the application
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApplicationUpdateRes'
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Internal server error
+ */
 
 applicationsRouter.patch('/update/:id', authenticateToken, async (req, res, next) => {
     try {
