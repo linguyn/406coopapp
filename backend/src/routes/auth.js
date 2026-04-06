@@ -103,8 +103,8 @@ authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
  * @swagger
  * /api/auth/logout:
  *   post:
- *     summary:
- *     description:
+ *     summary: Logs out an active user
+ *     description: Clears the refresh token cookie in the user's browser to prevent them from accessing any more app services
  *     tags:
  *       - Auth
  *     parameters:
