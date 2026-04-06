@@ -41,9 +41,7 @@ export const userRouter = express.Router();
  *         schema:
  *           type: string
  *           example: student
- *           enum:
- *             - student
- *             - supervisor
+ *           enum: [student, supervisor]
  *         description: Specifies which type of users to get 
  *         required: true
  *       - in: query
@@ -52,20 +50,7 @@ export const userRouter = express.Router();
  *           type: string
  *           example: email
  *           default: firstName
- *           enum:
- *             - firstName
- *             - lastName
- *             - email
- *             - createdAt
- *             - applications
- *             - status
- *             - studentId
- *             - program
- *             - year
- *             - gpa
- *             - company
- *             - status
- *             - jobTitle
+ *           enum: [firstName, lastName, email, createdAt, applications, status, studentId, program, year, gpa, company, status, jobTitle]
  *         description: Sort the list of users based on this value
  *       - in: query
  *         name: searchStr
@@ -80,26 +65,14 @@ export const userRouter = express.Router();
  *           type: string
  *           example: desc
  *           default: asc
- *           enum:
- *             - asc
- *             - desc
+ *           enum: [asc, desc]
  *         description: Specifies the list sorting order
  *       - in: query
  *         name: status
  *         schema:
  *           type: string
  *           example: applied
- *           enum:
- *             - applying
- *             - applied
- *             - offered
- *             - rejected
- *             - waitlisted
- *             - probation
- *             - searching
- *             - placed
- *             - active
- *             - inactive
+ *           enum: [applying, applied, offered, rejected, waitlisted, probation, searching, placed, active, inactive]
  *         description: Filters for an exact status (active and inactive belong to supervisor)
  *       - in: query
  *         name: program
@@ -124,6 +97,7 @@ export const userRouter = express.Router();
  *         schema:
  *           type: number
  *           example: 2
+ *           enum: [1, 2, 3, 4, 5]
  *         description: Filters for an exact year (belongs to student/applicant)
  *       - in: query
  *         name: location 
@@ -136,6 +110,7 @@ export const userRouter = express.Router();
  *         schema:
  *           type: boolean
  *           example: false
+ *           enum: [true, false]
  *         description: Filters for applicant or student (belongs to student/applicant)
  *       - in: query
  *         name: jobTitle
@@ -272,13 +247,14 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
  *         schema:
  *           type: string
  *           example: student
+ *           enum: [student, supervisor, coordinator]
  *         required: true
- *         description: The user's role
+ *         description: The role of the user whose fields are being updated
  *       - in: path
  *         name: userId
  *         schema:
  *         required: true
- *         description: The user's id
+ *         description: The object id of the user whose fields are being updated
  *     requestBody:
  *       required: true
  *       content:
@@ -288,7 +264,8 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
  *               - $ref: '#/components/schemas/StudentSelfUpdateReq'
  *               - $ref: '#/components/schemas/SupervisorSelfUpdateReq'
  *               - $ref: '#/components/schemas/CoordinatorSelfUpdateReq'
- *               - $ref: '#/components/schemas/CoordinatorOtherUpdateReq'
+ *               - $ref: '#/components/schemas/CoordinatorOnStudentUpdateReq'
+ *               - $ref: '#/components/schemas/CoordinatorOnSupervisorUpdateReq'
  *           examples:
  *             studentSelf:
  *               $ref: '#/components/examples/StudentSelfUpdateReqEx'
@@ -296,8 +273,10 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
  *               $ref: '#/components/examples/SupervisorSelfUpdateReqEx'
  *             coordinatorSelf:
  *               $ref: '#/components/examples/CoordinatorSelfUpdateReqEx'
- *             coordinatorOther:
- *               $ref: '#/components/examples/CoordinatorOtherUpdateReqEx'
+ *             coordinatorOnStudent:
+ *               $ref: '#/components/examples/CoordinatorOnStudentUpdateReqEx'
+ *             coordinatorOnSupervisor:
+ *               $ref: '#/components/examples/CoordinatorOnSupervisorUpdateReqEx'
  *     responses:
  *       200:
  *         content:
@@ -322,25 +301,11 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
  *         description: Internal server error
  */
 
-userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => { //change this path to remove :userId as it would not be known to
+userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => {
     try {
         const { role, userId } = req.params;
 
-        let Model;
-
-        switch (role.toLowerCase()) {
-            case 'student':
-                Model = Student;
-                break;
-            case 'coordinator':
-                Model = Coordinator;
-                break;
-            case 'supervisor':
-                Model = Supervisor;
-                break;
-            default:
-                throw new HTTPError("Invalid type", 422);
-        }
+        const Model = getModelByRole(role);
 
         const updatedInfo = await Model.findByIdAndUpdate(
             userId,
@@ -386,6 +351,7 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
  *         schema:
  *           type: string
  *           example: student
+ *           enum: [student, supervisor, coordinator]
  *         required: true
  *         description: The user's role
  *       - in: path
@@ -436,7 +402,7 @@ userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
             const applications = await Application.find({assignedStudent: user._id});
             const progressForms = await ProgressForm.find({assignedStudent: user._id});
             const reflections = await Reflection.find({assignedStudent: user._id});
-            return res.status(200).json({user: sanitizedUser, applications, progressForms, reflections});
+            return res.status(200).json({user: sanitizedUser, applications : applications, progressForms : progressForms, reflections: reflections});
         }
         
         return res.status(200).json(sanitizedUser);
@@ -446,21 +412,7 @@ userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
 }); 
 
 export async function getUserByEmail(role, email) { //Can be moved to database services at a later time. Make sure to update all imports if moved. 
-    let Model;
-
-    switch(role.toLowerCase()){
-        case 'student':
-            Model = Student;
-            break;
-        case 'coordinator':
-            Model = Coordinator;
-            break;
-        case 'supervisor':
-            Model = Supervisor;
-            break;
-        default:
-            return false;
-    }
+    const Model = getModelByRole(role);
     
     const user = await Model.findOne({email: email});
     return user;
@@ -486,20 +438,8 @@ userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, r
         const { role } = req.params;
         const { email } = req.body;
 
-        let Model;
-        switch(role.toLowerCase()){
-            case 'student':
-                Model = Student;
-                break;
-            case 'coordinator':
-                Model = Coordinator;
-                break;
-            case 'supervisor':
-                Model = Supervisor;
-                break;
-            default:
-                throw new HTTPError("Invalid type", 400);
-        }
+        const Model = getModelByRole(role);
+
         const user = await Model.findOneAndDelete({email: email});
 
         if (!user) {

@@ -144,20 +144,6 @@ export function isValidLogin(email, password) {
 }
 
 /**
- * @function isValidStatusUpdate
- * @description Validates status fields
- * @param {String} status - new status
- * @param {String} callerId - calling user id
- * @returns {boolean} True if all parameters are valid
- */
-
-export function isValidStatusUpdate(role, status) { //ALEX REMEMEBER TO UPDATE THIS SO THAT IT CHECKS FOR ALL STATUSES, NOT JUST STUDENT STATUSES.
-    if (role === "student") { return USER_DETAILS.studentStatuses.includes(status); }
-    else if (role === "supervisor") { return USER_DETAILS.supervisorStatuses.includes(status); } 
-    return false;
-}
-
-/**
  * @function hasValidReason
  * @description Validates reason to apply (150 words max)
  * @param {String} reason - the reason to apply
