@@ -26,8 +26,12 @@ export async function validateLogin(req, res, next) {
 
 export async function  validatePermissions(req, res, next) {
     const user = req.user;
-    if (user.role === USER_DETAILS.roles.coordinator || user.role === USER_DETAILS.roles.admin) { next(); }
-    else { throw new HTTPError("Invalid user permissions.", 403); }
+    try {
+        if (user.role === USER_DETAILS.roles.coordinator || user.role === USER_DETAILS.roles.admin) { next(); }
+        else { throw new HTTPError("Invalid user permissions.", 403); }
+    } catch(error) {
+        next(error);
+    }
 }
 
 export async function validateRegister(req, res, next) {
@@ -46,16 +50,16 @@ export async function validateRegister(req, res, next) {
 }
 
 const baseFields = ["firstName", "lastName", "email", "password"];
-const studentFields = [...baseFields, "location", "year", "gpa", "resume", "coverLetter", "transcript", "reflection"];
-const supervisorFields = [...baseFields, "location", "interns", "company"];
+const studentFields = [...baseFields, "academics", "termActivity", "location"];
+const supervisorFields = [...baseFields, "location", "interns", "company", "jobTitle"];
 
 const allowedUpdates = {
     student: studentFields,
     supervisor: supervisorFields,
     coordinator: [...baseFields],
-    coordinatorOther: [...studentFields, ...supervisorFields, "isApplicant", "status"],
+    coordinatorOther: [...studentFields, ...supervisorFields, "isApplicant", "status", "support"],
     admin: [...baseFields],
-    adminOther: [...studentFields, ...supervisorFields, "isApplicant", "status"]
+    adminOther: [...studentFields, ...supervisorFields, "isApplicant", "status", "support"]
 }
 
 function isValidCaller(callerRole, userRole) {
