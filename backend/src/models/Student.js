@@ -60,10 +60,10 @@ export default Student;
  *               $ref: '#/components/schemas/TermActivity'
  *             support:
  *               $ref: '#/components/schemas/Support'
- *             isApplicant: { type: boolean, example: true }
+ *             isApplicant: { type: boolean, example: true, enum: [true, false] }
  *             studentId: { type: string, example: 123456789 }
  *             location: { type: string, example: Xi'an }
- *             status: { type: string, example: applied }
+ *             status: { type: string, example: applied, enum: ["applying", "applied", "offered", "rejected", "waitlisted", "probation", "searching", "placed"] }
  *         - $ref: '#/components/schemas/StudentStats'
  *     StudentRegisterReq:
  *       required: [studentId]
@@ -89,9 +89,9 @@ export default Student;
  *                   $ref: '#/components/schemas/TermActivity'
  *                 support:
  *                   $ref: '#/components/schemas/Support'
- *                 isApplicant: { type: boolean, example: false }
+ *                 isApplicant: { type: boolean, example: false, enum: [true, false] }
  *                 studentId: { type: string, example: 123456789 }
- *                 status: { type: string, example: searching }
+ *                 status: { type: string, example: searching, enum: ["applying", "applied", "offered", "rejected", "waitlisted", "probation", "searching", "placed"] }
  *             - $ref: '#/components/schemas/StudentStats'
  *     StudentRegisterRes:
  *       type: object
@@ -134,7 +134,7 @@ export default Student;
  *           required: [program, year, gpa]
  *           properties:
  *             program: { type: string, example: Computer Science }
- *             year: { type: number, example: 4 }
+ *             year: { type: number, example: 4, enum: [1, 2, 3, 4, 5]}
  *             gpa: { type: string, example: 2.33 }
  *         documents:
  *           type: object
@@ -147,6 +147,27 @@ export default Student;
  *       type: array
  *       items:
  *         $ref: '#/components/schemas/ApplicantListItemRes'
+ *     StudentSelfUpdateReq:
+ *       allOf:
+ *         - $ref: '#/components/schemas/UserSelfUpdateReq'
+ *         - type: object
+ *           properties:
+ *             location: { type: string, example: Hello }
+ *             academics:
+ *               type: object
+ *               required: [program, year, gpa]
+ *               properties:
+ *                 program: { type: string, example: Computer Science }
+ *                 year: { type: number, example: 4, enum: [1, 2, 3, 4, 5] }
+ *                 gpa: { type: string, example: 2.33 }
+ *             documents:
+ *               type: object
+ *               required: [resume, coverLetter, transcript]
+ *               properties:
+ *                 resume: { type: string, example: N/A }
+ *                 coverLetter: { type: string, example: N/A }
+ *                 transcript: { type: string, example: N/A }
+ *                 reflection: { type: string, example: N/A }
  *     TermActivity:
  *       type: object
  *       required: [applications, interviews, applied, interviewed, shortlisted, workTerms, startTerm]
@@ -156,7 +177,7 @@ export default Student;
  *         applied: { type: number, example: 1000 }
  *         interviewed: { type: number, example: 0 }
  *         shortlisted: { type: number, example: 2200 }
- *         workTerms: { type: number, example: 2 }
+ *         workTerms: { type: number, example: 2, enum: [1, 2, 3, 4, 5] }
  *         startTerm: { type: string, example: Summer 2025 }
  *     Documents:
  *       type: object
@@ -171,7 +192,7 @@ export default Student;
  *       required: [program, year, gpa, department]
  *       properties:
  *         program: { type: string, example: Computer Science }
- *         year: { type: number, example: 2 }
+ *         year: { type: number, example: 2, enum: [1, 2, 3, 4, 5] }
  *         gpa: { type: string, example: 3.23 }
  *         department: { type: string, example: Faculty of Science }
  *     StudentStats:
@@ -197,4 +218,6 @@ export default Student;
  *       value: { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} }
  *     ApplicantListResEx:
  *       value: [ { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} }, { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} }, { studentId: "123456789", academics: { program: Architectural Science, year: 2, gpa: 4.5 }, documents: { resume: N/A, coverLetter: N/A, transcript: N/A} } ]
+ *     StudentSelfUpdateReqEx:
+ *       value: { firstName: "Jin-Woo", lastName: "Sung", email: "jinwoo@thegreatest.com", password: "password1234", location: "Seoul", academics: { program: "Computer Science", year: 4, gpa: "3.98"}, documents: { resume: "resume_v1.pdf", coverLetter: "cl_final.pdf", transcript: "official_transcript.pdf", reflection: "internship_reflection.pdf" }}
  */

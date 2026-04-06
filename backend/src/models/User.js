@@ -32,6 +32,13 @@
  *         - type: object
  *           properties:
  *             fullName: { type: string, example: Bollocks McGee }
+ *     UserSelfUpdateReq:
+ *       type: object
+ *       properties:
+ *         firstName: { type: string, example: Jin-Woo }
+ *         lastName: { type: string, example: Sung }
+ *         email: { type: string, example: jinwoo@thegreatest.com }
+ *         password: { type: string, example: password123 }
  *     Support:
  *       required: [facultyAdvisor, coordinators]
  *       type: object

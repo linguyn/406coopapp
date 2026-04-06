@@ -21,12 +21,13 @@ export const progressSubmit = async (progressData) => {
 }
 
 
-export const getApplication = async (studentEmail) => {
+export const getStudent = async (studentEmail) => {
     const res = await api.get(`/user/student/${studentEmail}`, { withCredentials: true });
     return res;
 }
 
 
-export const updateApplication = async (updatedData) => {
-    const res = await api.patch()
+export const updateProgress = async (id, progressData) => {
+    const res = await api.patch(`progress-forms/update/${id}`, progressData, {withCredentials: true});
+    return res;
 }

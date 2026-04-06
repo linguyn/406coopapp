@@ -10,6 +10,7 @@ import ProgressForm from '../models/ProgressForm.js';
 import Reflection from '../models/Reflection.js';
 import { UserListItemResponse } from '../response-classes/UserListItemResponse.js';
 import { UserResponse } from '../response-classes/UserResponse.js';
+import { HTTPError } from '../errors.js'
 
 export const userRouter = express.Router();
 
@@ -40,9 +41,7 @@ export const userRouter = express.Router();
  *         schema:
  *           type: string
  *           example: student
- *           enum:
- *             - student
- *             - supervisor
+ *           enum: [student, supervisor]
  *         description: Specifies which type of users to get 
  *         required: true
  *       - in: query
@@ -51,20 +50,7 @@ export const userRouter = express.Router();
  *           type: string
  *           example: email
  *           default: firstName
- *           enum:
- *             - firstName
- *             - lastName
- *             - email
- *             - createdAt
- *             - applications
- *             - status
- *             - studentId
- *             - program
- *             - year
- *             - gpa
- *             - company
- *             - status
- *             - jobTitle
+ *           enum: [firstName, lastName, email, createdAt, applications, status, studentId, program, year, gpa, company, status, jobTitle]
  *         description: Sort the list of users based on this value
  *       - in: query
  *         name: searchStr
@@ -79,26 +65,14 @@ export const userRouter = express.Router();
  *           type: string
  *           example: desc
  *           default: asc
- *           enum:
- *             - asc
- *             - desc
+ *           enum: [asc, desc]
  *         description: Specifies the list sorting order
  *       - in: query
  *         name: status
  *         schema:
  *           type: string
  *           example: applied
- *           enum:
- *             - applying
- *             - applied
- *             - offered
- *             - rejected
- *             - waitlisted
- *             - probation
- *             - searching
- *             - placed
- *             - active
- *             - inactive
+ *           enum: [applying, applied, offered, rejected, waitlisted, probation, searching, placed, active, inactive]
  *         description: Filters for an exact status (active and inactive belong to supervisor)
  *       - in: query
  *         name: program
@@ -123,6 +97,7 @@ export const userRouter = express.Router();
  *         schema:
  *           type: number
  *           example: 2
+ *           enum: [1, 2, 3, 4, 5]
  *         description: Filters for an exact year (belongs to student/applicant)
  *       - in: query
  *         name: location 
@@ -135,6 +110,7 @@ export const userRouter = express.Router();
  *         schema:
  *           type: boolean
  *           example: false
+ *           enum: [true, false]
  *         description: Filters for applicant or student (belongs to student/applicant)
  *       - in: query
  *         name: jobTitle
@@ -179,9 +155,27 @@ userRouter.get('/list', authenticateToken, validateListRequest, async (req, res,
         const Model = getModelByRole(role);
         const filteredSortedUsers = await Model.find(filterQuery).sort({ [sortBy] : order });
 
-        const sanitizedUsers = filteredSortedUsers.map((user) => {
-            return UserListItemResponse.createUserListItemResponse(user);
+        const userPromises = filteredSortedUsers.map(async (user) => {
+            const sanitizedUser = UserListItemResponse.createUserListItemResponse(user);
+
+            if (user.role !== "student") {
+                return {
+                    user: sanitizedUser
+                }
+            } else {
+                const applications = await Application.find({assignedStudent: user._id});
+                const progressForms = await ProgressForm.find({assignedStudent: user._id});
+                const reflections = await Reflection.find({assignedStudent: user._id});
+                return {
+                    user: sanitizedUser, 
+                    applications : applications, 
+                    progressForms : progressForms, 
+                    reflections: reflections
+                };
+            }
         });
+
+        const sanitizedUsers = await Promise.all(userPromises);
         
         return res.status(200).json(sanitizedUsers);
     } catch (error) {
@@ -247,7 +241,7 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
 }
 
 /**
- * @api {PATCH} - /api/user/:role/:id
+ * @api {PATCH} - /api/user/:role/:userId
  * @description - Updates a user's information
  * @param id - Student id
  * @success {200} {Object} - Returns the updated student information
@@ -257,25 +251,79 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
  * @error {500} {Object} - Internal server error
  */
 
-userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => { //change this path to remove :userId as it would not be known to
+/**
+ * @swagger
+ * /api/user/{role}/{userId}:
+ *   patch:
+ *     summary: Updates an existing user's information
+ *     description: Finds a user by role and id and updates the fields specified
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: path
+ *         name: role
+ *         schema:
+ *           type: string
+ *           example: student
+ *           enum: [student, supervisor, coordinator]
+ *         required: true
+ *         description: The role of the user whose fields are being updated
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *         required: true
+ *         description: The object id of the user whose fields are being updated
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             oneOf:
+ *               - $ref: '#/components/schemas/StudentSelfUpdateReq'
+ *               - $ref: '#/components/schemas/SupervisorSelfUpdateReq'
+ *               - $ref: '#/components/schemas/CoordinatorSelfUpdateReq'
+ *               - $ref: '#/components/schemas/CoordinatorOnStudentUpdateReq'
+ *               - $ref: '#/components/schemas/CoordinatorOnSupervisorUpdateReq'
+ *           examples:
+ *             studentSelf:
+ *               $ref: '#/components/examples/StudentSelfUpdateReqEx'
+ *             supervisorSelf:
+ *               $ref: '#/components/examples/SupervisorSelfUpdateReqEx'
+ *             coordinatorSelf:
+ *               $ref: '#/components/examples/CoordinatorSelfUpdateReqEx'
+ *             coordinatorOnStudent:
+ *               $ref: '#/components/examples/CoordinatorOnStudentUpdateReqEx'
+ *             coordinatorOnSupervisor:
+ *               $ref: '#/components/examples/CoordinatorOnSupervisorUpdateReqEx'
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/StudentRes'
+ *                 - $ref: '#/components/schemas/SupervisorRes'
+ *                 - $ref: '#/components/schemas/CoordinatorRes'
+ *             examples:
+ *               student:
+ *                 $ref: '#/components/examples/StudentResEx'
+ *               supervisor:
+ *                 $ref: '#/components/examples/SupervisorResEx'
+ *               coordinator:
+ *                 $ref: '#/components/examples/CoordinatorResEx'
+ *       400:
+ *         description: Invalid role
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+
+userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => {
     try {
         const { role, userId } = req.params;
 
-        let Model;
-
-        switch (role.toLowerCase()) {
-            case 'student':
-                Model = Student;
-                break;
-            case 'coordinator':
-                Model = Coordinator;
-                break;
-            case 'supervisor':
-                Model = Supervisor;
-                break;
-            default:
-                return res.status(400).json({ message: "Invalid type" });
-        }
+        const Model = getModelByRole(role);
 
         const updatedInfo = await Model.findByIdAndUpdate(
             userId,
@@ -286,26 +334,22 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
             }
         );
         
-        // TODO: return a cleaned version of updatedInfo
+        const sanitizedUser = UserResponse.createUserResponse(updatedInfo);
 
         if (!updatedInfo) {
-            return res.status(404).json({ message: "User not found" });
+            throw new HTTPError("User not found", 404);
         }
         return res.status(200).json({
-            user : updatedInfo
+            user : sanitizedUser
         });
     } catch (error) {
-        console.error("PATCH Route Error:", error);
-        return res.status(500).json({
-            error: "something went wrong in userRouter.patch",
-            details: error.message
-        });
+        next(error);
     }
 });
 
 
 /**
- * @api {GET} - /api/user/:id
+ * @api {GET} - /api/user/:role/:email
  * @description Retrieves the user's information
  * @param id - User's id
  * @success {200} {Object} - Returns the user's information
@@ -325,6 +369,7 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
  *         schema:
  *           type: string
  *           example: student
+ *           enum: [student, supervisor, coordinator]
  *         required: true
  *         description: The user's role
  *       - in: path
@@ -367,7 +412,7 @@ userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
 
         const user = await getUserByEmail(role, email);
 
-        if (!user) return res.status(404).json({message: "User not found"});
+        if (!user) throw new HTTPError("User not found", 404);
 
         const sanitizedUser = UserResponse.createUserResponse(user);
         
@@ -375,33 +420,17 @@ userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
             const applications = await Application.find({assignedStudent: user._id});
             const progressForms = await ProgressForm.find({assignedStudent: user._id});
             const reflections = await Reflection.find({assignedStudent: user._id});
-            return res.status(200).json({user: sanitizedUser, applications, progressForms, reflections});
+            return res.status(200).json({user: sanitizedUser, applications : applications, progressForms : progressForms, reflections: reflections});
         }
         
         return res.status(200).json(sanitizedUser);
     } catch(error){
-        return res.status(500).json({error: "something went wrong in userRouter.get",
-            details: error.message
-        });
+        next(error);
     }
 }); 
 
 export async function getUserByEmail(role, email) { //Can be moved to database services at a later time. Make sure to update all imports if moved. 
-    let Model;
-
-    switch(role.toLowerCase()){
-        case 'student':
-            Model = Student;
-            break;
-        case 'coordinator':
-            Model = Coordinator;
-            break;
-        case 'supervisor':
-            Model = Supervisor;
-            break;
-        default:
-            return false;
-    }
+    const Model = getModelByRole(role);
     
     const user = await Model.findOne({email: email});
     return user;
@@ -427,31 +456,16 @@ userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, r
         const { role } = req.params;
         const { email } = req.body;
 
-        let Model;
-        switch(role.toLowerCase()){
-            case 'student':
-                Model = Student;
-                break;
-            case 'coordinator':
-                Model = Coordinator;
-                break;
-            case 'supervisor':
-                Model = Supervisor;
-                break;
-            default:
-                return res.status(400).json({message: "Invalid type"});
-        }
+        const Model = getModelByRole(role);
+
         const user = await Model.findOneAndDelete({email: email});
 
-        if (!user) 
-            return res.status(404).json({message: "User has already been deleted or does not exist."});
+        if (!user) {
+            throw new HTTPError("User has already been deleted or does not exist.", 404);
+        }
 
         return res.status(200).json({message: "User deleted successfully!", deletedUser: user});
-    
     } catch(error){
-        console.error("DELETE Route Error:", error);
-        return res.status(500).json({error: "something went wrong in userRouter.delete",
-            details: error.message
-        });
+        next(error);
     }
 });

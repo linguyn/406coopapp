@@ -59,6 +59,22 @@ export default Coordinator;
  *         totalSeeking: { type: number, example: 676767 }
  *         totalInterviewing: { type: number, example: 676767 }
  *         totalPlaced: { type: number, example: 676767 }
+ *     CoordinatorOnStudentUpdateReq:
+ *       allOf:
+ *         - $ref: '#/components/schemas/StudentSelfUpdateReq'
+ *         - type: object
+ *           properties:
+ *             isApplicant: { type: Boolean, example: true }
+ *             status: { type: string, example: applied }
+ *     CoordinatorOnSupervisorUpdateReq:
+ *       allOf:
+ *         - $ref: '#/components/schemas/SupervisorSelfUpdateReq'
+ *         - type: object
+ *           properties:
+ *             status: { type: string, example: inactive }
+ *     CoordinatorSelfUpdateReq:
+ *       allOf:
+ *         - $ref: '#/components/schemas/UserSelfUpdateReq'
  *   examples:
  *     CoordinatorRegisterReqEx:
  *       value: { role: coordinator, email: supevisor@examplee.com, password: password123, passwordAgain: password123, firstName: Jin-Woo, lastName: Sung }
@@ -68,4 +84,10 @@ export default Coordinator;
  *       value: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, fullName: Jin-Woo Sung, dateCreated : "DNE", id : "238945789237457817", totalStudents: 67676, totalActive: 67676, totalPendingApproval: 67676, totalSeeking: 67676, totalInterviewing: 67676, totalPlaced: 67 }
  *     CoordinatorLoginResEx:
  *       value: { accessToken: AKDJSNAKSJFBkjbskdjBFK, user: { role: student, email: jinwoo@thegreatest.com, firstName: Jin-Woo, lastName: Sung, fullName: Jin-Woo Sung, dateCreated : "DNE", id : "238945789237457817", totalStudents: 67676, totalActive: 67676, totalPendingApproval: 67676, totalSeeking: 67676, totalInterviewing: 67676, totalPlaced: 67 } }
+ *     CoordinatorSelfUpdateReqEx:
+ *       value: { firstName: "Jin-Woo", lastName: "Sung", email: "jinwoo@thegreatest.com", password: "password1234"}
+ *     CoordinatorOnStudentUpdateReqEx:
+ *       value: { isApplicant: false, status: applied, firstName: "Jin-Woo", lastName: "Sung", email: "jinwoo@thegreatest.com", password: "password1234", location: "Seoul", academics: { program: "Computer Science", year: 4, gpa: "3.98"}, documents: { resume: "resume_v1.pdf", coverLetter: "cl_final.pdf", transcript: "official_transcript.pdf", reflection: "internship_reflection.pdf" } }
+ *     CoordinatorOnSupervisorUpdateReqEx:
+ *       value: { status: inactive, firstName: "Jin-Woo", lastName: "Sung", email: "jinwoo@thegreatest.com", password: "password1234", location: "Seoul", interns: [Gef, Bethany, pola], company: Google }
  */

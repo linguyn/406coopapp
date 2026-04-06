@@ -36,7 +36,7 @@ function Application() {
                 portfolioLink: github
             });
 
-            if (response.status == 201 || response){
+            if (response.status == 201){
                 console.log("Application submitted successfully: ", response.data);
                 navigate('/applicant/thank-you-page'); 
             }

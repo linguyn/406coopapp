@@ -1,6 +1,6 @@
 import { HTTPError } from "../errors.js";
 import { USER_DETAILS } from "../constants.js";
-import { isValidStatusUpdate, isValidLogin } from "../validate-services.js";
+import { isValidLogin } from "../validate-services.js";
 import { VALIDATE_OPERATIONS } from "../auth-services.js";
 import { getUserByEmail, getUserByEmailAllRoles } from "../routes/user.js";
 
@@ -26,8 +26,12 @@ export async function validateLogin(req, res, next) {
 
 export async function  validatePermissions(req, res, next) {
     const user = req.user;
-    if (user.role === USER_DETAILS.roles.coordinator || user.role === USER_DETAILS.roles.admin) { next(); }
-    else { throw new HTTPError("Invalid user permissions.", 403); }
+    try {
+        if (user.role === USER_DETAILS.roles.coordinator || user.role === USER_DETAILS.roles.admin) { next(); }
+        else { throw new HTTPError("Invalid user permissions.", 403); }
+    } catch(error) {
+        next(error);
+    }
 }
 
 export async function validateRegister(req, res, next) {
@@ -53,30 +57,29 @@ const allowedUpdates = {
     student: studentFields,
     supervisor: supervisorFields,
     coordinator: [...baseFields],
-    coordinatorOther: [...studentFields, ...supervisorFields, "isApplicant"],
+    coordinatorOther: [...studentFields, ...supervisorFields, "isApplicant", "status"],
     admin: [...baseFields],
-    adminOther: [...studentFields, ...supervisorFields, "isApplicant"]
+    adminOther: [...studentFields, ...supervisorFields, "isApplicant", "status"]
 }
 
 function isValidCaller(callerRole, userRole) {
-    if (callerRole === USER_DETAILS.roles.coordinator || callingUser.role === USER_DETAILS.roles.admin) { return true; }
+    if (callerRole === USER_DETAILS.roles.coordinator || callerRole.role === USER_DETAILS.roles.admin) { return true; }
     return callerRole === userRole;
 }
 
 export function validateUserUpdate(req, res, next) {
     const callingUser = req.user;
     const callingUserRole = callingUser.role;
-    const { userRole, userId } = req.params;
+    const { role, userId } = req.params;
     const reqFields = req.body;
 
-    if (!userRole || !userId) { throw new HTTPError("Missing parameters role or userId", 422); }
+    if (!role || !userId) { throw new HTTPError("Missing parameters role or userId", 422); }
 
     let roleScope = callingUserRole;
-
     try {
-        if (!isValidCaller(callingUserRole, userRole)) { throw new HTTPError("Missing permissions to update user", 403); }
+        if (!isValidCaller(callingUserRole, role)) { throw new HTTPError("Missing permissions to update user", 403); }
 
-        if (callingUserRole !== userRole) {
+        if (callingUserRole !== role) {
             if (callingUserRole === "coordinator") {
                 roleScope = "coordinatorOther";
             } else if (callingUserRole === "admin") {
@@ -86,11 +89,6 @@ export function validateUserUpdate(req, res, next) {
 
         let fieldsToUpdate = {};
 
-        // update for general user (universal for each user type) and then after for the specific role scope
-        allowedUpdates[user].forEach((field) => {
-            const reqFieldsVal = reqFields[field];
-            if (reqFieldsVal !== null) { fieldsToUpdate[field] = reqFieldsVal; }
-        });
         allowedUpdates[roleScope].forEach((field) => {
             const reqFieldsVal = reqFields[field];
             if (reqFieldsVal !== null) { fieldsToUpdate[field] = reqFieldsVal; }

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { applicationSubmit } from '../../services/applicationService';
 import { useAuth } from '../../context/authContext';
-import { progressSubmit, getApplication } from '../../services/formServices';
+import { progressSubmit, getStudent, updateProgress } from '../../services/formServices';
 
 
 function StudentProgress() {
@@ -22,25 +22,21 @@ function StudentProgress() {
 
     const navigate = useNavigate();
 
-
-    const handleUpdate = (value) => {
-        if (value) {
-            
-        }
-
-    }
-        
-        
-
-
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setPageError('');
 
         try {
-            const response = await progressSubmit({
+            const res = await getStudent(schoolEmail);
+            const data = res.data
+
+            const id = data?.progressForms?.[0]?._id;
+
+            let response;
+
+            if (!data?.progressForms?.length)
+            {
+                response = await progressSubmit({
                 studentName,
                 supervisorName,
                 company,
@@ -49,11 +45,32 @@ function StudentProgress() {
                 stairs,
                 employable,
                 schoolEmail: schoolEmail
-            });
+                });
+            }   else {
+                response = await updateProgress(id, {
+                studentName,
+                supervisorName,
+                company,
+                jobTitle,
+                stars,
+                stairs,
+                employable,
+                schoolEmail: schoolEmail
+                });
+            }
 
-            if (response.status === 201 || response) {
+            if (response?.status === 201 || response?.status === 200) {
+
+                if (response?.status === 201) {
                 console.log('Progress form submitted successfully:', response.data);
                 navigate('/supervisor/thank-you-page');
+                }
+
+                if (response?.status === 200) {
+                console.log('Progress form updated successfully:', response.data);
+                navigate('/supervisor/thank-you-page');
+                }
+
             }
         } catch (error) {
             const msg = error.response?.data?.message || error.message || 'Something went wrong';
@@ -160,9 +177,7 @@ function StudentProgress() {
                             <input
                                 type='text'
                                 value={schoolEmail}
-                                onChange={(e) => {setSchoolEmail(e.target.value)
-                                                  handleUpdate(e.target.value) 
-                                }}
+                                onChange={(e) => {setSchoolEmail(e.target.value)}}
                                 placeholder='Your response...'
                                 required
                             />
