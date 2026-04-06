@@ -12,7 +12,7 @@ import { getUserByEmail } from './user.js';
  * /api/progress-forms/submit:
  *   post:
  *     summary: Submits a progress form
- *     description: Saves a progress form to the database and associates it with its student
+ *     description: Saves a progress form to the database and associates it with its student (email must match)
  *     tags:
  *       - Documents
  *     requestBody:
@@ -65,10 +65,10 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
 
 /**
  * @swagger
- * /api/progress-forms/update/{id}:
+ * /api/progress-forms/update/{progressForm_id}:
  *   patch:
  *     summary: Updates a progress form
- *     description: Finds a progress form based on the user id and email, and updates and returns their progress form
+ *     description: Finds a progress form based on the progress form id and email, and updates and returns their progress form
  *     tags:
  *       - Documents
  *     parameters:

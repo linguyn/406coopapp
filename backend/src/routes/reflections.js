@@ -12,7 +12,7 @@ import { getUserByEmail } from './user.js';
  * /api/reflections/submit:
  *   post:
  *     summary: Submits a reflection
- *     description: Saves a reflection to the database and associates it with its student
+ *     description: Saves a reflection to the database and associates it with its student (email must match)
  *     tags:
  *       - Documents
  *     requestBody:
@@ -64,10 +64,10 @@ reflectionsRouter.post('/submit', authenticateToken, async (req, res, next) => {
 
 /**
  * @swagger
- * /api/reflections/update/{id}:
+ * /api/reflections/update/{reflection_id}:
  *   patch:
  *     summary: Updates a reflection
- *     description: Finds a reflection based on the user id and email, and updates and returns their reflection
+ *     description: Finds a reflection based on the reflection id and email, and updates and returns their reflection
  *     tags:
  *       - Documents
  *     parameters:
