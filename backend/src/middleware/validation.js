@@ -26,8 +26,12 @@ export async function validateLogin(req, res, next) {
 
 export async function  validatePermissions(req, res, next) {
     const user = req.user;
-    if (user.role === USER_DETAILS.roles.coordinator || user.role === USER_DETAILS.roles.admin) { next(); }
-    else { throw new HTTPError("Invalid user permissions.", 403); }
+    try {
+        if (user.role === USER_DETAILS.roles.coordinator || user.role === USER_DETAILS.roles.admin) { next(); }
+        else { throw new HTTPError("Invalid user permissions.", 403); }
+    } catch(error) {
+        next(error);
+    }
 }
 
 export async function validateRegister(req, res, next) {
