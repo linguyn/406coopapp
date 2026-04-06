@@ -110,7 +110,7 @@ function Application() {
                             <div id='apply-field-3'>
                                 <div className='apply-input-field-1'>
                                     <label>Are you eligible to work in Canada/have your work permit?</label>
-                                    <input type='checkbox' 
+                                    <input type='text' 
                                            value={String(permission)}
                                            onChange={(e) => {
                                                    const raw = e.target.value;

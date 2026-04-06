@@ -29,8 +29,8 @@ function Roles () {
                             className='roles-icon'/>
                         </div>
 
-                        <p>"Apply for co-op positions, track your internship progress, 
-                            and submit reflection reports."
+                        <p>Apply for co-op positions, track your internship progress, 
+                            and submit reflection reports
                         </p>
                     </div>
 
@@ -44,8 +44,8 @@ function Roles () {
                             className='roles-icon'/>
                         </div>
 
-                        <p>"Apply for co-op positions, track your internship progress, 
-                            and submit reflection reports."
+                        <p>Apply for co-op positions, track your internship progress, 
+                            and submit reflection reports
                         </p>
                     </div>
 

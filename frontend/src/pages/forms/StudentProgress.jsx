@@ -1,10 +1,11 @@
 import './StudentProgress.css';
 import AuthLayout from '../../components/auth-layout/AuthLayout';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { applicationSubmit } from '../../services/applicationService';
 import { useAuth } from '../../context/authContext';
-import { progressSubmit } from '../../services/formServices';
+import { progressSubmit, getApplication } from '../../services/formServices';
+
 
 function StudentProgress() {
     const [studentName, setStudentName] = useState('');
@@ -16,9 +17,23 @@ function StudentProgress() {
     const [employable, setEmployable] = useState('');
     const [schoolEmail, setSchoolEmail] = useState('');
     const [pageError, setPageError] = useState('');
+    const [formUpdate, setFormUpdate] = useState(false);    
     const { userData } = useAuth();
 
     const navigate = useNavigate();
+
+
+    const handleUpdate = (value) => {
+        if (value) {
+            
+        }
+
+    }
+        
+        
+
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,7 +53,7 @@ function StudentProgress() {
 
             if (response.status === 201 || response) {
                 console.log('Progress form submitted successfully:', response.data);
-                navigate('/student');
+                navigate('/supervisor/thank-you-page');
             }
         } catch (error) {
             const msg = error.response?.data?.message || error.message || 'Something went wrong';
@@ -131,8 +146,8 @@ function StudentProgress() {
                             <label>Is this student employable after their co-op term? Please briefly explain.</label>
                             <input
                                 type='text'
-                                value={schoolEmail}
-                                onChange={(e) => setSchoolEmail(e.target.value)}
+                                value={employable}
+                                onChange={(e) => setEmployable(e.target.value)}
                                 placeholder='Your response...'
                                 required
                             />
@@ -144,8 +159,10 @@ function StudentProgress() {
                             <label>Student Email</label>
                             <input
                                 type='text'
-                                value={employable}
-                                onChange={(e) => setEmployable(e.target.value)}
+                                value={schoolEmail}
+                                onChange={(e) => {setSchoolEmail(e.target.value)
+                                                  handleUpdate(e.target.value) 
+                                }}
                                 placeholder='Your response...'
                                 required
                             />

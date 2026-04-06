@@ -19,3 +19,14 @@ export const progressSubmit = async (progressData) => {
     const res = await api.post(`/progress-forms/submit`, progressData, { withCredentials: true });
     return res;
 }
+
+
+export const getApplication = async (studentEmail) => {
+    const res = await api.get(`/user/student/${studentEmail}`, { withCredentials: true });
+    return res;
+}
+
+
+export const updateApplication = async (updatedData) => {
+    const res = await api.patch()
+}
