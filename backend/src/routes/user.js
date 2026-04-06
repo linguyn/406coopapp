@@ -388,7 +388,7 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
  *         description: Internal server error
  */
 
-userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
+userRouter.get('/:role/:email', authenticateToken, async(req, res, next) =>{
     try{
         const { role, email } = req.params;
 
@@ -433,7 +433,7 @@ export async function getUserByEmailAllRoles(email) {
     return student || supervisor || coordinator || null;
 }
 
-userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res) => {
+userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res, next) => {
     try{
         const { role } = req.params;
         const { email } = req.body;

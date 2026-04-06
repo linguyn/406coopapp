@@ -85,6 +85,10 @@
     font-weight: 700;
 }
 
+.detailed-user-info-return h2:hover{
+    color:#0C49A6;
+    cursor: pointer;
+}
 
 .detailed-user-info-homepage img{
     width: 3rem;
@@ -115,7 +119,6 @@
     height: 60px;
     border-radius: 20px;
     color:white;
-    text-decoration: underline;
     font-size: 1.5rem;
 }
 
@@ -128,20 +131,31 @@
 
 .single-input input{
     width: 77%;
-    height: 4.7vh;
+    height: 5vh;
     margin-left: 2%;
     color:black;
     font-size: 0.8em;
     font-family: "Roboto", "Inter", Helvetica ;
     letter-spacing: -2%;
     color: #444E5E;
-    border-radius: 10px;
-    border: solid black 0.5 px;
+    border-radius: 5px;
+    border: solid black 0.2px;
+    box-shadow: 1px 1px 1px gray;
+    padding-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.single-input input:hover, .double-input input:hover{
+    filter: brightness(0.9);
+}
+
+.single-input input:focus, .double-input input:focus{
+    filter: brightness(1);
 }
 
 .double-input input{
     width: 13vw;
-    height: 4.5vh;
+    height: 5vh;
 }
 
 .double-input{
@@ -187,7 +201,6 @@
     font-size: 2rem;
     font-weight: bold;
     color:#444E5E;
-    text-decoration: underline;
 }
 
 .detatiled-user-info-accept-reject-buttons{
@@ -198,7 +211,7 @@
     margin-left: 5%;
 }
 
-.detailed-user-info-adjust-button{
+.detailed-user-info-adjust-button, .detailed-user-info-adjust-bigbutton{
     margin-left: 10%;
 }
 
@@ -210,14 +223,19 @@
     border: solid gray 1px;
 }
 
-.detatiled-user-info-accept-reject-buttons button:hover{
+.detatiled-user-info-accept-reject-buttons button:hover, .detailed-user-info-adjust-bigbutton:hover {
     color:white;
-    filter: brightness(1.2);
+    filter: brightness(1.3);
+    cursor:pointer;
 }
 .detatiled-user-info-accept-reject-buttons .detailed-user-info-accept-button {
-    background-color: #6BD15A;           
+    background-color: #2E6F40;           
 }
 
 .detatiled-user-info-accept-reject-buttons .detailed-user-info-reject-button {
-    background-color: #FB6188;         
+    background-color: #d14249;
+}
+
+.detatiled-user-info-accept-reject-buttons .detailed-user-info-accept-button:hover, .detatiled-user-info-accept-reject-buttons .detailed-user-info-reject-button:hover{
+    cursor:pointer;
 }

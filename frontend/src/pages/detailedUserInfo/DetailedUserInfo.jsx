@@ -50,7 +50,7 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
     //titles
     const listTypeMap = new Map()
     listTypeMap.set("applicant", "Applicant List");
-    listTypeMap.set("coop-student", "Co-op Student List");
+    listTypeMap.set("coop-student", "Student List");
     listTypeMap.set("supervisor", "Supervisor List");
 
     const listTypeMap2 = new Map()
@@ -66,7 +66,6 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
     const listTitle = listTypeMap.get(listType);
     const listTitle2 = listTypeMap2.get(listType);
     const listTitle3 = listTypeMap3.get(listType);
-    console.log(id);
 
     //function to accept applicant
     const handleAccept = async () => {
@@ -266,7 +265,7 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
                         
                         
                         {(listType !== "applicant"  || status === "rejected")&& (
-                            <button className='detailed-user-info-adjust-button' onClick={handleUpdate}>Adjust</button>
+                            <button className='detailed-user-info-adjust-bigbutton' onClick={handleUpdate}>Adjust</button>
                         )}
 
                         {(listType === "applicant" && status !== "rejected" && status !== "accepted") && (
