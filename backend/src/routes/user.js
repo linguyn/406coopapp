@@ -158,21 +158,16 @@ userRouter.get('/list', authenticateToken, validateListRequest, async (req, res,
         const userPromises = filteredSortedUsers.map(async (user) => {
             const sanitizedUser = UserListItemResponse.createUserListItemResponse(user);
 
-            if (user.role !== "student") {
-                return {
-                    user: sanitizedUser
-                }
-            } else {
+            if (user.role === "student") {
                 const applications = await Application.find({assignedStudent: user._id});
                 const progressForms = await ProgressForm.find({assignedStudent: user._id});
                 const reflections = await Reflection.find({assignedStudent: user._id});
-                return {
-                    user: sanitizedUser, 
-                    applications : applications, 
-                    progressForms : progressForms, 
-                    reflections: reflections
-                };
+                sanitizedUser.applications = applications;
+                sanitizedUser.progressForms = progressForms;
+                sanitizedUser.reflections = reflections;
             }
+            
+            return sanitizedUser;
         });
 
         const sanitizedUsers = await Promise.all(userPromises);
@@ -406,7 +401,7 @@ userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async 
  *         description: Internal server error
  */
 
-userRouter.get('/:role/:email', authenticateToken, async(req, res) =>{
+userRouter.get('/:role/:email', authenticateToken, async(req, res, next) =>{
     try{
         const { role, email } = req.params;
 
@@ -474,7 +469,7 @@ export async function getUserByEmailAllRoles(email) {
  *             type: object
  *             required: [email]
  *             properties:
- *               email: { type: string, example: something@satisfies.com}
+ *               email: { type: string, example: something@poop.com}
  *     responses: 
  *       200:
  *         description: Successfully deleted the user
@@ -498,7 +493,7 @@ export async function getUserByEmailAllRoles(email) {
  *         description: Internal server error
  */
 
-userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res) => {
+userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res, next) => {
     try{
         const { role } = req.params;
         const { email } = req.body;
