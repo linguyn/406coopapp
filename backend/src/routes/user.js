@@ -180,6 +180,9 @@ userRouter.get('/list', authenticateToken, validateListRequest, async (req, res,
 
 export function getModelByRole(role) {
     let Model;
+    if (!role) {
+        throw new HTTPError("Please enter a role", 422);
+    }
     switch(role.toLowerCase()){
         case 'student':
             Model = Student;
@@ -191,7 +194,7 @@ export function getModelByRole(role) {
             Model = Supervisor;
             break;
         default:
-            return res.status(400).json({message: "Invalid type"});
+            throw new HTTPError("Invalid type", 400);
     }
     return Model;
 }
