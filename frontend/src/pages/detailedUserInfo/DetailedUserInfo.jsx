@@ -18,7 +18,6 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
     }
 
     const nameArray = user.fullName.split(" ");
-    console.log(user.role);
 
     //general fields
     const [firstName, setfirstName] = useState(nameArray[0]);
@@ -31,16 +30,13 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
 
     //co-op student fields
     const [supervisor, setSupervisor] = useState(user.supervisor);
-    const [interviewed, setInterviewed] = useState(user.interviews);
-    const [applications, setApplications] = useState(user.applications);
-    const [workTerms, setWorkTerms] = useState(user.workTerms);
+    const [interviews, setInterviews] = useState(user.termActivity?.interviewed);
+    const [applications, setApplications] = useState(user.termActivity?.applications);
+    const [workTerms, setWorkTerms] = useState(user.termActivity?.workTerms);
     const [studentID, setStudentID] = useState(user.studentId);
-
     //applicant fields
     const [year, setYear] = useState(user.academics?.year);
     const [gpa, setGPA] = useState(user.academics?.gpa || "");
-
-    console.log(`Gpa is: ${gpa}`);
 
     //supervisor fields
     const [company, setCompany] = useState(user.company);
@@ -102,11 +98,10 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
                 gpa: gpa
             },
 
-            supervisor: supervisor,
-            interviews:  interviewed,
-            applications: applications,
-            workTerms: workTerms,
-
+            termActivity:{
+                applications: Number(applications),
+                interviewed: Number(interviews)
+            },  
             company: company,
             jobTitle: jobTitle,
             interns: interns.split(',').map(name => name.trim()).filter(name => name !== "")
@@ -114,8 +109,8 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
 
         try {
             await updateUserInfo(user.role, id, body);
-            console.log("Update successful with Interns Array:", body.interns);
-            navigate(`/coordinator/applicant-list`);
+
+            navigate(`/coordinator/${listTitle3}-list`);
             } catch (err) {
                 console.error("Update Failed", err)
         };
@@ -237,32 +232,16 @@ function DetailedUserInfo({userData, listType, updateUserInfo}){
                         <div className='double-input'>
 
                             <div className='single-input'>
-                            <label className='left-label'>Supervisor:</label>
-                            <input type='text' value={supervisor} onChange={(e) => setSupervisor(e.target.value)}></input>
-                            </div>
-
-                            <div className='single-input'>
-                            <label>Interviewed:</label>
-                            <input type='text' value={interviewed} onChange={(e) => setInterviewed(e.target.value)}></input>
-                            </div>
-                        </div>
-                        )}
-        
-                        {listType === "coop-student" && (
-                        <div className='double-input'>
-                            
-                            <div className='single-input'>
                             <label className='left-label'> Apps Sent: </label>
                             <input type='text' value={applications} onChange={(e) => setApplications(e.target.value)}></input>
                             </div>
 
                             <div className='single-input'>
-                            <label> Work Terms: </label>
-                            <input type='text' value={workTerms} onChange={(e) => setWorkTerms(e.target.value)}></input>
+                            <label>Interviews:</label>
+                            <input type='text' value={interviews} onChange={(e) => setInterviews(e.target.value)}></input>
                             </div>
                         </div>
-                        )}
-                        
+                        )}        
                         
                         {(listType !== "applicant"  || status === "rejected")&& (
                             <button className='detailed-user-info-adjust-bigbutton' onClick={handleUpdate}>Adjust</button>
