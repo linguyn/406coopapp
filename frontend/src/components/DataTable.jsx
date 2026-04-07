@@ -79,7 +79,7 @@ const coopStudentListHeaders = [
     },
     {
         id: 6,
-        KEY: "interviews",
+        KEY: "interviewed",
         LABEL: "Interviews",
     },
     {
@@ -162,7 +162,8 @@ function DataTable(props) {
     "Year": "year",
     "GPA": "gpa",
     "Company": "company",
-    "Job Title": "jobTitle"
+    "Job Title": "jobTitle",
+    "Interviews" : "interviewed"
 };
 
     const handleHeaderClick = async (label) => {
@@ -215,7 +216,7 @@ function DataTable(props) {
                 className={`sort-icon sort-icon-${header.LABEL.toLowerCase()}`}
                 src={sortIcon}
                 alt="sort"
-                style={{ cursor: 'pointer', marginLeft: '5px' }} // Make it look clickable
+                style={{ cursor: 'pointer', marginLeft: '5px' }} 
                 onClick={() => handleHeaderClick(header.LABEL)}
             />
         )}
@@ -237,8 +238,18 @@ function DataTable(props) {
                                         <span className="clickable-name" onClick={() => handleRowClick(item.id)}>
                                             {item[column.KEY] ?? "N/A"}
                                         </span>
+
                                     ) : column.KEY === "createdAt" ? (
                                         item[column.KEY]?.slice(0,10)
+
+                                    ) : ["program", "year", "gpa"].includes(column.KEY) ? (
+                                        item.academics?.[column.KEY] ?? item[column.KEY] ?? "N/A"
+
+                                    ) : ["applications", "interviewed"].includes(column.KEY) ? (
+                                        item.termActivity?.[column.KEY] ?? item.termActivity?.interviewed ?? item[column.KEY] ?? 0
+                                    
+                                    
+
                                     ) : column.KEY === "interns" ? (
                                         Array.isArray(item[column.KEY]) && item[column.KEY].length > 0 ? (
 

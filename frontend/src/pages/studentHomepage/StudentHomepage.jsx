@@ -31,7 +31,7 @@ function StudentHomepage() {
     let createdAt = (userData?.createdAt).slice(0,10);
     let coordinators = userData?.support.coordinators;
     let facultyAdvisor = userData?.support.facultyAdvisor;
-
+    let status = userData?.status;
 
     const handleClick = async (e) => {
         const option = e.currentTarget.name;
@@ -62,6 +62,16 @@ function StudentHomepage() {
             return;
         }
 
+        if (option === 'student-status' || option === 'student-status-sidebar') {
+            if(status){
+                navigate(`/applicant/application-status/${status}`)
+            } 
+            else{
+                navigate(`/applicant/application-status/under-review`)
+            }
+            
+        }
+
         if (option === 'student-logout-sidebar') {
             const response = await logOut(); 
             if (response.status == 200 || response) {
@@ -87,6 +97,7 @@ function StudentHomepage() {
                     <button name='student-apply' onClick={handleClick}>Apply to Co-op</button>
                     <button name='student-jobs' onClick={handleClick}>Job Postings</button>
                     <button name='student-reflection' onClick={handleClick}>Co-op Reflection</button>
+                    <button name='student-status' onClick={handleClick}>Status</button>
                 </div>
 
                 {isSidebarVisible && (
@@ -96,6 +107,7 @@ function StudentHomepage() {
                         <button name='student-jobs-sidebar' onClick={handleClick}>Job Postings</button>
                         <button name='student-reflection-sidebar' onClick={handleClick}>Co-op Reflection</button>
                         <button name='student-logout-sidebar' onClick={handleClick}>Logout</button>
+                        <button name='student-status-sidebar' onClick={handleClick}>Status</button>
                     </div>
                 )}
             </div>

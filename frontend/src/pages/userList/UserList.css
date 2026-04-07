@@ -49,7 +49,7 @@
 }
 
 .home-icon{
-    width: 15%;
+    width: 5%;
     max-width: 40px;
     margin-right: 2%;
 }
@@ -131,6 +131,15 @@ input[type="search"]{
     border: 1px #444E5E solid;
 }
 
+input[type="search"]:hover{
+    filter: brightness(0.9);
+}
+
+input[type="search"]:focus{
+    filter: brightness(1.1);
+    background-color: lightgray;
+}
+
 .search-bar{
     position: relative;
 }
@@ -196,6 +205,10 @@ table{
     text-decoration: underline;
     color:#0C49A6;
     cursor: pointer;
+}
+
+.clickable-name:hover{
+    color:purple;
 }
 
 .detailed-user-info-homepage h2:hover{

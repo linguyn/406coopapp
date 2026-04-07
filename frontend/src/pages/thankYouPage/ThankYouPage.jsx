@@ -26,9 +26,6 @@ function ThankYouPage(props){
                         
                         <div className='button-row'>
                             <button onClick={() => navigate(`/${homeMap.get(String(props.type))}`)}>Home</button>
-                            {String (props.type) === "applicant" && (
-                                <button>Status</button>
-                            )}
                         </div>                    
 
                     </div>

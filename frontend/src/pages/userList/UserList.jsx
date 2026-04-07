@@ -5,7 +5,7 @@ import SearchIcon from '../../assets/searchIcon.svg'
 import LeftArrowIcon from '../../assets/leftArrow.svg'
 import RightArrowIcon from '../../assets/rightArrow.svg'
 import DataTable from '../../components/DataTable.jsx'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 
 function UserList(props){
@@ -14,8 +14,12 @@ function UserList(props){
     const [userData, setUserData] = useState(props.starterData)
     const [currentPage, setCurrentPage] = useState(1)
     const [usersPerPage, setUsersPerPage] = useState(5)
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const location = useLocation();
 
+    useEffect(() => {
+        props.fetchApplicants(); 
+    }, [location.key]);
 
     const [searchTerm, setSearchTerm] = useState("")
 
@@ -155,8 +159,6 @@ function UserList(props){
                     </div>
 
                     <div className='search-section'> 
-
-                        <h2 className='entry-text'>Search:</h2>
                         
                         <div className='search-bar'>
                         <input type="search" value={searchTerm}
