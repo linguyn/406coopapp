@@ -320,19 +320,37 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
 userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => {
     try {
         const { role, userId } = req.params;
+        const { supervisorEmail } = req.body;
 
         const Model = getModelByRole(role);
 
+        
+
         const updatedInfo = await Model.findByIdAndUpdate(
             userId,
+
             req.update,
             {
                 new: true,
                 runValidators: true
             }
         );
-        
+        if (supervisorEmail) { //only enter if assigning Student user to a Supervisor user. 
+            const supervisor = await Supervisor.findOne({email: supervisorEmail});
+            updatedInfo = await Model.findByIdAndUpdate(
+                supervisor._id,
+                req.update,
+                {
+                    new: true,
+                    runValidators: true
+                }
+            ); //Anytime a student is assigned to a supervisor, update the number of students that supervisor has.
+            const studentCount = await Student.countDocuments({assignedSupervisor: supervisor._id}); 
+            await Supervisor.findByIdAndUpdate( supervisor._id, {totalStudents: studentCount}, {new: true});
+        }
+
         const sanitizedUser = UserResponse.createUserResponse(updatedInfo);
+
 
         if (!updatedInfo) {
             throw new HTTPError("User not found", 404);

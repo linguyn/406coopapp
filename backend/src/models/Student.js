@@ -36,6 +36,7 @@ const student = new studentSchema({
         facultyAdvisor: {type: String, required: false, default: null},
         coordinators:{ type: String, required: false, default: null}
     },
+    assignedSupervisor: { type: mongoose.Schema.Types.ObjectId, ref: "Supervisor", default: null },
 }, { timestamps: true });
 
 const Student = mongoose.model('Student', student);

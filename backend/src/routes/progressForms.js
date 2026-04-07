@@ -49,8 +49,10 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
 
         const studentUser = await getUserByEmail("student", schoolEmail);
         if (!studentUser) { throw new HTTPError("Student not found", 404); }
+        const supervisorUser = await getUserByEmail("supervisor", supervisorName);
+        if (!supervisorUser) { throw new HTTPError("Supervisor not found", 404); }
 
-        const newProgressForm = new ProgressForm({ ...req.body, assignedStudent: studentUser._id });
+        const newProgressForm = new ProgressForm({ ...req.body, assignedStudent: studentUser._id, assignedSupervisor: supervisorUser._id });
         await newProgressForm.save();
         
         return res.status(201).json({ 
