@@ -2,9 +2,8 @@ import './StudentProgress.css';
 import AuthLayout from '../../components/auth-layout/AuthLayout';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { applicationSubmit } from '../../services/applicationService';
 import { useAuth } from '../../context/authContext';
-import { progressSubmit, getStudent, updateProgress } from '../../services/formServices';
+import { progressSubmit, getID, updateProgress } from '../../services/formServices';
 
 
 function StudentProgress() {
@@ -27,7 +26,7 @@ function StudentProgress() {
         setPageError('');
 
         try {
-            const res = await getStudent(schoolEmail);
+            const res = await getID(schoolEmail);
             const data = res.data
 
             const id = data?.progressForms?.[0]?._id;
