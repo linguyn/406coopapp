@@ -54,6 +54,9 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
 
         const newProgressForm = new ProgressForm({ ...req.body, assignedStudent: studentUser._id, assignedSupervisor: supervisorUser._id });
         await newProgressForm.save();
+
+        const reportCount = await ProgressForm.countDocuments({assignedSupervisor: supervisorUser._id}); 
+        await Supervisor.findByIdAndUpdate( supervisorUser._id, {submittedReports: reportCount}, {new: true});
         
         return res.status(201).json({ 
             message: "Progress form submitted successfully", 
