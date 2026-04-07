@@ -72,16 +72,16 @@ function CoordinatorHomepage() {
                     </button>
 
                     <button name='coordinator-homepage' onClick={handleClick}>Homepage</button>
-                    <button name='coordinator-student-list' onClick={handleClick}>Student List</button>
                     <button name='coordinator-applicant-list' onClick={handleClick}>Applicant List</button>
+                    <button name='coordinator-student-list' onClick={handleClick}>Student List</button>
                     <button name='coordinator-supervisor-list' onClick={handleClick}>Supervisor List</button>
                 </div>
 
                 {isSidebarVisible && (
                     <div className='coordinator-sidebar'>
                         <button name='coordinator-homepage-sidebar' onClick={handleClick}>Homepage</button>
-                        <button name='coordinator-student-list-sidebar' onClick={handleClick}>Student List</button>
                         <button name='coordinator-applicant-list-sidebar' onClick={handleClick}>Applicant List</button>
+                        <button name='coordinator-student-list-sidebar' onClick={handleClick}>Student List</button>
                         <button name='coordinator-supervisor-list-sidebar' onClick={handleClick}>Supervisor List</button>
                         <button name='coordinator-logout-sidebar' onClick={handleClick}>Logout</button>
                     </div>
