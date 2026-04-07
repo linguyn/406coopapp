@@ -13,7 +13,10 @@ const supervisor = new supervisorSchema({
     jobTitle: {type: String,},
     location: {type: String,},
     status: { type: String, default: "inactive"},
-    interns: { type: [String], default: [] },
+
+    totalStudents: {type: Number, default: 0},
+    submittedReports: {type: Number, default: 0},
+    
 }, { timestamps: true });
 
 const Supervisor = mongoose.model('Supervisor', supervisor);

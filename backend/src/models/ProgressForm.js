@@ -12,6 +12,10 @@ const progressForm = new progressFormSchema({
     assignedStudent: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Student",
+    },
+    assignedSupervisor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Supervisor",
     }
 }, { timestamps: true });
 
