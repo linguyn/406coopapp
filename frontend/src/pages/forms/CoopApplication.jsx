@@ -120,7 +120,7 @@ function Application() {
                                                     else if (value === 'false') setPermission(false);
                                                     else setPermission(raw); 
                                                 }}
-                                           placeholder='true/false (must be boolen value)'
+                                           placeholder='true/false (must be boolean value)'
                                            required
                                     />
                                 </div>
