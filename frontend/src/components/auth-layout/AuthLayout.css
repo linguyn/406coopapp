@@ -29,6 +29,7 @@ body {
 }
 
 .auth-left {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 3; 

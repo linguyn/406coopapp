@@ -121,6 +121,14 @@ body {
 .app-home-button{
     width: 100%;
     display:flex;
-    justify-content: end;
+    justify-content: start;
+    position: absolute;
+    top: 15px; 
+    left: 15px; 
+    cursor: pointer;
+}
+
+.app-home-button img{
+    filter: brightness(0) invert(1);
 }
 
