@@ -12,7 +12,7 @@ import { getUserByEmail } from './user.js';
  * /api/progress-forms/submit:
  *   post:
  *     summary: Submits a progress form
- *     description: Saves a progress form to the database and associates it with its student
+ *     description: Saves a progress form to the database and associates it with its student (email must match)
  *     tags:
  *       - Documents
  *     requestBody:
@@ -49,9 +49,14 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
 
         const studentUser = await getUserByEmail("student", schoolEmail);
         if (!studentUser) { throw new HTTPError("Student not found", 404); }
+        const supervisorUser = await getUserByEmail("supervisor", supervisorName);
+        if (!supervisorUser) { throw new HTTPError("Supervisor not found", 404); }
 
-        const newProgressForm = new ProgressForm({ ...req.body, assignedStudent: studentUser._id });
+        const newProgressForm = new ProgressForm({ ...req.body, assignedStudent: studentUser._id, assignedSupervisor: supervisorUser._id });
         await newProgressForm.save();
+
+        const reportCount = await ProgressForm.countDocuments({assignedSupervisor: supervisorUser._id}); 
+        await Supervisor.findByIdAndUpdate( supervisorUser._id, {submittedReports: reportCount}, {new: true});
         
         return res.status(201).json({ 
             message: "Progress form submitted successfully", 
@@ -65,10 +70,10 @@ progressFormsRouter.post('/submit', authenticateToken, async (req, res, next) =>
 
 /**
  * @swagger
- * /api/progress-forms/update/{id}:
+ * /api/progress-forms/update/{progressForm_id}:
  *   patch:
  *     summary: Updates a progress form
- *     description: Finds a progress form based on the user id and email, and updates and returns their progress form
+ *     description: Finds a progress form based on the progress form id and email, and updates and returns their progress form
  *     tags:
  *       - Documents
  *     parameters:

@@ -1,7 +1,7 @@
 import { validateLogin, validateLogout, validateRegister } from '../middleware/validation.js';
 import express from 'express';
 import { generateAccessToken, generateRefreshToken } from '../server.js';
-import { getGlobalStats } from '../database-services.js';
+import { getGlobalStats, getStudentStats } from '../database-services.js';
 import { TOKEN_OPTIONS } from '../constants.js';
 import jwt from 'jsonwebtoken';
 import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
@@ -76,7 +76,7 @@ authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
     const user = req.user;
 
     const rememberMe = req.body.rememberMe;
-    const stats = getGlobalStats();
+    const stats = getStudentStats();
     const safeUser = UserLoginResponse.createUserLoginResponse(user, stats);
 
     const accessToken = generateAccessToken(user.id, user.role);
@@ -103,8 +103,8 @@ authRouter.post('/login', sanitizeLogin, validateLogin, (req, res, next) => {
  * @swagger
  * /api/auth/logout:
  *   post:
- *     summary:
- *     description:
+ *     summary: Logs out an active user
+ *     description: Clears the refresh token cookie in the user's browser to prevent them from accessing any more app services
  *     tags:
  *       - Auth
  *     parameters:

@@ -158,25 +158,20 @@ userRouter.get('/list', authenticateToken, validateListRequest, async (req, res,
         const userPromises = filteredSortedUsers.map(async (user) => {
             const sanitizedUser = UserListItemResponse.createUserListItemResponse(user);
 
-            if (user.role !== "student") {
-                return {
-                    user: sanitizedUser
-                }
-            } else {
+            if (user.role === "student") {
                 const applications = await Application.find({assignedStudent: user._id});
                 const progressForms = await ProgressForm.find({assignedStudent: user._id});
                 const reflections = await Reflection.find({assignedStudent: user._id});
-                return {
-                    user: sanitizedUser, 
-                    applications : applications, 
-                    progressForms : progressForms, 
-                    reflections: reflections
-                };
+                sanitizedUser.applications = applications;
+                sanitizedUser.progressForms = progressForms;
+                sanitizedUser.reflections = reflections;
             }
+            
+            return sanitizedUser;
         });
 
         const sanitizedUsers = await Promise.all(userPromises);
-        
+
         return res.status(200).json(sanitizedUsers);
     } catch (error) {
         next(error);
@@ -185,6 +180,9 @@ userRouter.get('/list', authenticateToken, validateListRequest, async (req, res,
 
 export function getModelByRole(role) {
     let Model;
+    if (!role) {
+        throw new HTTPError("Please enter a role", 422);
+    }
     switch(role.toLowerCase()){
         case 'student':
             Model = Student;
@@ -196,7 +194,7 @@ export function getModelByRole(role) {
             Model = Supervisor;
             break;
         default:
-            return res.status(400).json({message: "Invalid type"});
+            throw new HTTPError("Invalid type", 400);
     }
     return Model;
 }
@@ -322,19 +320,37 @@ function getFilterQuery(searchStr, exactFilters, fuzzyFilterKeys) {
 userRouter.patch('/:role/:userId', authenticateToken, validateUserUpdate, async (req, res, next) => {
     try {
         const { role, userId } = req.params;
+        const { supervisorEmail } = req.body;
 
         const Model = getModelByRole(role);
 
+        
+
         const updatedInfo = await Model.findByIdAndUpdate(
             userId,
+
             req.update,
             {
                 new: true,
                 runValidators: true
             }
         );
-        
+        if (supervisorEmail) { //only enter if assigning Student user to a Supervisor user. 
+            const supervisor = await Supervisor.findOne({email: supervisorEmail});
+            updatedInfo = await Model.findByIdAndUpdate(
+                supervisor._id,
+                req.update,
+                {
+                    new: true,
+                    runValidators: true
+                }
+            ); //Anytime a student is assigned to a supervisor, update the number of students that supervisor has.
+            const studentCount = await Student.countDocuments({assignedSupervisor: supervisor._id}); 
+            await Supervisor.findByIdAndUpdate( supervisor._id, {totalStudents: studentCount}, {new: true});
+        }
+
         const sanitizedUser = UserResponse.createUserResponse(updatedInfo);
+
 
         if (!updatedInfo) {
             throw new HTTPError("User not found", 404);
@@ -450,6 +466,53 @@ export async function getUserByEmailAllRoles(email) {
 
     return student || supervisor || coordinator || null;
 }
+
+/**
+ * @swagger
+ * /api/user/{role}:
+ *   delete:
+ *     summary: Deletes a user
+ *     description: Removes a user from the database
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: path
+ *         name: role
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: student
+ *           enum: [student, supervisor, coordinator]
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email: { type: string, example: something@poop.com}
+ *     responses: 
+ *       200:
+ *         description: Successfully deleted the user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               required: [message, deletedUser]
+ *               properties:
+ *                 message: { type: string, example: "User deleted successfully!" }
+ *                 deletedUser:
+ *                   oneOf:
+ *                     - $ref: '#/components/schemas/StudentRes' 
+ *                     - $ref: '#/components/schemas/SupervisorRes' 
+ *                     - $ref: '#/components/schemas/CoordinatorRes' 
+ *       403:
+ *         description: Invalid user permissions
+ *       404:
+ *         description: User already deleted or does not exist
+ *       500:
+ *         description: Internal server error
+ */
 
 userRouter.delete('/:role', authenticateToken, validatePermissions, async(req, res, next) => {
     try{

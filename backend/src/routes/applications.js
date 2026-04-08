@@ -27,7 +27,7 @@ import { getUserByEmail } from './user.js';
  * /api/applications/submit:
  *   post:
  *     summary: Submits an application
- *     description: Saves an application to the database and associates it with its student
+ *     description: Saves an application to the database and associates it with its student (email must match)
  *     tags:
  *       - Documents
  *     requestBody:
@@ -76,10 +76,10 @@ applicationsRouter.post('/submit', authenticateToken, async(req, res, next) => {
 
 /**
  * @swagger
- * /api/applications/update/{id}:
+ * /api/applications/update/{application_id}:
  *   patch:
  *     summary: Updates an application
- *     description: Finds a application based on the user id and email, and updates and returns their application
+ *     description: Finds a application based on the application id and email, and updates and returns their application
  *     tags:
  *       - Documents
  *     parameters:

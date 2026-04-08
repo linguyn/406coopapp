@@ -118,3 +118,9 @@ body {
     background-color: #093a85;
 }
 
+.app-home-button{
+    width: 100%;
+    display:flex;
+    justify-content: end;
+}
+

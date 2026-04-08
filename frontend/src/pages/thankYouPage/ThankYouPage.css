@@ -89,3 +89,8 @@
     -webkit-text-stroke-width: 1px; 
     -webkit-text-stroke-color: #FBE81F;
 }
+
+.button-row button:hover{
+    filter: brightness(1.2);
+    border:  #0C3E8B solid 3px;
+}

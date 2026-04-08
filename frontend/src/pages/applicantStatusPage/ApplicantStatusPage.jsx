@@ -1,7 +1,10 @@
 import './ApplicantStatusPage.css'
 import YellowWave from '../../assets/yellowWave.svg'
+import { useNavigate } from 'react-router-dom'
 
 function ApplicantStatusPage(props){
+
+    const navigate = useNavigate()
 
     const statusText = {
         underReview : "Under Review",
@@ -28,7 +31,7 @@ function ApplicantStatusPage(props){
                         <p>{statusInnerText[props.status]}</p>
                         
                         <div className='button-row'>
-                            <button>Home</button>
+                            <button onClick={() => navigate('/student')}>Home</button>
                         </div>                    
 
                     </div>

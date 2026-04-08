@@ -4,6 +4,7 @@ import { signIn } from '../../services/authService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { applicationSubmit, updateApplication, getID } from '../../services/formServices';
+import ReturnButton from '../../assets/returnButton.svg'
 
 function Application() {
     const [firstName, setFirstName] = useState('');
@@ -91,8 +92,11 @@ function Application() {
         <AuthLayout title='CO-OP APPLICATION'
                     description='"Fill out the application with your placement details and required documents. Once submitted, your faculty supervisor will review your application for Co-op credit eligibility."'
                     rightPanel={
+                        
                         <form id='application-container' onSubmit={handleSubmit}>
-                            
+                            <div className='app-home-button' onClick={() => navigate('/student')}>
+                                <img src={ReturnButton} className='home-icon'></img>                    
+                            </div>
                             <div id='apply-field-1'>
                                 <div className='apply-input-field-1'>
                                     <label>First Name</label>
