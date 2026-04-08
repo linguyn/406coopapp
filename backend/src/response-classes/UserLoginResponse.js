@@ -34,7 +34,11 @@ export class UserLoginResponse {
         this.#fullName = (firstName && lastName) ? `${firstName} ${lastName}` : null;
         this.#id = _id;
         this.#createdAt = createdAt;
-        this.#currentTerm = currentTerm.charAt(0).toUpperCase() + currentTerm.slice(1);
+        if (currentTerm) {
+            this.#currentTerm = currentTerm.charAt(0).toUpperCase() + currentTerm.slice(1);
+        } else {
+            this.#currentTerm = null;
+        }
     }
 
     toJSON() {

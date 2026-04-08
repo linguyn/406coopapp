@@ -1,7 +1,7 @@
 import { validateLogin, validateLogout, validateRegister } from '../middleware/validation.js';
 import express from 'express';
 import { generateAccessToken, generateRefreshToken } from '../server.js';
-import { getGlobalStats } from '../database-services.js';
+import { getGlobalStats, getStudentStats } from '../database-services.js';
 import { TOKEN_OPTIONS } from '../constants.js';
 import jwt from 'jsonwebtoken';
 import { sanitizeRegister, sanitizeLogin } from '../middleware/data-sanitization.js';
