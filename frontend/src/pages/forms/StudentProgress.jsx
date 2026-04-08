@@ -1,9 +1,9 @@
 import './StudentProgress.css';
 import AuthLayout from '../../components/auth-layout/AuthLayout';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { applicationSubmit } from '../../services/applicationService';
 import { useAuth } from '../../context/authContext';
+import { progressSubmit, getID, updateProgress } from '../../services/formServices';
 import ReturnButton from '../../assets/returnButton.svg'
 
 function StudentProgress() {
@@ -16,6 +16,7 @@ function StudentProgress() {
     const [employable, setEmployable] = useState('');
     const [schoolEmail, setSchoolEmail] = useState('');
     const [pageError, setPageError] = useState('');
+    const [formUpdate, setFormUpdate] = useState(false);    
     const { userData } = useAuth();
 
     const navigate = useNavigate();
@@ -25,7 +26,16 @@ function StudentProgress() {
         setPageError('');
 
         try {
-            const response = await applicationSubmit({
+            const res = await getID(schoolEmail);
+            const data = res.data
+
+            const id = data?.progressForms?.[0]?._id;
+
+            let response;
+
+            if (!data?.progressForms?.length)
+            {
+                response = await progressSubmit({
                 studentName,
                 supervisorName,
                 company,
@@ -33,12 +43,33 @@ function StudentProgress() {
                 stars,
                 stairs,
                 employable,
-                schoolEmail: userData?.email
-            });
+                schoolEmail: schoolEmail
+                });
+            }   else {
+                response = await updateProgress(id, {
+                studentName,
+                supervisorName,
+                company,
+                jobTitle,
+                stars,
+                stairs,
+                employable,
+                schoolEmail: schoolEmail
+                });
+            }
 
-            if (response.status === 201 || response) {
+            if (response?.status === 201 || response?.status === 200) {
+
+                if (response?.status === 201) {
                 console.log('Progress form submitted successfully:', response.data);
-                navigate('/student');
+                navigate('/supervisor/thank-you-page');
+                }
+
+                if (response?.status === 200) {
+                console.log('Progress form updated successfully:', response.data);
+                navigate('/supervisor/thank-you-page');
+                }
+
             }
         } catch (error) {
             const msg = error.response?.data?.message || error.message || 'Something went wrong';
@@ -136,6 +167,19 @@ function StudentProgress() {
                                 type='text'
                                 value={employable}
                                 onChange={(e) => setEmployable(e.target.value)}
+                                placeholder='Your response...'
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div id='progress-field-7'>
+                        <div className='progress-input-field-1'>
+                            <label>Student Email</label>
+                            <input
+                                type='text'
+                                value={schoolEmail}
+                                onChange={(e) => {setSchoolEmail(e.target.value)}}
                                 placeholder='Your response...'
                                 required
                             />

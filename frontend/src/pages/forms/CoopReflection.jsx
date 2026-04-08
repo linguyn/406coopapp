@@ -1,6 +1,6 @@
 import './CoopReflection.css';
 import AuthLayout from '../../components/auth-layout/AuthLayout';
-import { reflectionSubmit } from '../../services/formServices';
+import { reflectionSubmit, updateReflection, getID } from '../../services/formServices';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReturnButton from '../../assets/returnButton.svg'
@@ -15,27 +15,57 @@ function CoopReflection() {
     const [challenges, setChallenges] = useState('');
     const [supported, setSupported] = useState('');
     const [pageError, setPageError] = useState('');
+    const [schoolEmail, setSchoolEmail] = useState('');
     const navigate = useNavigate(); 
 
 
     const handleSubmit = async (e) => { 
         e.preventDefault(); 
-
+    
 
         try { 
-            const response = await reflectionSubmit({
+            const res = await getID(schoolEmail);
+            const data = res.data
+
+            const id = data?.reflections?.[0]?._id;
+
+            let response;
+
+            if (!data?.reflections?.length) {
+                response = await reflectionSubmit({
                 company: company,
                 supervisor: supervisor,
                 jobTitle: jobTitle,
                 termDuration: termDuration,
                 skills: skills,
                 challenges: challenges,
-                supported: supported
-            });
+                supported: supported,
+                schoolEmail: schoolEmail
+                });
+            } else {
+                response = await updateReflection(id, {
+                company: company,
+                supervisor: supervisor,
+                jobTitle: jobTitle,
+                termDuration: termDuration,
+                skills: skills,
+                challenges: challenges,
+                supported: supported,
+                schoolEmail: schoolEmail
+                });
+            }
+            
 
-            if (response.status == 201 || response){
-                console.log("Reflection submitted successfully: ", response.data);
-                navigate('/student'); 
+            if (response?.status === 201 || response?.status === 200){
+                if (response.status === 201) {
+                    console.log("Reflection submitted successfully: ", response.data);
+                    navigate('/student'); 
+                }
+
+                if (response.status === 200) {
+                    console.log("Reflection updated successfully: ", response.data);
+                    navigate('/student'); 
+                }
             }
         } catch (error) {
             const msg = error.response?.data.message || error.message || "Something went wrong"; 
@@ -106,6 +136,19 @@ function CoopReflection() {
                             </div>
 
 
+                            <div id='reflect-field-7'>
+                                <div className='reflect-input-field-1'>
+                                    <label>Student Email</label>
+                                    <input type='text' 
+                                           value={schoolEmail}
+                                           onChange={(e) => setSchoolEmail(e.target.value)}
+                                           placeholder='123@example.com'
+                                           required
+                                    />
+                                </div>
+                            </div>
+
+
                             <div id='reflect-field-3'>
                                 <div className='reflect-input-field-1'>
                                     <label>What is a technical skill you’ve learned and how have you implemented it in your role?</label>
@@ -141,7 +184,6 @@ function CoopReflection() {
                                     />
                                 </div>
                             </div>
-
 
                             <div id='reflect-field-6'>
                                 {pageError && (

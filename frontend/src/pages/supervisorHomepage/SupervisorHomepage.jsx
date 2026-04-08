@@ -23,7 +23,7 @@ function SupervisorHomepage() {
     let pending = userData?.pending;
     let late = userData?.late;
     let followUpNeeded = userData?.followUpNeeded;
-    let createdAt = userData?.createdAt;
+    let createdAt = (userData?.createdAt).slice(0,10);
     let lastSubmissionDate = userData?.lastSubmissionDate;
     let dueThisWeek = userData?.dueThisWeek;
 

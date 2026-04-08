@@ -18,6 +18,7 @@ import axios from 'axios';
 import { useAuth } from './context/authContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import api, {setAccessToken, getAccessToken} from './services/api';
+import LandingPage from './pages/landingPage/LandingPage';
 
 function App() {
   const navigate = useNavigate();
@@ -137,6 +138,9 @@ function App() {
 
   return (
       <Routes>
+
+          {/*landing page*/}
+          <Route path='/' element={<LandingPage />}></Route>
       
           {/*login*/}
           <Route path='/login' element={<Login />}/>

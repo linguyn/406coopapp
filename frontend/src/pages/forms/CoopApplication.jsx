@@ -3,13 +3,13 @@ import AuthLayout from '../../components/auth-layout/AuthLayout';
 import { signIn } from '../../services/authService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { applicationSubmit } from '../../services/formServices';
+import { applicationSubmit, updateApplication, getID } from '../../services/formServices';
 import ReturnButton from '../../assets/returnButton.svg'
 
 function Application() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
+    const [schoolEmail, setSchoolEmail] = useState('');
     const [studentId, setStudentId] = useState('');
     const [permission, setPermission] = useState('');
     const [paragraph, setParagraph] = useState('');
@@ -26,20 +26,51 @@ function Application() {
             return;
         }*/
 
-        try { 
-            const response = await applicationSubmit({
-                firstName: firstName,
-                lastName: lastName,
-                schoolEmail: email,
-                studentId: studentId,
-                eligibility: permission,
-                reasonToApply: paragraph,
-                portfolioLink: github
-            });
+        if (typeof permission !== 'boolean') {
+            setPageError('Eligibility must be true or false');
+            return;
+        }
 
-            if (response.status == 201 || response){
-                console.log("Application submitted successfully: ", response.data);
-                navigate('/applicant/thank-you-page'); 
+        try { 
+            const res = await getID(schoolEmail);
+            const data = res.data
+
+            const id = data?.applications?.[0]?._id;
+
+            let response; 
+
+            if (!data?.applications?.length) {
+                response = await applicationSubmit({
+                    firstName: firstName,
+                    lastName: lastName,
+                    schoolEmail: schoolEmail,
+                    studentId: studentId,
+                    eligibility: permission,
+                    reasonToApply: paragraph,
+                    portfolioLink: github
+                });
+            } else {
+                response = await updateApplication(id, {
+                    firstName: firstName,
+                    lastName: lastName,
+                    schoolEmail: schoolEmail,
+                    studentId: studentId,
+                    eligibility: permission,
+                    reasonToApply: paragraph,
+                    portfolioLink: github
+                });
+            }
+
+            if (response?.status == 201 || response?.status === 200){
+                if (response.status === 201) {
+                    console.log("Application submitted successfully: ", response.data);
+                    navigate('/applicant/thank-you-page'); 
+                } 
+
+                if (response.status === 200) {
+                    console.log("Application updated successfully: ", response.data);
+                    navigate('/applicant/thank-you-page'); 
+                }
             }
         } catch (error) {
             const msg = error.response?.data.message || error.message || "Something went wrong";
@@ -92,8 +123,8 @@ function Application() {
                                 <div className='apply-input-field-1'>
                                     <label>Student Email</label>
                                     <input type="email"
-                                           value={email}
-                                           onChange={(e) => setEmail(e.target.value)}
+                                           value={schoolEmail}
+                                           onChange={(e) => setSchoolEmail(e.target.value)}
                                            required
                                            placeholder='123@example.com'>
                                     </input>
@@ -124,7 +155,7 @@ function Application() {
                                                     else if (value === 'false') setPermission(false);
                                                     else setPermission(raw); 
                                                 }}
-                                           placeholder='true/false (must be boolen value)'
+                                           placeholder='true/false (must be boolean value)'
                                            required
                                     />
                                 </div>

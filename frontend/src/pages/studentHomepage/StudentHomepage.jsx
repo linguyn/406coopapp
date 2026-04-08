@@ -106,8 +106,8 @@ function StudentHomepage() {
                         <button name='student-apply-sidebar' onClick={handleClick}>Apply to Co-op</button>
                         <button name='student-jobs-sidebar' onClick={handleClick}>Job Postings</button>
                         <button name='student-reflection-sidebar' onClick={handleClick}>Co-op Reflection</button>
-                        <button name='student-logout-sidebar' onClick={handleClick}>Logout</button>
                         <button name='student-status-sidebar' onClick={handleClick}>Status</button>
+                        <button name='student-logout-sidebar' onClick={handleClick}>Logout</button>
                     </div>
                 )}
             </div>

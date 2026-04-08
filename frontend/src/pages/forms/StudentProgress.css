@@ -52,12 +52,13 @@ body {
 #progress-field-2,
 #progress-field-3,
 #progress-field-4,
-#progress-field-5 {
+#progress-field-5,
+#progress-field-7 {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     width: 80%;
-    height: 15%;
+    height: 14%;
     gap: 5%;
 }
 
@@ -80,7 +81,7 @@ body {
     height: auto;       
     min-height: 60px;  
     gap: 10px;          
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .progress-error {
