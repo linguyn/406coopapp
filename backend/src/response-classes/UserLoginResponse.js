@@ -34,7 +34,6 @@ export class UserLoginResponse {
         this.#fullName = (firstName && lastName) ? `${firstName} ${lastName}` : null;
         this.#id = _id;
         this.#createdAt = createdAt;
-        //TEMPORARY FIX, WILL BE IMPLEMENTED LATER
         if (currentTerm) {
             this.#currentTerm = currentTerm.charAt(0).toUpperCase() + currentTerm.slice(1);
         } else {
