@@ -15,7 +15,6 @@ export let tempStats = {
 export function getGlobalStats() { //return all global stats: current term, total students, total active, 
     return tempStats;
 }
-// WE ARE KEEPING ALL CODE FROM BELOW THIS LINE. ANY ADDED CODE THAT USES THE DATABASE SHOULD BE BELOW THIS LINE.
 
 export async function getStudentStats(){ //Make this multi-functional for all Users.
     try {
