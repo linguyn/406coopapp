@@ -51,10 +51,6 @@ function SupervisorHomepage() {
             return;
         }
 
-        if (option === 'supervisor-reports' || option === 'supervisor-reports-sidebar') {
-            navigate('/supervisor/reports');
-            return;
-        }
 
         if (option === 'supervisor-logout-sidebar') {
             const response = await logOut(); 
@@ -77,7 +73,6 @@ function SupervisorHomepage() {
                     <button name='supervisor-homepage' onClick={handleClick}>Homepage</button>
                     <button name='supervisor-students' onClick={handleClick}>Students</button>
                     <button name='supervisor-progress-forms' onClick={handleClick}>Progress Forms</button>
-                    <button name='supervisor-reports' onClick={handleClick}>Reports</button>
                 </div>
 
                 {isSidebarVisible && (
@@ -85,7 +80,6 @@ function SupervisorHomepage() {
                         <button name='supervisor-homepage-sidebar' onClick={handleClick}>Homepage</button>
                         <button name='supervisor-students-sidebar' onClick={handleClick}>Students</button>
                         <button name='supervisor-progress-forms-sidebar' onClick={handleClick}>Progress Forms</button>
-                        <button name='supervisor-reports-sidebar' onClick={handleClick}>Reports</button>
                         <button name='supervisor-logout-sidebar' onClick={handleClick}>Logout</button>
                     </div>
                 )}
