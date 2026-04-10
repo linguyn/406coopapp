@@ -27,9 +27,9 @@
 
 .main-title{
     color: #0C49A6;
-    font-size: 5rem;
+    font-size: 4rem;
     letter-spacing: -5px;
-    margin-top: 5%;
+    margin-top: 4%;
     margin-left: 5%;
 }
 
@@ -38,7 +38,7 @@
     align-items: center;
     width: 15%;
     font-size: 2rem;
-    margin-top: 1.5%;
+    margin-top: 5.5%;
     color: #444E5E;
     margin-right: 2%;
 }
@@ -50,6 +50,12 @@
 
 .home-icon{
     width: 5%;
+    max-width: 40px;
+    margin-right: 2%;
+}
+
+.home-icon2{
+    width: 25%;
     max-width: 40px;
     margin-right: 2%;
 }

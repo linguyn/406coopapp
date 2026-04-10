@@ -128,7 +128,7 @@ function UserList(props){
                 <h1 className='main-title'>{titleName}</h1>
 
                     <div className='homepage' onClick={() => navigate('/coordinator')}>
-                    <img src={HomeIcon} className='home-icon'></img>
+                    <img src={HomeIcon} className='home-icon2'></img>
                     <h3>Homepage</h3>
                     </div>
 
