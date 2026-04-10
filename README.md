@@ -119,3 +119,25 @@ To clarify:
 6. Create a database (name should match to the backend .env file)
 7. Create a dummy collection (if it requires you to)
 8. Done! When running npm run dev, the database should update (after reloading) and should show all of the new collections that the application will use.
+
+## 7. Testing Coordinator
+
+You may notice (as stated in the video, or when navigating to the "Create account" section in the top left of the main page) that there is no registration option for a coordinator. We decided to omit this due to the sensitive information and operations available to the coordinator, and we assumed that the coordinator would already have an account automatically created for them when using the website.
+
+When using our website for the first time, there will be no coordinator account to log in to. To be able to log in to a coordinator account, open MongoDB Compass, connect to the database, and navigate to the "coordinators" collection/folder. It should say the collection has no data, so click the green "+ ADD DATA" dropdown button. Click insert document, delete the entire placeholder text, and copy and paste the text below:
+
+{
+  "_id": {
+    "$oid": "69cad4552cde95a0a1b6f83a"
+  },
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "janedoe@torontomu.ca",
+  "password": "password1234",
+  "isAdmin": true,
+  "role": "coordinator",
+  "__v": 0
+}
+
+After pasting, click insert. This should have added a coordinator entry into the database. Now you may log in as a coordinator, using the credentials above, on the sign in page of the website.
+
