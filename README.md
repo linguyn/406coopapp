@@ -2,13 +2,13 @@
 
 ## 1. Quick Project Structural Breakdown
 * This project is divided into two main sections: backend and frontend
-* In the backend folder you will find the express server and all of the resources the backend and database teams create
-* In the frontend folder you will find the vite app and all of the resources the frontend team creates
-* Each section, including the root, has a unique package.json which serves as a "recipe" containing related metadata, scripts, and dependencies
-* By following the instructions below, these recipes will tell node the dependencies that it needs to install or the files it should run when you use the developer commands
-* Please do not hesitate to reach out if you encounter an issue or need help understanding how something works
+* The frontend folder contains the frontend Vite development server
+* The backend folder contains the backend Express server
+* Both servers require .env files in their respective folders, which contain URLs and secrets information
+* This project uses a local connection to MongoDB
+* The following instructions will tell you how to get the project running by installing the right software and setting up the .env files
 
-Here is a neat visual:
+Project layout:
 
 ```text
 406coopapp/
@@ -29,19 +29,20 @@ Here is a neat visual:
 ## 2. Prerequisites
 
 * **Node.js**: [Download Node.js](https://nodejs.org/) (node: v25.8.0, npm: v11.11.0)
-* **MongoDB**: A local instance or a [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) account (ignore this for now)
+* **MongoDB**: A local instance of [MongoDB Community Server](https://www.mongodb.com/try/download/community)
 
 ## 3. Quick Setup
 
 ### Clone Repository
-navigate to the directory where you want to create the cloned directory
+Navigate to the directory where you want to clone the repository
 
 ```bash
-git clone https://github.com/IsAlexAvailable/406coopapp
 cd <project-directory>
+git clone https://github.com/IsAlexAvailable/406coopapp
 ```
 
 ### Install Dependencies
+Navigate to the root directory of the project and install all dependencies
 
 ```bash
 cd <project-directory>
@@ -49,7 +50,7 @@ npm run install-all
 ```
 
 ### Configure Frontend and Backend Environment Variables
-Note: the port number you use should be the same in both .env files
+Navigate to the backend directory
 
 ```bash
 cd <project-directory>/backend
@@ -61,11 +62,13 @@ create a .env file and add the following to it:
 BACKEND_PORT=5000
 FRONTEND_PORT=5173
 
-ACCESS_TOKEN_SECRET=<paste-your-access-token-key-here>
-REFRESH_TOKEN_SECRET=<paste-your-refresh-token-key-here>
+ACCESS_TOKEN_SECRET=<paste-your-access-token-key-here> # This can be any string e.g. 3cbc4a2cbaff2f6dcc1d348d651ec88b99ef0178cc699c887b5843719713010e
+REFRESH_TOKEN_SECRET=<paste-your-refresh-token-key-here> # This can be any string (different from ACCESS_TOKEN_SECRET) e.g. 67fc98beb00eaff20763a137e336af06033208f7c119727ebc15cc1e54b57a84
 
-MONGO_URI=mongodb://localhost:27017/406_Project
+MONGO_URI=mongodb://localhost:27017/406_Project # Give your database the same name as the last part of this URL and run it on the same port
 ```
+
+Navigate to the frontend directory
 ```bash
 cd <project-directory>/frontend
 ```
@@ -73,24 +76,26 @@ cd <project-directory>/frontend
 create a .env file and add the following to it:
 
 ```bash
-API_URL= # Ignore this for now
+VITE_API_URL=http://localhost:5000/api
 ```
+
+You may now run both servers and navigate to the URL of your frontend server to play around with the app. Have fun!
 
 ## 4. Developer Commands
 
 ```bash
 npm run dev         # Start frontend and backend simultaneously
-npm run server      # Start backend only with nodemon
-npm run client      # Start frontend only with vite
+npm run server      # Start backend only
+npm run client      # Start frontend only
 
 npm run install-all                                  # Installs the dependencies needed for each directory
 npm install <dependency> --prefix <directory-name>   # Installs a dependency in the specified directory (please use the prefix otherwise this command may affect the wrong package.json)
 npm uninstall <dependency> --prefix <directory-name> # Uninstalls a dependency in the specified directory
 ```
 
-## 5. Accessing Swagger API documentation
+## 5. Accessing Swagger API documentation (not required for TA and prof)
 
-After starting the backend server, find a deatiled view of the API by navigating to:
+After starting the backend server, you can find a detailed view of the API by navigating to:
 
 ```bash
 http://localhost:<BACKEND_PORT>/api-docs/   # replace <BACKEND_PORT> with the port your server is running on (likely 5000 or 5005)
@@ -98,7 +103,19 @@ http://localhost:<BACKEND_PORT>/api-docs/   # replace <BACKEND_PORT> with the po
 
 This documentation allows you to see request/response requirements for the api endpoints and test them with sample input.
 
-Note: most of the endpoints (except: /api/auth/login and /api/auth/register) require authentication tokens. When you are testing them, obtain an access token from the login or refresh endpoints, click the "Authorize" button, and paste your key there
+Note: most of the endpoints (except: login, register, and refresh-token) require access tokens. When you are testing them, obtain an access token from the login or refresh endpoints, click the "Authorize" button, and paste your key there.
 
-## 6. Database and Postman
+## 6. Database
 
+This application uses MongoDB, which must be downloaded as shown in step 2. Once it is downloaded, create a connection with the same Mongo URI (mongodb://localhost:27017/). 
+
+To clarify:
+
+1. Navigate to https://www.mongodb.com/try/download/community.
+2. Install the community local version (select your OS).
+3. Select the "complete" version when opening the installer (recommended by MongoDB).
+4. MongoDB Compass should also open. This is the interactive, UI version of MongoDB.
+5. Create a new connection with the Mongo URI above. 
+6. Create a database (name should match to the backend .env file)
+7. Create a dummy collection (if it requires you to)
+8. Done! When running npm run dev, the database should update (after reloading) and should show all of the new collections that the application will use.

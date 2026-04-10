@@ -52,10 +52,6 @@ function StudentHomepage() {
             return;
         }
 
-        if (option === 'student-jobs' || option === 'student-jobs-sidebar') {
-            navigate('/student/jobs');
-            return;
-        }
 
         if (option === 'student-reflection' || option === 'student-reflection-sidebar') {
             navigate('/student/reflection');
@@ -95,7 +91,6 @@ function StudentHomepage() {
 
                     <button name='student-homepage' onClick={handleClick}>Homepage</button>
                     <button name='student-apply' onClick={handleClick}>Apply to Co-op</button>
-                    <button name='student-jobs' onClick={handleClick}>Job Postings</button>
                     <button name='student-reflection' onClick={handleClick}>Co-op Reflection</button>
                     <button name='student-status' onClick={handleClick}>Status</button>
                 </div>
@@ -104,7 +99,6 @@ function StudentHomepage() {
                     <div className='student-sidebar'>
                         <button name='student-homepage-sidebar' onClick={handleClick}>Homepage</button>
                         <button name='student-apply-sidebar' onClick={handleClick}>Apply to Co-op</button>
-                        <button name='student-jobs-sidebar' onClick={handleClick}>Job Postings</button>
                         <button name='student-reflection-sidebar' onClick={handleClick}>Co-op Reflection</button>
                         <button name='student-status-sidebar' onClick={handleClick}>Status</button>
                         <button name='student-logout-sidebar' onClick={handleClick}>Logout</button>
