@@ -10,6 +10,7 @@ import Student from '../models/Student.js';
 import Coordinator from '../models/Coordinator.js';
 import Supervisor from '../models/Supervisor.js';
 import { getModelByRole } from './user.js';
+import { HTTPError } from '../errors.js'
 
 export const authRouter = express.Router();
 
@@ -200,7 +201,8 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
     try {
         if (role === 'student') {
             const newStudent = new Student(req.body);
-            await newStudent.save();
+            const saveStudent = await newStudent.save();
+            if (!saveStudent) { throw new HTTPError("Duplicate student", 422); }
             return res.status(201).json({ message: "Student saved!" }); //message and data can be removed at a later time if not being used.
         }
 
@@ -223,6 +225,9 @@ authRouter.post('/register', sanitizeRegister, validateRegister, async (req, res
 
         // send back a "safe" version of user's details
     } catch (error) {
+        if (error.code === 11000) {
+            next(new HTTPError("Student ID is already in use", 422));
+        }
         next(error);
     }
 });
