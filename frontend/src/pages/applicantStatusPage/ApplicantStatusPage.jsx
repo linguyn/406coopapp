@@ -27,7 +27,7 @@ function ApplicantStatusPage(props){
 
                     <div className='applicant-status-inner-text'>
 
-                        <h2>Appplication Status: <span className='applicant-status-text'>{statusText[props.status]}</span> </h2>
+                        <h2>Application Status: <span className='applicant-status-text'>{statusText[props.status]}</span> </h2>
                         <p>{statusInnerText[props.status]}</p>
                         
                         <div className='button-row'>
