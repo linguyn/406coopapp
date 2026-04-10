@@ -4,12 +4,12 @@ export let tempStats = {
     currentTerm : "winter 2026",
     newPostings : 12,
     openPostings : 144,
-    totalStudents : 6767,
-    totalActive : 6760,
-    totalPendingApproval : 67,
-    totalSeeking : 676,
-    totalInterviewing: 7,
-    totalPlaced: 6 
+    totalStudents : 501,
+    totalActive : 48,
+    totalPendingApproval : 22,
+    totalSeeking : 91,
+    totalInterviewing: 5,
+    totalPlaced: 22 
 }
 
 export function getGlobalStats() { //return all global stats: current term, total students, total active, 
