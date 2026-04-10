@@ -44,6 +44,9 @@ function isValidStudentId(studentId) {
     const length = USER_DETAILS.fieldConstraints.lengthStudentId;
     // this regex verifies the studentId consists of exactly 9 digits
     const regex = new RegExp(`^\\d{${length}}$`);
+    if (!regex.test(studentId)) {
+        throw new HTTPError(`Student ID must be exactly ${length} digits`, 422);
+    }
     return regex.test(studentId);
 }
 
@@ -56,6 +59,9 @@ function isValidStudentId(studentId) {
 
 function isValidName(name) {
     const isName = (string) => /^[a-zA-Z][a-zA-Z\-\s']*[a-zA-Z]$/.test(string);
+    if (!isName(name)) {
+        throw new HTTPError("Names must only contain letters, spaces, hyphens, or apostrophes, and must be at least 1 letter", 422);
+    }
     return isName(name);
 }
 
