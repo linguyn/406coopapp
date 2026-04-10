@@ -139,5 +139,5 @@ When using our website for the first time, there will be no coordinator account 
   "__v": 0
 }
 
-After pasting, click insert. This should have added a coordinator entry into the database. Now you may log in as a coordinator, using the credentials above, on the sign in page of the website.
+After pasting, click insert. This should have added a coordinator entry into the database. Now you may log in as a coordinator, using the credentials above, on the sign in page of the website. If you would like to add multiple coordinators, repeat the process, but change the "$oid" field and the "email" field.
 
