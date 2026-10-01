@@ -1,3 +1,5 @@
+<img width="800" height="500" alt="ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/f3e2039f-22be-4423-a553-e711d7504102" />
+
 # App Setup
 
 ## 1. Quick Project Structural Breakdown
